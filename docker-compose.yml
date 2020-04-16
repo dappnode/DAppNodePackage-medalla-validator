@@ -1,0 +1,19 @@
+version: '3.4'
+services:
+  prysm-validator.public.dappnode.eth:
+    image: 'prysm-validator.public.dappnode.eth:1.0.1'
+    build:
+      context: ./build
+      args:
+        - VERSION
+    volumes:
+      - 'data:/data'
+      - 'logs:/var/log'
+    restart: always
+    environment:
+      - PASSWORD
+      - VERBOSITY=info
+      - EXTRA_OPTS
+volumes:
+  data: {}
+  logs: {}

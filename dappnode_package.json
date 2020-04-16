@@ -1,0 +1,41 @@
+{
+  "name": "prysm-validator.public.dappnode.eth",
+  "version": "1.0.1",
+  "upstreamVersion": "v1.0.0-alpha.1",
+  "shortDescription": "ETH2.0 Test Network Validator",
+  "description": "A validator client which manages a staking user's private/public keys, connects to a beacon node, and acts as a validator in Ethereum 2.0 by staking 32 ETH and participating in proof of stake consensus by proposing and voting on blocks. [more info](https://medium.com/prysmatic-labs/introducing-topaz-testnet-8e8a4e00a700)",
+  "type": "service",
+  "author": "DAppNode Association <admin@dappnode.io> (https://github.com/dappnode)",
+  "contributors": [
+    "Eduardo Antuña <eduadiez@gmail.com> (https://github.com/eduadiez)"
+  ],
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dappnode/DAppNodePackage-prysm-validator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dappnode/DAppNodePackage-prysm-validator/issues"
+  },
+  "requirements": {
+    "minimumDappnodeVersion": "0.2.22"
+  },
+  "categories": [
+    "Blockchain",
+    "ETH2.0"
+  ],
+  "backup": [
+    {
+      "name": "data",
+      "path": "/data"
+    }
+  ],
+  "links": {
+    "homepage": "https://prylabs.net/participate?node=dappnode",
+    "prysm": "https://prylabs.net",
+    "validators": "https://goerli.etherscan.io/address/0x5ca1e00004366ac85f492887aaab12d0e6418876"
+  },
+  "dependencies": {
+    "prysm-beacon-chain.public.dappnode.eth": "latest"
+  }
+}
