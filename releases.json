@@ -222,10 +222,11 @@
     "link": "http://my.dappnode/#/sdk/publish/r=prysm-validator.public.dappnode.eth&v=1.0.0&h=%2Fipfs%2FQmQFqB4himf6GGBZTYMfktdyTT1djddUgu5Fv62feayDGo"
   },
   "1.0.1": {
-    "hash": "/ipfs/QmaUkiSeQdmUMARcsTpzQfoNcHb85XwYL3aiqxC8M7C7G3",
+    "hash": "/ipfs/QmNLuPtPwhUweGgYSeaP5u4KbLwWmjHFBDjAYQJ3BHmmAZ",
     "type": "directory",
     "uploadedTo": {
-      "dappnode": "Thu, 16 Apr 2020 10:48:28 GMT"
-    }
+      "remote": "Thu, 16 Apr 2020 12:56:23 GMT"
+    },
+    "link": "http://my.dappnode/#/sdk/publish/r=prysm-validator.public.dappnode.eth&v=1.0.1&h=%2Fipfs%2FQmNLuPtPwhUweGgYSeaP5u4KbLwWmjHFBDjAYQJ3BHmmAZ"
   }
 }
