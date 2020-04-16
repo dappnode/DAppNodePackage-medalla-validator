@@ -12,6 +12,10 @@ RUN apt update && \
 
 FROM ubuntu
 
+RUN apt update && \
+    apt install -y ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
 #Copy binaries from build stage
 COPY --from=binary /usr/local/bin/validator /usr/local/bin/validator
 
