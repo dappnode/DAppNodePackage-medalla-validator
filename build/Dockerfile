@@ -18,4 +18,6 @@ COPY --from=binary /usr/local/bin/validator /usr/local/bin/validator
 #Copy binaries from build stage
 COPY entrypoint.sh /usr/local/bin/entrypoint
 
+ADD ssl /ssl/
+
 ENTRYPOINT ["entrypoint"]
