@@ -238,11 +238,11 @@
     "link": "http://my.dappnode/#/sdk/publish/r=prysm-validator.public.dappnode.eth&v=1.0.2&h=%2Fipfs%2FQmeeaN8JQA5FzwNZ6Xn6xLpK7bi2jVzZ44HXR7ppiGHbjA"
   },
   "1.0.3": {
-    "hash": "/ipfs/QmWan7DZPQUKUUCffAT8Cwm78QL3UeQCB8rAL39Hkp6HMA",
+    "hash": "/ipfs/QmPSsyTxRe31VFDa4QWR6JGjwkAByCynRos8uqEmpXwmJc",
     "type": "directory",
     "uploadedTo": {
-      "remote": "Thu, 16 Apr 2020 19:08:17 GMT"
+      "remote": "Thu, 16 Apr 2020 19:39:44 GMT"
     },
-    "link": "http://my.dappnode/#/sdk/publish/r=prysm-validator.public.dappnode.eth&v=1.0.3&h=%2Fipfs%2FQmWan7DZPQUKUUCffAT8Cwm78QL3UeQCB8rAL39Hkp6HMA"
+    "link": "http://my.dappnode/#/sdk/publish/r=prysm-validator.public.dappnode.eth&v=1.0.3&h=%2Fipfs%2FQmPSsyTxRe31VFDa4QWR6JGjwkAByCynRos8uqEmpXwmJc"
   }
 }
