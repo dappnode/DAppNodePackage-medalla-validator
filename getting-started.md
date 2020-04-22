@@ -8,17 +8,15 @@ Once you've opened the [participate](https://prylabs.net/participate?node=dappno
 
 * **Follow** step 1 "Get GöETH — Test ether", as per Prysm's faucet steps.
 
-* **Follow** step 2 Download deposit data (http://my.dappnode/#/packages/prysm-validator.public.dappnode.eth/file-manager?from=%2Fdata%2Fdeposit_data.txt) file and open it, you will get something like this:
+* **Follow** step 2 [Download deposit data](http://my.dappnode/#/packages/prysm-validator.public.dappnode.eth/file-manager?from=%2Fdata%2Fdeposit_data.txt) file and open it, you will get something like this:
 
-        ```
-        ========================Deposit Data=======================
+    ========================Deposit Data=======================
 
-        0xbc0000006....
+    0xbc0000006....
 
-        ===========================================================
-        ```
+    ===========================================================
 
-    * Copy the value `0xbc0000006...` from the .txt file.
+    * Copy the value `0xbc0000006...` from the deposit_data.txt file.
 
     * Paste it in the field `your validator deposit data` of the Prysm's website:
 
