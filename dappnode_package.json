@@ -28,6 +28,10 @@
     {
       "name": "data",
       "path": "/data"
+    },
+    {
+      "name": "keymanager",
+      "path": "/keymanager"
     }
   ],
   "links": {

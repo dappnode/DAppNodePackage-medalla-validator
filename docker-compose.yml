@@ -9,11 +9,13 @@ services:
     volumes:
       - 'data:/data'
       - 'logs:/var/log'
+      - 'keymanager:/keymanager'
     restart: always
     environment:
-      - PASSWORD
+      - PASSWORD=edu
       - VERBOSITY=info
-      - EXTRA_OPTS
+      - EXTRA_OPTS=--enable-account-metrics
 volumes:
   data: {}
   logs: {}
+  keymanager: {}
