@@ -1,5 +1,5 @@
 import { mapValues } from "lodash";
-import { routesData, Routes } from "../../../common/routes";
+import { routesData, Routes } from "../common/routes";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const rpcUrl = `${apiUrl}/rpc`;

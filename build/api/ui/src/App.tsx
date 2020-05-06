@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { apiClient } from "./rpc";
 import useSWR from "swr";
-import { EthdoWallets } from "../../common/types";
+import { EthdoWallets } from "./common/types";
 import "./App.css";
 
 // @ts-ignore

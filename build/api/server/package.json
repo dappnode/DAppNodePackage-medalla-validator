@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "build": "webpack",
-    "mock": "nodemon -w mock mock/index",
+    "mock": "nodemon -w . -x NODE_ENV=development ts-node mock",
     "dev": "npm run dev:file src/index.ts",
     "dev:file": "ts-node -r dotenv/config",
     "test": "npm run test:file \"./{,!(node_modules)/**}/*.test.ts\" ",

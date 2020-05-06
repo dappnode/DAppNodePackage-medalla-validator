@@ -1,0 +1,1 @@
+cp -r common ../ui/src/common

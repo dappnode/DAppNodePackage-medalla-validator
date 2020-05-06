@@ -1,0 +1,1 @@
+cp -r src/common ../server/common
