@@ -1,9 +1,5 @@
 import { EthdoCmds } from "./cmds";
-
-export interface EthdoWallets {
-  name: string;
-  accounts: string[];
-}
+import { EthdoWallets } from "../../../common/types";
 
 export class Ethdo extends EthdoCmds {
   async listAll(): Promise<EthdoWallets[]> {

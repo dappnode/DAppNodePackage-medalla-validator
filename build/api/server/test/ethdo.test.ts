@@ -17,18 +17,20 @@ interface EthdoWallets {
   accounts: EthdoAccount[];
 }
 
-describe.only("ethdo module", () => {
+describe("ethdo module", () => {
   let id: string;
 
   before("Create docker container to run commands", async function() {
-    this.timeout(150 * 1000);
+    this.timeout(120 * 1000);
     await createTestImage();
     id = await shell(`docker run -d ${ethdoTestImage} sleep 10m`);
     const version = await execIn(id, "ethdo version");
     if (!version) throw Error(`ethdo not installed`);
   });
 
-  it("Get deposit data", async () => {
+  it("Get deposit data", async function() {
+    this.timeout(60 * 1000);
+
     const ethdo = new Ethdo(cmd => execIn(id, cmd));
 
     // Test data

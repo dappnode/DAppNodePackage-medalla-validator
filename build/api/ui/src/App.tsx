@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import useSWR from "swr";
-import { EthdoWallets } from "../../server/src/ethdo";
+import { EthdoWallets } from "../../common/types";
 import "./App.css";
 
 const rootApp = "http://localhost:8080"; // "/" in production

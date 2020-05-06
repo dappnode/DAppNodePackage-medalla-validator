@@ -21,13 +21,13 @@ function expect(res: request.Response, code: number, body: any) {
 describe("/api", () => {
   it("should return 200 OK", async () => {
     const res = await requestApp.get("/api");
-    expect(res, 200, { success: true, result: "prysm account api" });
+    expect(res, 200, { success: true, result: "ethdo account api" });
   });
 
   describe("Authorize an admin", () => {
-    it("should redirect to login", async () => {
+    it("should reject without auth", async () => {
       const res = await requestApp.get("/api/login");
-      expect(res, 403, { success: false, message: "Forbidden" });
+      expect(res, 400, { success: false, message: "No cookie" });
     });
 
     it("should error for missing credentials", async () => {

@@ -4,6 +4,8 @@ import { onlyAdmin, loginAdmin, logoutAdmin } from "./auth";
 import { Ethdo } from "./ethdo";
 import shell from "./utils/shell";
 
+const handlers: { [method: string]: (...args: any[]) => Promise<any> } = {};
+
 export const api = express.Router();
 const get = (path: string, handler: RequestHandler) =>
   api.get(path, wrapRoute(handler));
@@ -34,3 +36,4 @@ post("/account", async (req, res) => {
   const { account, passphrase, walletpassphrase } = req.body;
   await ethdo.accountCreate({ account, passphrase, walletpassphrase });
 });
+

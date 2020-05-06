@@ -1,5 +1,4 @@
 import express from "express";
-import passport from "passport";
 import session from "express-session";
 import bodyParser from "body-parser";
 import compression from "compression";
@@ -28,8 +27,9 @@ app.use(
     secret: "keyboard cat" // ### Make unique per server
   })
 );
-app.use(passport.initialize());
-app.use(passport.session());
+
+// Test jayson
+
 app.use(express.static(filesPath, { maxAge: "1d" })); // Express uses "ETags" (hashes of the files requested) to know when the file changed
 app.use("/api", api);
 app.get("*", (_0, res) => res.sendFile(path.resolve(filesPath, "index.html"))); // React-router, index.html at all routes
