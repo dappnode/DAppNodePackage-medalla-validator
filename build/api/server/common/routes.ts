@@ -1,9 +1,15 @@
+import { EthdoWallets } from "./types";
+
 export interface Routes {
-  greet: (name: string) => Promise<string>;
+  walletsGet: () => Promise<EthdoWallets[]>;
+  walletCreate: (walletName: string) => Promise<void>;
+  accountCreate: (accountName: string, walletName: string) => Promise<void>;
 }
 
 export const routesData: { [P in keyof Routes]: {} } = {
-  greet: {}
+  walletsGet: {},
+  walletCreate: {},
+  accountCreate: {}
 };
 
 // DO NOT REMOVE

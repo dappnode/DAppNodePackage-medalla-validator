@@ -1,5 +1,6 @@
 import { mapValues } from "lodash";
-import { routesData, Routes } from "../common/routes";
+import useSWR, { responseInterface } from "swr";
+import { routesData, Routes, ResolvedType } from "../common/routes";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const rpcUrl = `${apiUrl}/rpc`;
@@ -28,3 +29,16 @@ export const apiClient: Routes = mapValues(
   routesData,
   (data, route) => (...args: any[]) => callRoute(route, args)
 );
+
+export const useApi: {
+  [K in keyof Routes]: (
+    ...args: Parameters<Routes[K]>
+  ) => responseInterface<ResolvedType<Routes[K]>, Error>;
+} = mapValues(apiClient, (handler, route) => {
+  return function (...args: any[]) {
+    const argsKey = args.length > 0 ? JSON.stringify(args) : "";
+    const cacheKey = route + argsKey;
+    const fetcher: (...args: any[]) => Promise<any> = handler;
+    return useSWR([cacheKey, route], () => fetcher(...args));
+  };
+});

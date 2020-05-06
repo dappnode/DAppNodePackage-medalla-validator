@@ -1,1 +1,2 @@
-cp -r common ../ui/src/common
+rm -rf ../ui/src/common/
+cp -r common/ ../ui/src/common/
