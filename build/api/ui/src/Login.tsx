@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { apiClient } from "./rpc";
+import { api } from "./rpc";
 import useSWR from "swr";
 import { EthdoWallets } from "./common/types";
 import "./App.css";
 
 // @ts-ignore
-window.apiClient = apiClient;
+window.api = api;
 
 const rootApp = "http://localhost:8080"; // "/" in production
 

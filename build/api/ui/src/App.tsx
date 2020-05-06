@@ -1,72 +1,41 @@
-import React, { useState } from "react";
-import { apiClient, useApi } from "./rpc";
-import { EthdoWallets } from "./common/types";
-import "./App.css";
+import React from "react";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import { makeStyles } from "@material-ui/core/styles";
+import { Layout } from "./Dashboard";
+import { Chart } from "./Chart";
+import { Deposits } from "./Deposits";
+import { Accounts } from "./Accounts";
+import { useApi, api } from "./rpc";
 
-function Wallet({
-  wallet,
-  fetchWallets,
-}: {
-  wallet: EthdoWallets;
-  fetchWallets: () => void;
-}) {
-  const [input, setInput] = useState("");
-
-  function addAccount() {
-    apiClient
-      .accountCreate(input, wallet.name)
-      .then(fetchWallets)
-      .catch(console.error);
-  }
-
-  return (
-    <div key={wallet.name} className="wallet">
-      <strong>{wallet.name}</strong>
-      <div>
-        <input value={input} onChange={(e) => setInput(e.target.value)} />
-        <button onClick={addAccount}>Add account</button>
-      </div>
-
-      <ul>
-        {wallet.accounts.map((account) => (
-          <li key={account}>{account}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function Wallets() {
-  const wallets = useApi.walletsGet();
-
-  return (
-    <div>
-      {wallets.data ? (
-        <div className="wallets">
-          {wallets.data.map((wallet) => (
-            <div key={wallet.name}>
-              <Wallet wallet={wallet} fetchWallets={wallets.revalidate} />
-            </div>
-          ))}
-        </div>
-      ) : wallets.isValidating ? (
-        "Loading..."
-      ) : wallets.error ? (
-        wallets.error.message
-      ) : null}
-    </div>
-  );
-}
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+  },
+}));
 
 export default function App() {
-  const [input, setInput] = useState("");
+  const accounts = useApi.accountsGet();
+  async function addAccount(name: string) {
+    try {
+      await api.accountCreate(name);
+      console.log(`Created account ${name}`);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      accounts.revalidate();
+    }
+  }
+
+  const classes = useStyles();
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Wallets</h1>
-        <Wallets />
-      </header>
+    <div className={classes.root}>
+      <CssBaseline />
+      <Layout>
+        <Chart />
+        {/* <Deposits /> */}
+        <Accounts accounts={accounts.data || []} />
+      </Layout>
     </div>
   );
 }

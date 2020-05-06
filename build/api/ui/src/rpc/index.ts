@@ -25,7 +25,7 @@ export async function callRoute(route: string, args: any[]) {
   else return res.result;
 }
 
-export const apiClient: Routes = mapValues(
+export const api: Routes = mapValues(
   routesData,
   (data, route) => (...args: any[]) => callRoute(route, args)
 );
@@ -34,7 +34,7 @@ export const useApi: {
   [K in keyof Routes]: (
     ...args: Parameters<Routes[K]>
   ) => responseInterface<ResolvedType<Routes[K]>, Error>;
-} = mapValues(apiClient, (handler, route) => {
+} = mapValues(api, (handler, route) => {
   return function (...args: any[]) {
     const argsKey = args.length > 0 ? JSON.stringify(args) : "";
     const cacheKey = route + argsKey;
