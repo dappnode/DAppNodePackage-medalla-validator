@@ -1,9 +1,9 @@
 export interface Routes {
-  action: (arg: string) => Promise<string>;
+  greet: (name: string) => Promise<string>;
 }
 
 export const routesData: { [P in keyof Routes]: {} } = {
-  action: {},
+  greet: {},
 };
 
 // DO NOT REMOVE

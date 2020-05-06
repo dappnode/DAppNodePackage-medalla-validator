@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "build": "webpack",
+    "mock": "nodemon -w mock mock/index",
     "dev": "npm run dev:file src/index.ts",
     "dev:file": "ts-node -r dotenv/config",
     "test": "npm run test:file \"./{,!(node_modules)/**}/*.test.ts\" ",
@@ -31,6 +32,7 @@
     "@types/assert": "^1.4.6",
     "@types/errorhandler": "^1.5.0",
     "@types/express-session": "^1.17.0",
+    "ajv": "^6.12.2",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
@@ -71,6 +73,7 @@
     "ts-loader": "^6.2.0",
     "ts-node": "^8.4.1",
     "typescript": "^3.6.3",
+    "typescript-json-schema": "^0.42.0",
     "webpack": "^4.30.0",
     "webpack-cli": "^3.3.1"
   }

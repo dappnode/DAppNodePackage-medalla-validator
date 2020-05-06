@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const TJS = require("typescript-json-schema");
 
-const baseDir = "src/common/schemas";
+const baseDir = "schemas";
 
 const typesToSchema = [
   "RoutesArguments",

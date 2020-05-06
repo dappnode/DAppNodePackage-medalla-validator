@@ -1,10 +1,12 @@
 import express, { RequestHandler } from "express";
-import { wrapRoute } from "./utils/routes";
-import { onlyAdmin, loginAdmin, logoutAdmin } from "./auth";
-import { Ethdo } from "./ethdo";
-import shell from "./utils/shell";
+import { wrapRoute } from "../utils/routes";
+import { onlyAdmin, loginAdmin, logoutAdmin } from "../auth";
+import { Ethdo } from "../ethdo";
+import shell from "../utils/shell";
+import { getRpcHandler } from "./rpc";
+import * as methods from "../methods";
 
-const handlers: { [method: string]: (...args: any[]) => Promise<any> } = {};
+const rpcHandler = getRpcHandler(methods);
 
 export const api = express.Router();
 const get = (path: string, handler: RequestHandler) =>
@@ -37,3 +39,4 @@ post("/account", async (req, res) => {
   await ethdo.accountCreate({ account, passphrase, walletpassphrase });
 });
 
+api.post("/rpc", rpcHandler);

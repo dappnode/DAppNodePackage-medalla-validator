@@ -62,4 +62,23 @@ describe("/api", () => {
       await agent.get("/api/login").expect(403);
     });
   });
+
+  describe.only("/rpc", () => {
+    it("should greet", async () => {
+      const res = await requestApp
+        .post("/api/rpc")
+        .send({ method: "greet", params: ["Mike"] });
+      expect(res, 200, { result: "Hello Mike" });
+    });
+
+    it("should fail for wrong type", async () => {
+      const res = await requestApp
+        .post("/api/rpc")
+        .send({ method: "greet", params: [222] });
+      expect(res, 500, {
+        code: -32603,
+        message: "Validation error:\nparams[0] should be string"
+      });
+    });
+  });
 });

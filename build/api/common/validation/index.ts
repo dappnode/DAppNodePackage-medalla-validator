@@ -7,7 +7,7 @@ import { Args } from "../transport/types";
 const ajv = new Ajv({ allErrors: true });
 
 /* eslint-disable-next-line @typescript-eslint/explicit-function-return-type */
-export function validateRoutesArgsFactory() {
+export function getValidateRoutesArgs() {
   const validate = ajv.compile(routesArgumentsSchema);
   return function validateRoutesArgs(route: string, args: Args): void {
     const valid = validate({ [route]: args });
