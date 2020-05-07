@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "properties": {
+    "accountCreate": {
+      "type": "null"
+    },
+    "accountsGet": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ValidatorAccount"
+      }
+    }
+  },
+  "definitions": {
+    "ValidatorAccount": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "wallet": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "balance",
+        "name",
+        "status",
+        "wallet"
+      ]
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

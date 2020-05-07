@@ -7,10 +7,10 @@ export interface Routes {
 
 export const routesData: { [P in keyof Routes]: {} } = {
   accountCreate: {},
-  accountsGet: {},
+  accountsGet: {}
 };
 
-// DO NOT REMOVE
+// DO NOT REMOVE -
 // Enforces that each route is a function that returns a promise
 export type RoutesArguments = { [K in keyof Routes]: Parameters<Routes[K]> };
 export type RoutesReturn = {

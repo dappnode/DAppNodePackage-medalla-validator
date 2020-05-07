@@ -15,7 +15,10 @@
     "test:int:file": "mocha -r dotenv/config -r ts-node/register --exit",
     "lint": "./node_modules/.bin/eslint . --ext .ts --fix",
     "pre-commit": "npm run lint && npm run test",
-    "analyze": "webpack --profile --json > build/stats.json && npx webpack-bundle-analyzer build/stats.json"
+    "analyze": "webpack --profile --json > build/stats.json && npx webpack-bundle-analyzer build/stats.json",
+    "common-build": "node common/validation/generateSchemas",
+    "common-copy": "rm -rf ../ui/src/common/ && cp -r common/ ../ui/src/common/",
+    "common-watch": "node scripts/sync-common"
   },
   "repository": {
     "type": "git",
@@ -63,6 +66,7 @@
     "@typescript-eslint/eslint-plugin": "^2.9.0",
     "@typescript-eslint/parser": "^2.9.0",
     "chai": "^4.2.0",
+    "chokidar": "^3.4.0",
     "cookie": "^0.4.1",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.1.0",
