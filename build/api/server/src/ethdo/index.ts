@@ -1,12 +1,16 @@
 import crypto from "crypto";
 import { EthdoCmds } from "./cmds";
-import { EthdoWallets } from "../../common/types";
+import { EthdoWallets, WithdrawlAccount } from "../../common/types";
 
 const withdrawalWallet = "withdrawl";
-const withdrawalAccount = `${withdrawalWallet}/primary`;
 const validatorWallet = "validator";
 
 interface EthdoValidator {
+  account: string;
+  passphrase: string;
+}
+
+interface AccountCredentials {
   account: string;
   passphrase: string;
 }
@@ -48,19 +52,30 @@ export class Ethdo extends EthdoCmds {
     }
   }
 
-  async createWithdrawlAccount(passphrase: string) {
+  async createWithdrawlAccount({ account, passphrase }: AccountCredentials) {
     await this.assertWalletExists(withdrawalWallet);
-    await this.accountCreate({ account: withdrawalAccount, passphrase });
+    await this.accountCreate({
+      account: `${withdrawalWallet}/${account}`,
+      passphrase
+    });
+  }
+
+  async accountWithdrawlList(): Promise<WithdrawlAccount[]> {
+    const accounts = await this.walletAccounts({ wallet: withdrawalWallet });
+    return accounts.map(name => ({
+      name,
+      id: `${withdrawalWallet}/${name}`
+    }));
   }
 
   /**
    * Create a new validator account and generate deposit data
    */
-  async getDepositData(validator: EthdoValidator) {
+  async getDepositData(validator: EthdoValidator, withdrawalAccount: string) {
     return await this.validatorDepositdata({
       validatoraccount: validator.account,
       passphrase: validator.passphrase,
-      withdrawalaccount: withdrawalAccount,
+      withdrawalaccount: `${withdrawalWallet}/${withdrawalAccount}`,
       depositvalue: "32Ether",
       raw: true
     });

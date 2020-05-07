@@ -33,7 +33,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function SelectWithdrawlAccount() {
+export function SelectWithdrawlAccount({
+  setWithdrawlAccount,
+}: {
+  setWithdrawlAccount: (id: string) => void;
+}) {
   const withdrawlAccounts = useApi.accountWithdrawlList();
   const [id, setId] = useState<string>("");
   const [open, setOpen] = useState(false);
@@ -44,6 +48,10 @@ export function SelectWithdrawlAccount() {
       if (first) setId(first.id);
     }
   }, [withdrawlAccounts.data, id, setId]);
+
+  useEffect(() => {
+    if (id) setWithdrawlAccount(id);
+  }, [id, setWithdrawlAccount]);
 
   const openDialog = () => setOpen(true);
   const closeDialog = () => setOpen(false);

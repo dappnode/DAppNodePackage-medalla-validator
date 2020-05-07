@@ -12,18 +12,14 @@ export async function accountsGet(): Promise<ValidatorAccount[]> {
   return [];
 }
 
-export async function createWithdrawlAccount(
-  passphrase: string
-): Promise<void> {
-  await ethdo.createWithdrawlAccount(passphrase);
-}
-
-export async function newValidator(): Promise<{
+export async function newValidator(
+  withdrawalAccount: string
+): Promise<{
   depositData: string;
   account: string;
 }> {
   const validator = await ethdo.newRandomValidatorAccount();
-  const depositData = await ethdo.getDepositData(validator);
+  const depositData = await ethdo.getDepositData(validator, withdrawalAccount);
 
   db.validatorAccounts.set({
     ...db.validatorAccounts.get(),
@@ -46,8 +42,10 @@ export async function accountWithdrawlCreate({
 }: {
   name: string;
   passphrase: string;
-}) {}
+}) {
+  await ethdo.createWithdrawlAccount({ account: name, passphrase });
+}
 
 export async function accountWithdrawlList(): Promise<WithdrawlAccount[]> {
-  return [];
+  return await ethdo.accountWithdrawlList();
 }
