@@ -1,6 +1,12 @@
-import { EthdoWallets, ValidatorAccount } from "../../common/types";
+import {
+  EthdoWallets,
+  ValidatorAccount,
+  WithdrawlAccount
+} from "../../common/types";
 
 const walletValidator = "Validator";
+
+const withdrawlAccounts: WithdrawlAccount[] = [];
 
 const accounts: ValidatorAccount[] = [
   { name: "1", wallet: walletValidator, status: "pending", balance: 32.34521 },
@@ -12,6 +18,8 @@ const wallets: EthdoWallets[] = [
   { name: "Validator", accounts: ["1", "2"] },
   { name: "Withdrawl", accounts: ["1", "2"] }
 ];
+
+const waitMs = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 export async function accountsGet(): Promise<ValidatorAccount[]> {
   return accounts;
@@ -39,4 +47,24 @@ export async function accountCreate(name: string): Promise<void> {
     balance: 32
   };
   accounts.push(newAccount);
+}
+
+//  Useful now
+
+export async function accountWithdrawlCreate({
+  name,
+  passphrase
+}: {
+  name: string;
+  passphrase: string;
+}) {
+  passphrase;
+  withdrawlAccounts.push({ id: `withdrawl/${name}`, name });
+  await waitMs(1000);
+  if (passphrase === "error") throw Error(`Triggered error`);
+}
+
+export async function accountWithdrawlList(): Promise<WithdrawlAccount[]> {
+  await waitMs(1000);
+  return withdrawlAccounts;
 }

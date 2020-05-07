@@ -49,6 +49,23 @@ export class EthdoCmds {
   }
 
   /**
+   * ethdo wallet info provides information about a given wallet. Options include:
+   * ```
+   * $ ethdo wallet info --wallet="Personal wallet"
+   * Type: hierarchical deterministic
+   * Accounts: 3
+   * ```
+   */
+  async walletInfo(options: {
+    /**
+     * the name of the wallet to create (defaults to "primary")
+     */
+    wallet: string;
+  }): Promise<string> {
+    return await this.run("wallet info", options);
+  }
+
+  /**
    * ethdo wallet list lists all wallets in the store.
    * N.B. encrypted wallets will not show up in this list unless the correct passphrase for the store is supplied.
    * ```
@@ -113,6 +130,20 @@ export class EthdoCmds {
   }): Promise<string> {
     const res = await this.run("account create", options);
     return res;
+  }
+
+  /**
+   * ethdo account info provides information about the given account. Options include:
+   * $ ethdo account info --account="Personal wallet/Operations"
+   * Public key: 0x8e2f9e8cc29658ff37ecc30e95a0807579b224586c185d128cb7a7490784c1ad9b0ab93dbe604ab075b40079931e6670
+   */
+  async accountInfo(options: {
+    /**
+     *  the name of the account to create
+     */
+    account: string;
+  }): Promise<string> {
+    return await this.run("account info", options);
   }
 
   async validatorDepositdata(options: {

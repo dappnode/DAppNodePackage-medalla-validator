@@ -16,6 +16,46 @@
           }
         ]
       }
+    },
+    "accountWithdrawlCreate": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "passphrase": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "passphrase"
+          ]
+        }
+      ],
+      "minItems": 1,
+      "additionalItems": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "passphrase": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "passphrase"
+            ]
+          }
+        ]
+      }
     }
   },
   "$schema": "http://json-schema.org/draft-07/schema#"

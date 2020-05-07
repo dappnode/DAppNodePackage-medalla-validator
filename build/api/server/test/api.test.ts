@@ -63,7 +63,7 @@ describe("/api", () => {
     });
   });
 
-  describe.only("/rpc", () => {
+  describe("/rpc", () => {
     it("should greet", async () => {
       const res = await requestApp
         .post("/api/rpc")
@@ -75,9 +75,11 @@ describe("/api", () => {
       const res = await requestApp
         .post("/api/rpc")
         .send({ method: "greet", params: [222] });
-      expect(res, 500, {
-        code: -32603,
-        message: "Validation error:\nparams[0] should be string"
+      expect(res, 200, {
+        error: {
+          code: -32603,
+          message: "Validation error:\nparams[0] should be string"
+        }
       });
     });
   });

@@ -19,19 +19,19 @@ interface EthdoWallets {
 
 describe("ethdo module", () => {
   let id: string;
+  let ethdo: Ethdo;
 
-  before("Create docker container to run commands", async function() {
+  beforeEach("Create docker container to run commands", async function() {
     this.timeout(120 * 1000);
     await createTestImage();
     id = await shell(`docker run -d ${ethdoTestImage} sleep 10m`);
+    ethdo = new Ethdo(cmd => execIn(id, cmd));
     const version = await execIn(id, "ethdo version");
     if (!version) throw Error(`ethdo not installed`);
   });
 
   it("Get deposit data", async function() {
     this.timeout(60 * 1000);
-
-    const ethdo = new Ethdo(cmd => execIn(id, cmd));
 
     // Test data
 
@@ -91,7 +91,7 @@ describe("ethdo module", () => {
 
     console.log("deposit data");
     console.log(splitTxByWords(depositData).join("\n"));
-
+    assertDepositData(depositData);
     assert.equal(typeof depositData, "string", "deposit data must be a string");
     assert.equal(
       depositData.length,
@@ -100,10 +100,33 @@ describe("ethdo module", () => {
     );
   });
 
-  after("Remove test container", async () => {
+  it("Do UI flow", async () => {
+    await ethdo.createWithdrawlAccount("secret-passphrase" + Math.random());
+    const validator = await ethdo.newRandomValidatorAccount();
+    const depositData = await ethdo.getDepositData(validator);
+    console.log({ validator, depositData });
+    assert.equal(validator.account, "validator/1", "unexpected validator name");
+    assert.equal(validator.passphrase.length, 64, "wrong rand passhr length");
+    assertDepositData(depositData);
+  });
+
+  afterEach("Remove test container", async () => {
     if (id) await shell(`docker rm -f --volumes ${id}`);
   });
 });
+
+/**
+ * Util to assert dynamically generated deposit data
+ * @param depositData
+ */
+function assertDepositData(depositData: string): void {
+  assert.equal(typeof depositData, "string", "deposit data must be a string");
+  assert.equal(
+    depositData.length,
+    2 + 8 + 13 * 64,
+    "wrong deposit data length"
+  );
+}
 
 /**
  * Util: split raw transaction data by words for better diffing

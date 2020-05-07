@@ -9,6 +9,15 @@
       "items": {
         "$ref": "#/definitions/ValidatorAccount"
       }
+    },
+    "accountWithdrawlCreate": {
+      "type": "null"
+    },
+    "accountWithdrawlList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/WithdrawlAccount"
+      }
     }
   },
   "definitions": {
@@ -33,6 +42,21 @@
         "name",
         "status",
         "wallet"
+      ]
+    },
+    "WithdrawlAccount": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
       ]
     }
   },

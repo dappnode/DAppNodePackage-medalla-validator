@@ -9,3 +9,8 @@ export interface ValidatorAccount {
   status: string;
   balance: number;
 }
+
+export interface WithdrawlAccount {
+  id: string;
+  name: string;
+}

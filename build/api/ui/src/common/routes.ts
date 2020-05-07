@@ -1,16 +1,24 @@
-import { ValidatorAccount } from "./types";
+import { ValidatorAccount, WithdrawlAccount } from "./types";
 
 export interface Routes {
   accountCreate: (name: string) => Promise<void>;
   accountsGet: () => Promise<ValidatorAccount[]>;
+  // Withdrawl
+  accountWithdrawlCreate: (args: {
+    name: string;
+    passphrase: string;
+  }) => Promise<void>;
+  accountWithdrawlList: () => Promise<WithdrawlAccount[]>;
 }
 
 export const routesData: { [P in keyof Routes]: {} } = {
   accountCreate: {},
-  accountsGet: {}
+  accountsGet: {},
+  accountWithdrawlCreate: {},
+  accountWithdrawlList: {}
 };
 
-// DO NOT REMOVE -
+// DO NOT REMOVE
 // Enforces that each route is a function that returns a promise
 export type RoutesArguments = { [K in keyof Routes]: Parameters<Routes[K]> };
 export type RoutesReturn = {

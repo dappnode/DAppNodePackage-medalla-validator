@@ -14,11 +14,11 @@ import Badge from "@material-ui/core/Badge";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import Link from "@material-ui/core/Link";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import { mainListItems, secondaryListItems } from "./listItems";
+import { FooterNote } from "./components/FooterNote";
 
 const drawerWidth = 240;
 
@@ -175,7 +175,7 @@ export const Layout: React.FC = ({ children }) => {
           <Grid container spacing={3}>
             {/* Chart */}
             {childrenItems.map((item, i) => (
-              <Grid key={i} item xs={12} md={8} lg={9}>
+              <Grid key={i} item xs={12}>
                 <Paper className={classes.paper}>{item}</Paper>
               </Grid>
             ))}
@@ -188,15 +188,3 @@ export const Layout: React.FC = ({ children }) => {
     </div>
   );
 };
-
-function FooterNote() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"APLv2 - "}
-      <Link color="inherit" href="https://dappnode.io/">
-        DAppNode
-      </Link>{" "}
-      {"2020."}
-    </Typography>
-  );
-}
