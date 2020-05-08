@@ -9,6 +9,9 @@ import { StepSelectWithdrawl } from "./StepSelectWithdrawl";
 import { StepDeposit } from "./StepDeposit";
 import { FooterNote } from "../FooterNote";
 import { NavButtons } from "./NavButtons";
+import { Link } from "@material-ui/core";
+
+const txViewer = "https://goerli.etherscan.io/tx/";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -51,6 +54,7 @@ export function WelcomeFlow({ onExit }: { onExit: () => void }) {
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
   const [withdrawlAccount, setWithdrawlAccount] = useState("");
+  const [depositTxHash, setDepositTxHash] = useState("");
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -76,6 +80,7 @@ export function WelcomeFlow({ onExit }: { onExit: () => void }) {
         return (
           <StepDeposit
             withdrawlAccount={withdrawlAccount}
+            setDepositTxHash={setDepositTxHash}
             onNext={handleNext}
             onBack={handleBack}
           />
@@ -91,6 +96,7 @@ export function WelcomeFlow({ onExit }: { onExit: () => void }) {
               takes about 2 hours. You can track in the main panel when you get
               assigned.
             </Typography>
+            <Link href={`${txViewer}/${depositTxHash}`}>{depositTxHash}</Link>
             <NavButtons onNext={onExit}></NavButtons>
           </React.Fragment>
         );

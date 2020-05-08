@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function CreateWithdrawl({ onCreate }: { onCreate: () => void }) {
-  const [status, setStatus] = useState<RequestStatus>({});
+  const [status, setStatus] = useState<RequestStatus<true>>({});
   const [name, setName] = useState("Primary");
   const [passphrase, setPassphrase] = useState("");
   const [navValue, setNavValue] = useState(0);
@@ -54,7 +54,7 @@ export function CreateWithdrawl({ onCreate }: { onCreate: () => void }) {
     try {
       setStatus({ loading: true });
       await api.accountWithdrawlCreate({ name, passphrase });
-      setStatus({ success: true });
+      setStatus({ result: true });
       withdrawlAccounts.revalidate();
       if (onCreate) onCreate();
     } catch (e) {
@@ -100,7 +100,7 @@ export function CreateWithdrawl({ onCreate }: { onCreate: () => void }) {
         </Grid>
 
         <Grid item xs={12}>
-          {status.success ? (
+          {status.result ? (
             <Box className={classes.successBox}>
               <CheckCircleOutlineIcon className={classes.success} />
               <Typography gutterBottom>Account added</Typography>

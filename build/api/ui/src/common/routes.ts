@@ -10,14 +10,20 @@ export interface Routes {
     withdrawalAccount: string
   ) => Promise<{ depositData: string; account: string }>;
   // Internal Eth1 account
-  eth1AccountGet: () => Promise<{ address: string; balance: number }>;
+  eth1AccountGet: () => Promise<{
+    address: string;
+    balance: number;
+    insufficientFunds: boolean;
+  }>;
+  eth1MakeDeposit: (depositData: string) => Promise<string | undefined>;
 }
 
 export const routesData: { [P in keyof Routes]: {} } = {
   accountWithdrawlCreate: {},
   accountWithdrawlList: {},
   newValidator: {},
-  eth1AccountGet: {}
+  eth1AccountGet: {},
+  eth1MakeDeposit: {},
 };
 
 // DO NOT REMOVE

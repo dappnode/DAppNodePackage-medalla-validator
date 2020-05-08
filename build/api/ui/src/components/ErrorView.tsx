@@ -6,6 +6,7 @@ import Typography from "@material-ui/core/Typography";
 const useStyles = makeStyles((theme) => ({
   pre: {
     whiteSpace: "pre-wrap",
+    wordBreak: "break-all",
   },
 }));
 

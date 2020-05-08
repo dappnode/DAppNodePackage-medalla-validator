@@ -41,24 +41,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+type TxHash = string | undefined;
+
 export function StepDeposit({
   withdrawlAccount,
+  setDepositTxHash,
   onNext,
   onBack,
 }: {
   withdrawlAccount: string;
+  setDepositTxHash: (txHash: string) => void;
   onNext: () => void;
   onBack: () => void;
 }) {
   const [depositData, setDepositData] = useState("");
   const [validatorName, setValidatorName] = useState("");
-  const [depositStatus, setDepositStatus] = useState<RequestStatus>({});
+  const [depositStatus, setDepositStatus] = useState<RequestStatus<TxHash>>({});
 
   const eth1Account = useApi.eth1AccountGet();
   const eth1Address = eth1Account.data && eth1Account.data.address;
   const eth1Balance = eth1Account.data && eth1Account.data.balance;
-  const insufficientFunds =
-    typeof eth1Balance === "number" && eth1Balance < 32.05;
+  const insufficientFunds = typeof eth1Balance === "number" && eth1Balance < 1;
 
   useEffect(() => {
     const interval = setInterval(eth1Account.revalidate, 2000);
@@ -82,13 +85,12 @@ export function StepDeposit({
   async function makeDeposit() {
     try {
       setDepositStatus({ loading: true });
-      await new Promise((r) => setTimeout(r, 5000));
-      if (Math.random() > 0.5) {
-        setDepositStatus({ success: true });
-        onNext();
-      } else {
-        throw Error(`Error, could not make deposit`);
-      }
+      if (!depositData) throw Error(`No depositData`);
+      const txHash = await api.eth1MakeDeposit(depositData);
+      console.log("Deposit result", { txHash });
+      setDepositStatus({ result: txHash });
+      setDepositTxHash(txHash || "");
+      onNext();
     } catch (e) {
       console.error(e);
       setDepositStatus({ error: e });
@@ -163,7 +165,7 @@ export function StepDeposit({
           !eth1Account.data ||
           insufficientFunds ||
           depositStatus.loading ||
-          depositStatus.success
+          Boolean(depositStatus.result)
         }
       >
         Make deposit
