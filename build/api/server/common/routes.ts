@@ -1,21 +1,23 @@
 import { ValidatorAccount, WithdrawlAccount } from "./types";
 
 export interface Routes {
-  accountCreate: (name: string) => Promise<void>;
-  accountsGet: () => Promise<ValidatorAccount[]>;
-  // Withdrawl
   accountWithdrawlCreate: (args: {
     name: string;
     passphrase: string;
   }) => Promise<void>;
   accountWithdrawlList: () => Promise<WithdrawlAccount[]>;
+  newValidator: (
+    withdrawalAccount: string
+  ) => Promise<{ depositData: string; account: string }>;
+  // Internal Eth1 account
+  eth1AccountGet: () => Promise<{ address: string; balance: number }>;
 }
 
 export const routesData: { [P in keyof Routes]: {} } = {
-  accountCreate: {},
-  accountsGet: {},
   accountWithdrawlCreate: {},
-  accountWithdrawlList: {}
+  accountWithdrawlList: {},
+  newValidator: {},
+  eth1AccountGet: {}
 };
 
 // DO NOT REMOVE

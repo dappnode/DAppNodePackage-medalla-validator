@@ -61,7 +61,12 @@ export class Ethdo extends EthdoCmds {
   }
 
   async accountWithdrawlList(): Promise<WithdrawlAccount[]> {
-    const accounts = await this.walletAccounts({ wallet: withdrawalWallet });
+    const accounts = await this.walletAccounts({
+      wallet: withdrawalWallet
+    }).catch(e => {
+      if (e.message.includes("wallet not found")) return [] as string[];
+      else throw e;
+    });
     return accounts.map(name => ({
       name,
       id: `${withdrawalWallet}/${name}`
@@ -75,7 +80,7 @@ export class Ethdo extends EthdoCmds {
     return await this.validatorDepositdata({
       validatoraccount: validator.account,
       passphrase: validator.passphrase,
-      withdrawalaccount: `${withdrawalWallet}/${withdrawalAccount}`,
+      withdrawalaccount: withdrawalAccount,
       depositvalue: "32Ether",
       raw: true
     });

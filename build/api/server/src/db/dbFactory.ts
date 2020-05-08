@@ -27,13 +27,19 @@ export function dbFactory<State extends { [key: string]: any }>(
   const adapter = new FileSync(dbPath);
   const db = low(adapter);
 
-  const get = <T>(key: string): T | null => db.get(key).value();
-  const set = <T>(key: string, value: T): void => db.set(key, value).write();
+  function formatKey(key: string): string {
+    if (!key) throw Error(`key to access the db must be defined`);
+    return key.replace(new RegExp(".", "g"), "");
+  }
+
+  const get = <T>(key: string): T | null => db.get(formatKey(key)).value();
+  const set = <T>(key: string, value: T): void =>
+    db.set(formatKey(key), value).write();
   const del = (key: string): void => {
-    db.unset(key).write();
+    db.unset(formatKey(key)).write();
   };
 
-  return mapValues(initialState, (key, initialValue) => ({
+  return mapValues(initialState, (initialValue, key) => ({
     get: (): any => get(key) || initialValue,
     set: (newValue: any): void => set(key, newValue),
     del: (): void => del(key)

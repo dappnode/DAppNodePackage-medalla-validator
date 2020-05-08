@@ -19,6 +19,8 @@ const wallets: EthdoWallets[] = [
   { name: "Withdrawl", accounts: ["1", "2"] }
 ];
 
+let eth1Balance = 32.462112364172;
+
 const waitMs = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 export async function accountsGet(): Promise<ValidatorAccount[]> {
@@ -67,4 +69,27 @@ export async function accountWithdrawlCreate({
 export async function accountWithdrawlList(): Promise<WithdrawlAccount[]> {
   await waitMs(1000);
   return withdrawlAccounts;
+}
+
+export async function newValidator(
+  withdrawalAccount: string
+): Promise<{ depositData: string; account: string }> {
+  withdrawalAccount;
+  await waitMs(1000);
+  return {
+    account: "validator/1",
+    depositData:
+      "0x8defbaaba5c193a7975ca61649d5802632761ec1d986f5103100cd294ec69b8a0x8defbaaba5c193a7975ca61649d5802632761ec1d986f5103100cd294ec69b8a"
+  };
+}
+
+export async function eth1AccountGet(): Promise<{
+  address: string;
+  balance: number;
+}> {
+  eth1Balance = eth1Balance * 1.01;
+  return {
+    address: "0x11111111111111111111111111111111111111111",
+    balance: eth1Balance
+  };
 }

@@ -13,7 +13,14 @@ export class EthdoCmds {
     options?: { [key: string]: any }
   ): Promise<string> {
     const cmd = ["ethdo", subCmd, ...dargs(options || {})].join(" ");
-    return this.cmdRunner(cmd);
+    try {
+      return this.cmdRunner(cmd);
+    } catch (e) {
+      // Make sure no sensitive information is logged in an error message
+      e.message = (e.message || "").replace(/--\S*passphrase\S*/g, "****");
+      e.stack = (e.stack || "").replace(/--\S*passphrase\S*/g, "****");
+      throw e;
+    }
   }
 
   /**
@@ -130,6 +137,29 @@ export class EthdoCmds {
   }): Promise<string> {
     const res = await this.run("account create", options);
     return res;
+  }
+
+  /**
+   * ethdo account import creates a new account by importing its private key. Options for creating the account include:
+   * ```
+   * ethdo account import --account=Validators/123 --key=6dd12d588d1c05ba40e80880ac7e894aa20babdbf16da52eae26b3f267d68032 --passphrase="my account secret"
+   * ```
+   */
+  async accountImport(options: {
+    /**
+     *  the name of the account to create
+     */
+    account: string;
+    /**
+     * the passphrase for the account
+     */
+    passphrase: string;
+    /**
+     * the private key to import
+     */
+    key?: string;
+  }) {
+    return await this.run("account import", options);
   }
 
   /**

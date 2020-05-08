@@ -1,8 +1,9 @@
 import { ValidatorAccount, WithdrawlAccount } from "../../common/types";
 import { Ethdo } from "../ethdo";
 import { db } from "../db";
+import shell from "../utils/shell";
 
-const ethdo = new Ethdo(async () => "");
+const ethdo = new Ethdo(shell);
 
 export async function accountCreate(name: string): Promise<void> {
   name;

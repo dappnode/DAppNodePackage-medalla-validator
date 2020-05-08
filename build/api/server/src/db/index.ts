@@ -8,8 +8,15 @@ const dbInitialState: {
       depositData?: string;
     };
   };
+  eth1Account:
+    | {
+        address: string;
+        privateKey: string;
+      }
+    | undefined;
 } = {
-  validatorAccounts: {}
+  validatorAccounts: {},
+  eth1Account: undefined
 };
 
 export const db = dbFactory("account-db.json", dbInitialState);

@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function CreateWithdrawl() {
+export function CreateWithdrawl({ onCreate }: { onCreate: () => void }) {
   const [status, setStatus] = useState<RequestStatus>({});
   const [name, setName] = useState("Primary");
   const [passphrase, setPassphrase] = useState("");
@@ -56,6 +56,7 @@ export function CreateWithdrawl() {
       await api.accountWithdrawlCreate({ name, passphrase });
       setStatus({ success: true });
       withdrawlAccounts.revalidate();
+      if (onCreate) onCreate();
     } catch (e) {
       setStatus({ error: e.message });
     }
@@ -108,10 +109,11 @@ export function CreateWithdrawl() {
             <LinearProgress></LinearProgress>
           ) : (
             <Button
-              disabled={status.loading}
+              disabled={status.loading || !name || !passphrase}
               onClick={generateWithdrawlAccount}
               className={classes.generate}
               variant="contained"
+              color="primary"
               fullWidth
             >
               Generate

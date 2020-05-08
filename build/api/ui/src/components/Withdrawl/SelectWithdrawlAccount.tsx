@@ -15,6 +15,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import { ErrorView } from "components/ErrorView";
 
 const useStyles = makeStyles((theme) => ({
   formGroup: {
@@ -34,24 +35,21 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function SelectWithdrawlAccount({
+  withdrawlAccount,
   setWithdrawlAccount,
 }: {
+  withdrawlAccount: string;
   setWithdrawlAccount: (id: string) => void;
 }) {
   const withdrawlAccounts = useApi.accountWithdrawlList();
-  const [id, setId] = useState<string>("");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (!id && withdrawlAccounts.data) {
+    if (!withdrawlAccount && withdrawlAccounts.data) {
       const first = withdrawlAccounts.data[0];
-      if (first) setId(first.id);
+      if (first) setWithdrawlAccount(first.id);
     }
-  }, [withdrawlAccounts.data, id, setId]);
-
-  useEffect(() => {
-    if (id) setWithdrawlAccount(id);
-  }, [id, setWithdrawlAccount]);
+  }, [withdrawlAccounts.data, withdrawlAccount, setWithdrawlAccount]);
 
   const openDialog = () => setOpen(true);
   const closeDialog = () => setOpen(false);
@@ -70,8 +68,8 @@ export function SelectWithdrawlAccount({
               <Select
                 labelId="demo-simple-select-helper-label"
                 id="demo-simple-select-helper"
-                value={id}
-                onChange={(e) => setId(e.target.value as string)}
+                value={withdrawlAccount}
+                onChange={(e) => setWithdrawlAccount(e.target.value as string)}
               >
                 {withdrawlAccounts.data.map(({ id, name }) => (
                   <MenuItem key={id} value={id}>
@@ -89,7 +87,12 @@ export function SelectWithdrawlAccount({
             </FormControl>
           </FormGroup>
         ) : (
-          <Button onClick={openDialog} variant="contained" fullWidth>
+          <Button
+            onClick={openDialog}
+            variant="contained"
+            color="primary"
+            fullWidth
+          >
             Add withdrawl account
           </Button>
         )}
@@ -97,7 +100,9 @@ export function SelectWithdrawlAccount({
         {/* Dialog to create a withdrawl account */}
         <Dialog open={open} onClose={closeDialog}>
           <DialogContent className={classes.dialogContent}>
-            <CreateWithdrawl />
+            <CreateWithdrawl
+              onCreate={() => setTimeout(() => closeDialog(), 500)}
+            />
           </DialogContent>
           <DialogActions>
             <Button onClick={closeDialog} color="primary">
@@ -117,6 +122,10 @@ export function SelectWithdrawlAccount({
       </Box>
     );
   if (withdrawlAccounts.error)
-    return <Box my={2}>{withdrawlAccounts.error.message}</Box>;
+    return (
+      <Box my={2}>
+        <ErrorView error={withdrawlAccounts.error} />
+      </Box>
+    );
   return null;
 }

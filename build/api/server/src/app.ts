@@ -6,11 +6,14 @@ import path from "path";
 import logger from "morgan";
 import cors from "cors";
 import { api } from "./routes";
+import { getRpcHandler } from "./routes/rpc";
+import * as methods from "./methods";
 // Display stack traces with source-maps
 import "source-map-support/register";
 
 const app = express();
 
+const rpcHandler = getRpcHandler(methods);
 const filesPath = path.resolve(process.env.CLIENT_FILES_PATH || "../ui/build");
 
 // Express configuration
@@ -29,6 +32,7 @@ app.use(
 );
 app.use(express.static(filesPath, { maxAge: "1d" })); // Express uses "ETags" (hashes of the files requested) to know when the file changed
 app.use("/api", api);
+app.post("/rpc", rpcHandler);
 app.get("*", (_0, res) => res.sendFile(path.resolve(filesPath, "index.html"))); // React-router, index.html at all routes
 
 export default app;

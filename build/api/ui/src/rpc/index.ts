@@ -2,7 +2,7 @@ import { mapValues } from "lodash";
 import useSWR, { responseInterface } from "swr";
 import { routesData, Routes, ResolvedType } from "../common/routes";
 
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:8080";
 const rpcUrl = `${apiUrl}/rpc`;
 console.log({ apiUrl });
 
