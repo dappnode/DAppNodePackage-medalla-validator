@@ -1,6 +1,7 @@
 import express from "express";
 import Ajv from "ajv";
 import { Routes, routesArgumentsSchema } from "../../common";
+import { logs } from "../logs";
 
 const ajv = new Ajv({ allErrors: true });
 const validateParams = ajv.compile(routesArgumentsSchema);
@@ -34,7 +35,7 @@ export const getRpcHandler = (
       res.send({ error: { code: e.code, message: e.message } });
     } else {
       // Unexpected error, log and send more details
-      console.error(e.stack);
+      logs.error(e);
       res.send({ error: { code: -32603, message: e.message, data: e.stack } });
     }
   }

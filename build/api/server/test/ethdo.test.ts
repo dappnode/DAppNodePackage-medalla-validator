@@ -2,6 +2,7 @@ import "mocha";
 import assert from "assert";
 import { Ethdo } from "../src/ethdo";
 import shell from "../src/utils/shell";
+import { logs } from "../src/logs";
 
 const ethdoTestImage = "ethdo_test_image";
 const installCmd = "GO111MODULE=on go get github.com/wealdtech/ethdo@latest";
@@ -89,8 +90,8 @@ describe("ethdo module", () => {
       raw: true
     });
 
-    console.log("deposit data");
-    console.log(splitTxByWords(depositData).join("\n"));
+    logs.info("deposit data");
+    logs.info(splitTxByWords(depositData).join("\n"));
     assertDepositData(depositData);
     assert.equal(typeof depositData, "string", "deposit data must be a string");
     assert.equal(
@@ -104,7 +105,7 @@ describe("ethdo module", () => {
     await ethdo.createWithdrawlAccount("secret-passphrase" + Math.random());
     const validator = await ethdo.newRandomValidatorAccount();
     const depositData = await ethdo.getDepositData(validator);
-    console.log({ validator, depositData });
+    logs.info({ validator, depositData });
     assert.equal(validator.account, "validator/1", "unexpected validator name");
     assert.equal(validator.passphrase.length, 64, "wrong rand passhr length");
     assertDepositData(depositData);
@@ -169,7 +170,7 @@ async function execIn(id: string, cmd: string) {
 async function createTestImage() {
   const exists = await shell(`docker images -q ${ethdoTestImage}`);
   if (exists) return;
-  console.log(`Creating test image ${ethdoTestImage}, may take a while...`);
+  logs.info(`Creating test image ${ethdoTestImage}, may take a while...`);
 
   const id = await shell(`docker run -d golang sleep 10m`);
   await execIn(id, installCmd);
@@ -179,5 +180,5 @@ async function createTestImage() {
 
   await shell(`docker commit ${id} ${ethdoTestImage}`);
   await shell(`docker rm -f --volumes ${id}`);
-  console.log(`Created test image ${ethdoTestImage} from container ${id}`);
+  logs.info(`Created test image ${ethdoTestImage} from container ${id}`);
 }

@@ -46,8 +46,7 @@
     "json-stringify-safe": "^5.0.1",
     "lowdb": "^1.0.0",
     "morgan": "^1.9.1",
-    "source-map-support": "^0.5.13",
-    "winston": "^3.2.1"
+    "source-map-support": "^0.5.13"
   },
   "devDependencies": {
     "@types/compression": "^1.0.1",

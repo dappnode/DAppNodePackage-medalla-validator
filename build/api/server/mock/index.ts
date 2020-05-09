@@ -24,5 +24,6 @@ app.use(bodyParser.json());
 app.post("/rpc", rpcHandler);
 
 app.listen(app.get("port"), () => {
+  /* eslint-disable-next-line no-console */
   console.warn(`Mock app listening http://localhost:${app.get("port")}`);
 });

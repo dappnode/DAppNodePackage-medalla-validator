@@ -1,10 +1,10 @@
 import express from "express";
 import { HttpError } from "./utils/routes";
+import { logs } from "./logs";
 
 const adminPassword = process.env.PASSWORD || "test-password";
 const disablePassword = process.env.DISABLE_PASSWORD;
-if (disablePassword)
-  console.warn(`Warning! PASSWORD_DISABLED, anyone can access`);
+if (disablePassword) logs.warn(`Warning! PASSWORD_DISABLED, anyone can access`);
 
 export function onlyAdmin(req: express.Request): string {
   if (disablePassword) return "PASSWORD_DISABLED";

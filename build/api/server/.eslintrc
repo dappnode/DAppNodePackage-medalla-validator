@@ -13,6 +13,7 @@
     "es6": true
   },
   "rules": {
+    "no-console": "error",
     "max-len": ["error", 1000],
     // ##### Some libraries do not have typings and the compiler does not understand .d.ts files
     "@typescript-eslint/no-var-requires": "off",

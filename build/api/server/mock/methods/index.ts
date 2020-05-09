@@ -17,7 +17,8 @@ const wallets: EthdoWallets[] = [
 
 let eth1Balance = 32.462112364172;
 
-const waitMs = (ms: number) => new Promise(r => setTimeout(r, ms));
+const waitMs = (ms: number): Promise<void> =>
+  new Promise(r => setTimeout(r, ms));
 
 export async function accountsGet(): Promise<ValidatorAccount[]> {
   return accounts;
@@ -55,7 +56,7 @@ export async function accountWithdrawlCreate({
 }: {
   name: string;
   passphrase: string;
-}) {
+}): Promise<void> {
   passphrase;
   withdrawlAccounts.push({ id: `withdrawl/${name}`, name });
   await waitMs(1000);
