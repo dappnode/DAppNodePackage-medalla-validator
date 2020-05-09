@@ -4,13 +4,13 @@ services:
     image: "prysm-validator.public.dappnode.eth:1.0.7"
     build:
       context: ./build
-      dockerfile: Dockerfile.alpine
-      #dockerfile: Dockerfile
+      # dockerfile: Dockerfile.alpine
+      dockerfile: Dockerfile
       args:
         - VERSION
     volumes:
-      - 'logs:/var/log'
-      - 'data:/root/.config/ethereum2/'
+      - "logs:/var/log"
+      - "data:/root/.config/ethereum2/"
     restart: always
     environment:
       - PASSWORD=edu
