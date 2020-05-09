@@ -1,4 +1,4 @@
-concurrently -n ui,server,common \
+concurrently -n ui,server,schemas \
   "cd ui && yarn mock" \
   "cd server && yarn dev" \
-  "cd server && yarn common-watch" \
+  "cd ui && yarn schemas-watch" \

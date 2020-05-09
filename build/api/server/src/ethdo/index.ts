@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { EthdoCmds } from "./cmds";
-import { EthdoWallets, WithdrawlAccount } from "../../common/types";
+import { EthdoWallets, WithdrawlAccount } from "../../common";
 
 const withdrawalWallet = "withdrawl";
 const validatorWallet = "validator";

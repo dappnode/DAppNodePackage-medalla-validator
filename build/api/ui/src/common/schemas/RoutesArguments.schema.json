@@ -1,7 +1,63 @@
 {
   "type": "object",
   "properties": {
-    "greet": {
+    "accountWithdrawlCreate": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "passphrase": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "passphrase"
+          ]
+        }
+      ],
+      "minItems": 1,
+      "additionalItems": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "passphrase": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "passphrase"
+            ]
+          }
+        ]
+      }
+    },
+    "newValidator": {
+      "type": "array",
+      "items": [
+        {
+          "type": "string"
+        }
+      ],
+      "minItems": 1,
+      "additionalItems": {
+        "anyOf": [
+          {
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "eth1MakeDeposit": {
       "type": "array",
       "items": [
         {

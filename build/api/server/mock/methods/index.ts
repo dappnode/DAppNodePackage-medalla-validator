@@ -1,8 +1,4 @@
-import {
-  EthdoWallets,
-  ValidatorAccount,
-  WithdrawlAccount
-} from "../../common/types";
+import { EthdoWallets, ValidatorAccount, WithdrawlAccount } from "../../common";
 
 const walletValidator = "Validator";
 
