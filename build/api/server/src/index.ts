@@ -1,14 +1,5 @@
-import errorhandler from "errorhandler";
 import logs from "./logs";
 import app from "./app";
-
-/**
- * Error Handler. Provides full stack - remove for production
- */
-if (process.env.NODE_ENV === "development") {
-  // only use in development
-  app.use(errorhandler());
-}
 
 /**
  * Start Express server.

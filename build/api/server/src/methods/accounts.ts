@@ -1,4 +1,4 @@
-import { ValidatorAccount, WithdrawlAccount } from "../../common/types";
+import { ValidatorAccount, WithdrawlAccount } from "../../common";
 import { Ethdo } from "../ethdo";
 import { db } from "../db";
 import shell from "../utils/shell";

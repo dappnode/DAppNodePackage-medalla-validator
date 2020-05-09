@@ -2,119 +2,44 @@
 # UI build
 ################
 
-FROM node:10.15.3-alpine as api_build
-WORKDIR /usr/src/app
+FROM node:10.20.1-alpine as build-ui
+WORKDIR /app
 # Copy and install deps first to cache
-COPY api .
-
-WORKDIR /usr/src/app/ui
+COPY api/ui/package.json api/ui/yarn.lock ./
 RUN yarn
+COPY api/ui .
+RUN yarn schemas-generate
 RUN yarn build
 # Results in build/*
-WORKDIR /usr/src/app/server
-COPY api/server .
+
+################
+# Server build
+################
+
+FROM node:10.20.1-alpine as build-server
+WORKDIR /app
+COPY api/server/package.json api/server/yarn.lock ./
 RUN yarn
+COPY api/server .
+COPY --from=build-ui /app/src/common ../ui/src/common
 RUN yarn build
 # Results in build/index.js
-
-
-################
-# Validator build
-################
-
-FROM ubuntu as binary
-
-ARG VERSION
-ENV DOWNLOAD_URL https://github.com/prysmaticlabs/prysm/releases/download
-ENV BINARY_URL $DOWNLOAD_URL/$VERSION/validator-$VERSION-linux-amd64
-
-RUN apt update && \
-    apt install -y wget && \
-    wget $BINARY_URL -O /usr/local/bin/validator && \
-    chmod +x  /usr/local/bin/validator
-
-
-FROM ubuntu
-
-RUN apt update && \
-    apt install -y ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
-
-#Copy binaries from build stage
-COPY --from=binary /usr/local/bin/validator /usr/local/bin/validator
-
-#Copy binaries from build stage
-COPY entrypoint.sh /usr/local/bin/entrypoint
-
-ADD ssl /ssl/
-
-### Go install
-# gcc for cgo
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    g++ \
-    gcc \
-    libc6-dev \
-    make \
-    pkg-config \
-    wget \
-    && rm -rf /var/lib/apt/lists/*
-
-ENV GOLANG_VERSION 1.14.2
-
-RUN set -eux; \
-    \
-    # this "case" statement is generated via "update.sh"
-    dpkgArch="$(dpkg --print-architecture)"; \
-    case "${dpkgArch##*-}" in \
-    amd64) goRelArch='linux-amd64'; goRelSha256='6272d6e940ecb71ea5636ddb5fab3933e087c1356173c61f4a803895e947ebb3' ;; \
-    armhf) goRelArch='linux-armv6l'; goRelSha256='eb4550ba741506c2a4057ea4d3a5ad7ed5a887de67c7232f1e4795464361c83c' ;; \
-    arm64) goRelArch='linux-arm64'; goRelSha256='bb6d22fe5806352c3d0826676654e09b6e41eb1af52e8d506d3fa85adf7f8d88' ;; \
-    i386) goRelArch='linux-386'; goRelSha256='cab5f51e6ffb616c6ee963c3d0650ca4e3c4108307c44f2baf233fcb8ff098f6' ;; \
-    ppc64el) goRelArch='linux-ppc64le'; goRelSha256='48c22268c81ced9084a43bbe2c1596d3e636b5560b30a32434a7f15e561de160' ;; \
-    s390x) goRelArch='linux-s390x'; goRelSha256='501cc919648c9d85b901963303c5061ea6814c80f0d35fda9e62980d3ff58cf4' ;; \
-    *) goRelArch='src'; goRelSha256='98de84e69726a66da7b4e58eac41b99cbe274d7e8906eeb8a5b7eb0aadee7f7c'; \
-    echo >&2; echo >&2 "warning: current architecture ($dpkgArch) does not have a corresponding Go binary release; will be building from source"; echo >&2 ;; \
-    esac; \
-    \
-    url="https://golang.org/dl/go${GOLANG_VERSION}.${goRelArch}.tar.gz"; \
-    wget -O go.tgz "$url"; \
-    echo "${goRelSha256} *go.tgz" | sha256sum -c -; \
-    tar -C /usr/local -xzf go.tgz; \
-    rm go.tgz; \
-    \
-    if [ "$goRelArch" = 'src' ]; then \
-    echo >&2; \
-    echo >&2 'error: UNIMPLEMENTED'; \
-    echo >&2 'TODO install golang-any from jessie-backports for GOROOT_BOOTSTRAP (and uninstall after build)'; \
-    echo >&2; \
-    exit 1; \
-    fi; \
-    \
-    export PATH="/usr/local/go/bin:$PATH"; \
-    go version
-
-ENV GOPATH /go
-ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
-
-RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
-
-RUN GO111MODULE=on go get github.com/wealdtech/ethdo@latest
-
-# ENTRYPOINT ["entrypoint"]
 
 ################
 # Final layer
 ################
 
-ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y nodejs
+FROM alpine
+WORKDIR /app
+# Lightest way to have node in alpine
+RUN apk add --update nodejs
 
 ENV SERVER_PORT 80
 ENV CLIENT_FILES_PATH dist
-ENV DATA_PATH /usr/src/app/data
+ENV DATA_PATH /app/data
 
 # Copy index.js and source-maps
-COPY --from=api_build /usr/src/app/ui/build /usr/src/app/${CLIENT_FILES_PATH}
-COPY --from=api_build /usr/src/app/server/build /usr/src/app
+COPY --from=build-ui /app/build /app/${CLIENT_FILES_PATH}
+COPY --from=build-server /app/build /app
 
-CMD [ "node", "/usr/src/app" ]
+CMD [ "node", "/app" ]

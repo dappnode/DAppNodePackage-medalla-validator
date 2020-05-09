@@ -27,7 +27,9 @@
     "mock": "REACT_APP_API_URL=http://localhost:8080 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "schemas-generate": "node src/common/generateSchemas",
+    "schemas-watch": "nodemon -w src/common --ext js,ts -x npm run schemas-generate"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -43,5 +45,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "typescript-json-schema": "^0.42.0"
   }
 }

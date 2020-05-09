@@ -1,7 +1,6 @@
 import express from "express";
 import Ajv from "ajv";
-import { Routes } from "../../common/routes";
-import routesArgumentsSchema from "../../common/schemas/RoutesArguments.schema.json";
+import { Routes, routesArgumentsSchema } from "../../common";
 
 const ajv = new Ajv({ allErrors: true });
 const validateParams = ajv.compile(routesArgumentsSchema);
