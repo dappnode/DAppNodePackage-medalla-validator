@@ -158,7 +158,7 @@ export class EthdoCmds {
      * the private key to import
      */
     key?: string;
-  }) {
+  }): Promise<string> {
     return await this.run("account import", options);
   }
 

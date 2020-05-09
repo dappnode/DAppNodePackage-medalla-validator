@@ -1,4 +1,5 @@
 import express from "express";
+import { logs } from "../logs";
 
 export class HttpError extends Error {
   code: number;
@@ -24,7 +25,7 @@ export function wrapRoute(
         return res.status(e.code).send({ success: false, message: e.message });
 
       // Unexpected error
-      console.error(e.stack);
+      logs.error(e);
       res.status(500).send({ success: false, message: e.message });
     }
   };

@@ -3,6 +3,7 @@ import { mapValues } from "lodash";
 import fs from "fs";
 import path from "path";
 import FileSync from "lowdb/adapters/FileSync";
+import { logs } from "../logs";
 
 export function dbFactory<State extends { [key: string]: any }>(
   dbPath: string,
@@ -15,12 +16,12 @@ export function dbFactory<State extends { [key: string]: any }>(
 } {
   // Define dbPath and make sure it exists (mkdir -p)
   if (fs.existsSync(dbPath)) {
-    console.log(`Connecting to existing lowdb ${dbPath}`);
+    logs.info(`Connecting to existing lowdb ${dbPath}`);
   } else {
     const dir = path.parse(dbPath).dir;
-    console.log(`Creating new lowdb ${dbPath}`);
+    logs.info(`Creating new lowdb ${dbPath}`);
     if (dir) fs.mkdirSync(dir, { recursive: true });
-    console.log(`Created new lowdb ${dbPath}`);
+    logs.info(`Created new lowdb ${dbPath}`);
   }
 
   // Initialize db

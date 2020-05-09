@@ -44,7 +44,7 @@ export class Ethdo extends EthdoCmds {
     return validator;
   }
 
-  async assertWalletExists(wallet: string) {
+  async assertWalletExists(wallet: string): Promise<void> {
     try {
       await this.walletInfo({ wallet });
     } catch (e) {
@@ -52,7 +52,10 @@ export class Ethdo extends EthdoCmds {
     }
   }
 
-  async createWithdrawlAccount({ account, passphrase }: AccountCredentials) {
+  async createWithdrawlAccount({
+    account,
+    passphrase
+  }: AccountCredentials): Promise<void> {
     await this.assertWalletExists(withdrawalWallet);
     await this.accountCreate({
       account: `${withdrawalWallet}/${account}`,
@@ -76,7 +79,10 @@ export class Ethdo extends EthdoCmds {
   /**
    * Create a new validator account and generate deposit data
    */
-  async getDepositData(validator: EthdoValidator, withdrawalAccount: string) {
+  async getDepositData(
+    validator: EthdoValidator,
+    withdrawalAccount: string
+  ): Promise<string> {
     return await this.validatorDepositdata({
       validatoraccount: validator.account,
       passphrase: validator.passphrase,

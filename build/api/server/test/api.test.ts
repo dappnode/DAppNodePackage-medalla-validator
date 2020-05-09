@@ -2,6 +2,7 @@ import "mocha";
 import assert from "assert";
 import request from "supertest";
 import app from "../src/app";
+import { logs } from "../src/logs";
 
 const requestApp = request(app);
 
@@ -50,7 +51,7 @@ describe("/api", () => {
         .expect(200);
       const setCookie = resLogin.header["set-cookie"][0];
       assert.ok(setCookie, "header set-cookie should be set");
-      console.log({ setCookie });
+      logs.info({ setCookie });
 
       // Check it logged in
       await agent.get("/api/login").expect(200);

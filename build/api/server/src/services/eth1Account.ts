@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { db } from "../db";
+import { logs } from "../logs";
 
 // Old
 const depositContractAddress = "0x4689a3C63CE249355C8a573B5974db21D2d1b8Ef";
@@ -64,10 +65,10 @@ export async function makeDeposit(
     value: ethers.utils.parseEther(depositAmount)
   };
 
-  console.log(`Sending deposit request`, tx);
+  logs.info(`Sending deposit request`, tx);
   const txResponse = await wallet.sendTransaction(tx);
 
   const receipt = await txResponse.wait(1);
-  console.log(`Successful deposit`, receipt);
+  logs.info(`Successful deposit`, receipt);
   return receipt.transactionHash;
 }

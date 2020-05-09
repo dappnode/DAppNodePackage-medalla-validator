@@ -1,4 +1,4 @@
-import logs from "./logs";
+import { logs } from "./logs";
 import app from "./app";
 
 /**
