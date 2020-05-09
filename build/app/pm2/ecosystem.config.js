@@ -1,10 +1,12 @@
+const WORKDIR = process.env.WORKDIR || '/app';
+
 module.exports = {
   apps: [{
-    script: 'sleep 123456',
-    name: 'dashboard',
+    script: '/app/server/index.js',
+    name: 'server',
   },{
     name: 'validator_starter',
-    script: '/usr/src/app/validator_starter.js',
+    script: WORKDIR + '/pm2/validator_starter.js',
     autorestart : false,
     env: {
       "NODE_PATH": "/usr/lib/node_modules",

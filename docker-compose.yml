@@ -4,6 +4,8 @@ services:
     image: "prysm-validator.public.dappnode.eth:1.0.7"
     build:
       context: ./build
+      dockerfile: Dockerfile.alpine
+      #dockerfile: Dockerfile
       args:
         - VERSION
     volumes:
@@ -14,6 +16,8 @@ services:
       - PASSWORD=edu
       - VERBOSITY=info
       - EXTRA_OPTS=--enable-account-metrics
+    ports:
+      - "8080:80"
 volumes:
   data: {}
   logs: {}

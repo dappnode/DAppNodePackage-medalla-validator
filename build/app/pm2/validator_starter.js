@@ -1,14 +1,16 @@
 var pm2 = require('pm2');
 var fs = require('fs');
 
+const WORKDIR = process.env.WORKDIR || '/app';
+const DATA_PATH = process.env.DATA_PATH || '/app/data';
 const INTERVAL = 5000;
 const PROCESS = 'validator';
-const TLS_CERT = '/ssl/ssl.crt'
+const TLS_CERT = WORKDIR + '/ssl/ssl.crt'
 const LOG = '/var/log/validator.log'
 const EXTRA_OPTS = process.env.EXTRA_OPTS || '';
 const VERBOSITY = process.env.VERBOSITY || 'info';
-const KEYMANAGEROPTS = '/usr/src/app/ethereum2/keymanager.json'
-const BEACON_RPC_PROVIDER = 'prysm-beacon-chain.public.dappnode:4000'
+const KEYMANAGEROPTS = DATA_PATH + '/keymanager.json';
+const BEACON_RPC_PROVIDER = 'prysm-beacon-chain.public.dappnode:4000';
 
 // PM2 API docs: https://pm2.keymetrics.io/docs/usage/pm2-api/
 pm2.connect(function(err) {
@@ -100,8 +102,6 @@ function startValidator() {
       + ' --verbosity=' + VERBOSITY
       + ' --log-file=' + LOG
       + ' ' + EXTRA_OPTS,
-    output: "/dev/stdout",
-    error: "/dev/stderr",
     watch: KEYMANAGEROPTS,
     watch_options: {
       usePolling: true
