@@ -1,2 +1,5 @@
 build_*
 .env
+node_modules/
+
+build/api/server/build
