@@ -54,6 +54,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
 ################
 FROM debian:stretch-slim
 
+ENV NODE_ENV production
 ENV SERVER_PORT 80
 ENV CLIENT_FILES_PATH dist
 ENV DATA_PATH /app/data
@@ -61,18 +62,13 @@ ENV WORKDIR /app
 
 WORKDIR ${WORKDIR}
 
+ADD app/ssl /app/
 COPY --from=node:10.20.1-stretch-slim /usr/local/bin/node /usr/local/bin
 COPY --from=ethdo-binary /go/bin/ethdo /usr/local/bin/ 
 COPY --from=validator-binary /usr/local/bin/validator /usr/local/bin/
-COPY --from=build-ui /app/build ${WORKDIR}/${CLIENT_FILES_PATH}
-COPY --from=build-server /app/build ${WORKDIR}/server
+COPY --from=build-ui /app/build ${CLIENT_FILES_PATH}
+COPY --from=build-server /app/build server
 
 RUN ln -s /root/.config/ethereum2 ${DATA_PATH}
-# RUN npm install -g pm2 --production && \
-#   rm -f /usr/local/lib/dtrace/node.d && \
-#   rm -rf ~/.npm && \
-#   rm -rf /tmp/*
 
-ADD app $WORKDIR
-
-ENTRYPOINT ["pm2-runtime", "/app/pm2/ecosystem.config.js"]
+CMD ["node", "server"]

@@ -7,7 +7,7 @@ services:
       # dockerfile: Dockerfile.alpine
       dockerfile: Dockerfile
       args:
-        - VERSION
+        - VERSION=v1.0.0-alpha.6
     volumes:
       - "logs:/var/log"
       - "data:/root/.config/ethereum2/"
