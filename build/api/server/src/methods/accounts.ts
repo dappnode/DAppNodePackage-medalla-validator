@@ -5,7 +5,7 @@ import {
   EthdoAccountNoPass
 } from "../../common";
 import { Ethdo } from "../ethdo";
-import { db } from "../db";
+import * as db from "../db";
 import shell from "../utils/shell";
 
 const ethdo = new Ethdo(shell);
@@ -18,28 +18,22 @@ export async function accountsGet(): Promise<ValidatorAccount[]> {
   return [];
 }
 
-export async function newValidator(
-  withdrawalAccount: string
-): Promise<{
-  depositData: string;
-  account: string;
-}> {
-  const validator = await ethdo.newRandomValidatorAccount();
-  const depositData = await ethdo.getDepositData(validator, withdrawalAccount);
+export async function getDepositData({
+  validatorAccount,
+  withdrawlAccount
+}: {
+  validatorAccount: string;
+  withdrawlAccount: string;
+}): Promise<string> {
+  const validators = db.accounts.validatorAccounts.get();
+  if (!validators) throw Error(`No validators in DB`);
+  const validator = validators[validatorAccount];
+  if (!validator) throw Error(`Validator ${validatorAccount} not found`);
 
-  db.validatorAccounts.set({
-    ...db.validatorAccounts.get(),
-    [validator.account]: {
-      account: validator.account,
-      passphrase: validator.passphrase,
-      depositData
-    }
-  });
+  const depositData = await ethdo.getDepositData(validator, withdrawlAccount);
+  db.updateValidator({ ...validator, depositData });
 
-  return {
-    account: validator.account,
-    depositData
-  };
+  return depositData;
 }
 
 export async function accountWithdrawlCreate(accountReq: EthdoAccount) {
@@ -48,6 +42,7 @@ export async function accountWithdrawlCreate(accountReq: EthdoAccount) {
 
 export async function accountValidatorCreate(accountReq: EthdoAccountNoPass) {
   const account = await ethdo.createValidatorAccount(accountReq);
+  db.updateValidator(account);
 }
 
 export async function accountWithdrawlList(): Promise<WithdrawlAccount[]> {

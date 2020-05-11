@@ -5,9 +5,10 @@ export interface Routes {
   accountWithdrawlList: () => Promise<WithdrawlAccount[]>;
   accountWithdrawlCreate: (account: EthdoAccount) => Promise<void>;
   accountValidatorCreate: (account: EthdoAccountNoPass) => Promise<void>;
-  newValidator: (
-    withdrawalAccount: string
-  ) => Promise<{ depositData: string; account: string }>;
+  getDepositData: (args: {
+    validatorAccount: string;
+    withdrawlAccount: string;
+  }) => Promise<string>;
   // Internal Eth1 account
   eth1AccountGet: () => Promise<{
     address: string;
@@ -22,7 +23,7 @@ export const routesData: { [P in keyof Routes]: {} } = {
   accountWithdrawlList: {},
   accountValidatorCreate: {},
   accountWithdrawlCreate: {},
-  newValidator: {},
+  getDepositData: {},
   eth1AccountGet: {},
   eth1MakeDeposit: {},
 };

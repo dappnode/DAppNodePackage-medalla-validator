@@ -5,18 +5,50 @@
       "type": "array",
       "items": [
         {
+          "$ref": "#/definitions/EthdoAccount"
+        }
+      ],
+      "minItems": 1,
+      "additionalItems": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/EthdoAccount"
+          }
+        ]
+      }
+    },
+    "accountValidatorCreate": {
+      "type": "array",
+      "items": [
+        {
+          "$ref": "#/definitions/EthdoAccountNoPass"
+        }
+      ],
+      "minItems": 1,
+      "additionalItems": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/EthdoAccountNoPass"
+          }
+        ]
+      }
+    },
+    "getDepositData": {
+      "type": "array",
+      "items": [
+        {
           "type": "object",
           "properties": {
-            "name": {
+            "validatorAccount": {
               "type": "string"
             },
-            "passphrase": {
+            "withdrawlAccount": {
               "type": "string"
             }
           },
           "required": [
-            "name",
-            "passphrase"
+            "validatorAccount",
+            "withdrawlAccount"
           ]
         }
       ],
@@ -26,33 +58,17 @@
           {
             "type": "object",
             "properties": {
-              "name": {
+              "validatorAccount": {
                 "type": "string"
               },
-              "passphrase": {
+              "withdrawlAccount": {
                 "type": "string"
               }
             },
             "required": [
-              "name",
-              "passphrase"
+              "validatorAccount",
+              "withdrawlAccount"
             ]
-          }
-        ]
-      }
-    },
-    "newValidator": {
-      "type": "array",
-      "items": [
-        {
-          "type": "string"
-        }
-      ],
-      "minItems": 1,
-      "additionalItems": {
-        "anyOf": [
-          {
-            "type": "string"
           }
         ]
       }
@@ -72,6 +88,37 @@
           }
         ]
       }
+    }
+  },
+  "definitions": {
+    "EthdoAccount": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "type": "string"
+        },
+        "passphrase": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "account",
+        "passphrase"
+      ]
+    },
+    "EthdoAccountNoPass": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "type": "string"
+        },
+        "passphrase": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "account"
+      ]
     }
   },
   "$schema": "http://json-schema.org/draft-07/schema#"

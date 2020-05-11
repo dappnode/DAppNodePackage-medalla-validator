@@ -44,19 +44,23 @@ const useStyles = makeStyles((theme) => ({
 type TxHash = string | undefined;
 
 export function StepDeposit({
+  validatorAccount,
   withdrawlAccount,
   setDepositTxHash,
   onNext,
   onBack,
 }: {
+  validatorAccount: string;
   withdrawlAccount: string;
   setDepositTxHash: (txHash: string) => void;
   onNext: () => void;
   onBack: () => void;
 }) {
-  const [depositData, setDepositData] = useState("");
-  const [validatorName, setValidatorName] = useState("");
   const [depositStatus, setDepositStatus] = useState<RequestStatus<TxHash>>({});
+  const depositData = useApi.getDepositData({
+    validatorAccount,
+    withdrawlAccount,
+  });
 
   const eth1Account = useApi.eth1AccountGet();
   const eth1Address = eth1Account.data && eth1Account.data.address;
@@ -68,25 +72,11 @@ export function StepDeposit({
     return () => clearInterval(interval);
   }, [eth1Account]);
 
-  async function generateDepositData() {
-    try {
-      const res = await api.newValidator(withdrawlAccount);
-      setDepositData(res.depositData);
-      setValidatorName(res.account);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  useEffect(() => {
-    if (withdrawlAccount) generateDepositData();
-  }, [withdrawlAccount]);
-
   async function makeDeposit() {
     try {
       setDepositStatus({ loading: true });
-      if (!depositData) throw Error(`No depositData`);
-      const txHash = await api.eth1MakeDeposit(depositData);
+      if (!depositData.data) throw Error(`No depositData`);
+      const txHash = await api.eth1MakeDeposit(depositData.data);
       console.log("Deposit result", { txHash });
       setDepositStatus({ result: txHash });
       setDepositTxHash(txHash || "");
@@ -108,7 +98,7 @@ export function StepDeposit({
       <List disablePadding>
         <ListItem className={classes.listItem}>
           <ListItemText primary={"Validator"} secondary={""} />
-          <Typography variant="body2">{validatorName}</Typography>
+          <Typography variant="body2">{validatorAccount}</Typography>
         </ListItem>
         <ListItem className={classes.listItem}>
           <ListItemText primary={"Withdrawl"} secondary={""} />
@@ -123,13 +113,19 @@ export function StepDeposit({
         Send deposit
       </Typography>
 
-      <details className={classes.accountDetails}>
-        <summary>With internal Eth1 account</summary>
-        <Typography>Account:</Typography>
-        <code className={classes.code}>{eth1Address || "Loading..."}</code>
-        <Typography>Deposit data:</Typography>
-        <code className={classes.code}>{depositData}</code>
-      </details>
+      {depositData.data ? (
+        <details className={classes.accountDetails}>
+          <summary>With internal Eth1 account</summary>
+          <Typography>Account:</Typography>
+          <code className={classes.code}>{eth1Address || "Loading..."}</code>
+          <Typography>Deposit data:</Typography>
+          <code className={classes.code}>{depositData.data}</code>
+        </details>
+      ) : depositData.error ? (
+        <ErrorView error={depositData.error} />
+      ) : depositData.isValidating ? (
+        <LoadingView steps={["Computing deposit data"]} />
+      ) : null}
 
       <Grid container>
         <Grid item xs={6}>

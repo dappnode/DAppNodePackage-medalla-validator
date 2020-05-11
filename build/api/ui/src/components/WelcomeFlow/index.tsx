@@ -90,6 +90,7 @@ export function WelcomeFlow({ onExit }: { onExit: () => void }) {
       case 2:
         return (
           <StepDeposit
+            validatorAccount={validatorAccount}
             withdrawlAccount={withdrawlAccount}
             setDepositTxHash={setDepositTxHash}
             onNext={handleNext}

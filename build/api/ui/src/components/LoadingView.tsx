@@ -23,8 +23,6 @@ export function LoadingView({ steps }: { steps?: string[] }) {
     return () => clearInterval(interval);
   }, []);
 
-  console.log({ index, steps });
-
   const classes = useStyles();
 
   return (

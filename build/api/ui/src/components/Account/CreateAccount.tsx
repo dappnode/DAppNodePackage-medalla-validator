@@ -67,6 +67,7 @@ export function CreateAccount({
     try {
       setStatus({ loading: true });
       await accountCreate({ account: name, passphrase });
+      setName(""); // Clear name on success
       setStatus({ result: true });
     } catch (e) {
       setStatus({ error: e });

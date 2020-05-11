@@ -1,12 +1,15 @@
 import React from "react";
 // Material UI
 import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles((theme) => ({
   pre: {
     whiteSpace: "pre-wrap",
     wordBreak: "break-all",
+  },
+  error: {
+    color: theme.palette.secondary.main,
   },
 }));
 
@@ -22,13 +25,11 @@ export function ErrorView({ error }: { error: Error | string }) {
   const { message, detail } = parseError(error);
 
   return (
-    <React.Fragment>
-      <Typography color="secondary">
-        <details>
-          <summary>{message.split("\n")[0]}</summary>
-          <pre className={classes.pre}>{detail}</pre>
-        </details>
-      </Typography>
-    </React.Fragment>
+    <Box color="secondary" className={classes.error}>
+      <details>
+        <summary>{message.split("\n")[0]}</summary>
+        <pre className={classes.pre}>{detail}</pre>
+      </details>
+    </Box>
   );
 }

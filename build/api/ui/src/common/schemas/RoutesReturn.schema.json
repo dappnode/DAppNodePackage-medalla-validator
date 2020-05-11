@@ -1,8 +1,23 @@
 {
   "type": "object",
   "properties": {
-    "accountWithdrawlCreate": {
-      "type": "null"
+    "accountValidatorList": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      }
     },
     "accountWithdrawlList": {
       "type": "array",
@@ -10,20 +25,14 @@
         "$ref": "#/definitions/WithdrawlAccount"
       }
     },
-    "newValidator": {
-      "type": "object",
-      "properties": {
-        "depositData": {
-          "type": "string"
-        },
-        "account": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "account",
-        "depositData"
-      ]
+    "accountWithdrawlCreate": {
+      "type": "null"
+    },
+    "accountValidatorCreate": {
+      "type": "null"
+    },
+    "getDepositData": {
+      "type": "string"
     },
     "eth1AccountGet": {
       "type": "object",

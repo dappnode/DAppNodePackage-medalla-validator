@@ -10,7 +10,7 @@ import { Button } from "@material-ui/core";
 
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(true);
-  const [showValidatorFlow, setShowValidatorFlow] = useState(true);
+  const [showValidatorFlow, setShowValidatorFlow] = useState(false);
   // const accounts = useApi.accountsGet();
   // async function addAccount(name: string) {
   //   try {

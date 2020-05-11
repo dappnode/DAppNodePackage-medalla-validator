@@ -22,11 +22,11 @@ const dbInitialState: {
   eth1Account: undefined
 };
 
-export const db = dbFactory("account-db.json", dbInitialState);
+export const accounts = dbFactory("account-db.json", dbInitialState);
 
 export function updateValidator(validator: DbValidator) {
-  db.validatorAccounts.set(
-    merge(db.validatorAccounts.get(), {
+  accounts.validatorAccounts.set(
+    merge(accounts.validatorAccounts.get(), {
       [validator.account]: validator
     })
   );
