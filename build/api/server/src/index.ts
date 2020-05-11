@@ -1,11 +1,13 @@
 import { logs } from "./logs";
 import app from "./app";
 import { listenToDepositEvents } from "./services/eth1";
+import { readKeymanager, validator } from "./services/validator";
 
 /**
  * Start services
  */
 listenToDepositEvents();
+if (readKeymanager().accounts.length > 0) validator.restart();
 
 /**
  * Start Express server.

@@ -53,7 +53,7 @@ export function addValidatorToKeymanager(validator: {
   writeKeymanager(keymanager);
 }
 
-function readKeymanager(): Keymanager {
+export function readKeymanager(): Keymanager {
   try {
     return JSON.parse(fs.readFileSync(keymanagerFile, "utf8"));
   } catch (e) {
