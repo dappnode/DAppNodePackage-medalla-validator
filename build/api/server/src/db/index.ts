@@ -1,5 +1,10 @@
+import path from "path";
 import { dbFactory } from "./dbFactory";
 import { DepositEvent } from "../../common";
+
+const dbDir = process.env.DB_API_DIR || "db-api";
+const accountsDbPath = path.join(dbDir, "account-db.json");
+const depositsDbPath = path.join(dbDir, "deposits-db.json");
 
 interface DbValidator {
   account: string; // "Validator/1"
@@ -33,8 +38,8 @@ const dbDepositsInitialState: {
   depositEvents: {}
 };
 
-export const accounts = dbFactory("account-db.json", dbAccountsInitialState);
-export const deposits = dbFactory("deposits-db.json", dbDepositsInitialState);
+export const accounts = dbFactory(accountsDbPath, dbAccountsInitialState);
+export const deposits = dbFactory(depositsDbPath, dbDepositsInitialState);
 
 export function updateValidator(validator: DbValidator) {
   accounts.validatorAccounts.merge({ [validator.account]: validator });

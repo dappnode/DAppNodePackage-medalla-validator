@@ -88,7 +88,8 @@ export class Ethdo extends EthdoCmds {
       }));
     } catch (e) {
       // In case parsing the wallet account --verbose output fails, fetch each account
-      logs.warn(`Error on walletAccountsVerbose`, e);
+      if (!e.message.includes("wallet not found"))
+        logs.warn(`Error on walletAccountsVerbose`, e);
 
       const accounts = await this.walletAccounts({ wallet }).catch(e => {
         if (e.message.includes("wallet not found")) return [] as string[];

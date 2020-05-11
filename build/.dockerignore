@@ -6,3 +6,4 @@ server/build/
 server/dist
 ui/build
 Dockerfile*
+db-api/

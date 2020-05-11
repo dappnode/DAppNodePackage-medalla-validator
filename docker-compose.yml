@@ -11,6 +11,7 @@ services:
     volumes:
       - "logs:/var/log"
       - "data:/root/.config/ethereum2/"
+      - "db-api:/app/db-api"
     restart: always
     environment:
       - PASSWORD=edu
@@ -20,4 +21,5 @@ services:
       - "8080:80"
 volumes:
   data: {}
+  db-api: {}
   logs: {}

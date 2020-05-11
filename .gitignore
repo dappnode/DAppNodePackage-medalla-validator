@@ -3,3 +3,4 @@ build_*
 node_modules/
 
 build/api/server/build
+build/api/server/db-api/
