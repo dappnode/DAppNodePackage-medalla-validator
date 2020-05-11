@@ -1,11 +1,10 @@
-import { ValidatorAccount, WithdrawlAccount } from "./types";
+import { WithdrawlAccount, EthdoAccount, EthdoAccountNoPass } from "./types";
 
 export interface Routes {
-  accountWithdrawlCreate: (args: {
-    name: string;
-    passphrase: string;
-  }) => Promise<void>;
+  accountValidatorList: () => Promise<{ name: string; id: string }[]>;
   accountWithdrawlList: () => Promise<WithdrawlAccount[]>;
+  accountWithdrawlCreate: (account: EthdoAccount) => Promise<void>;
+  accountValidatorCreate: (account: EthdoAccountNoPass) => Promise<void>;
   newValidator: (
     withdrawalAccount: string
   ) => Promise<{ depositData: string; account: string }>;
@@ -19,8 +18,10 @@ export interface Routes {
 }
 
 export const routesData: { [P in keyof Routes]: {} } = {
-  accountWithdrawlCreate: {},
+  accountValidatorList: {},
   accountWithdrawlList: {},
+  accountValidatorCreate: {},
+  accountWithdrawlCreate: {},
   newValidator: {},
   eth1AccountGet: {},
   eth1MakeDeposit: {},

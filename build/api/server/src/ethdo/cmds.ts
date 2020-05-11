@@ -2,6 +2,10 @@ import dargs from "dargs";
 
 type CmdRunner = (cmd: string) => Promise<string>;
 
+function hidePassphrase(s: string = ""): string {
+  return s.replace(/--\S*passphrase\S*/g, "********");
+}
+
 export class EthdoCmds {
   private cmdRunner: CmdRunner;
   constructor(cmdRunner: CmdRunner) {
@@ -14,11 +18,11 @@ export class EthdoCmds {
   ): Promise<string> {
     const cmd = ["ethdo", subCmd, ...dargs(options || {})].join(" ");
     try {
-      return this.cmdRunner(cmd);
+      return await this.cmdRunner(cmd);
     } catch (e) {
       // Make sure no sensitive information is logged in an error message
-      e.message = (e.message || "").replace(/--\S*passphrase\S*/g, "****");
-      e.stack = (e.stack || "").replace(/--\S*passphrase\S*/g, "****");
+      e.message = hidePassphrase(e.message);
+      e.stack = hidePassphrase(e.stack);
       throw e;
     }
   }

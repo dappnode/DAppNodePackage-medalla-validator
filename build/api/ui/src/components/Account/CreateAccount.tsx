@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { InputPassword } from "components/InputPassword";
-import { api, useApi } from "rpc";
+import { api } from "rpc";
 import { RequestStatus } from "types";
 // Material UI
 import { makeStyles } from "@material-ui/core/styles";
@@ -14,6 +14,8 @@ import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
 import ShuffleIcon from "@material-ui/icons/Shuffle";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import { LinearProgress } from "@material-ui/core";
+import { EthdoAccount } from "common";
+import { ErrorView } from "components/ErrorView";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -43,31 +45,44 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function CreateWithdrawl({ onCreate }: { onCreate: () => void }) {
+export function CreateAccount({
+  wallet,
+  accounts,
+  placeholderName,
+  withPassphrase,
+  accountCreate,
+}: {
+  wallet: string;
+  accounts: { id: string; name: string }[];
+  placeholderName: string;
+  withPassphrase?: boolean;
+  accountCreate: (account: EthdoAccount) => Promise<void>;
+}) {
   const [status, setStatus] = useState<RequestStatus<true>>({});
-  const [name, setName] = useState("Primary");
+  const [name, setName] = useState(placeholderName);
   const [passphrase, setPassphrase] = useState("");
   const [navValue, setNavValue] = useState(0);
-  const withdrawlAccounts = useApi.accountWithdrawlList();
 
-  async function generateWithdrawlAccount() {
+  async function generateAccount() {
     try {
       setStatus({ loading: true });
-      await api.accountWithdrawlCreate({ name, passphrase });
+      await accountCreate({ account: name, passphrase });
       setStatus({ result: true });
-      withdrawlAccounts.revalidate();
-      if (onCreate) onCreate();
     } catch (e) {
-      setStatus({ error: e.message });
+      setStatus({ error: e });
     }
   }
+
+  const nameErrors: string[] = [];
+  if (accounts.some((account) => account.name === name))
+    nameErrors.push(`Account ${name} already exists`);
 
   const classes = useStyles();
 
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        Add withdrawl account
+        Add {wallet} account
       </Typography>
 
       <BottomNavigation
@@ -83,7 +98,7 @@ export function CreateWithdrawl({ onCreate }: { onCreate: () => void }) {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Typography gutterBottom>
-            Protect the withdrawl keystore with a strong password
+            Protect the account keystore with a strong password
           </Typography>
         </Grid>
         <Grid item xs={12}>
@@ -95,8 +110,12 @@ export function CreateWithdrawl({ onCreate }: { onCreate: () => void }) {
             id="validatorName"
             label="Validator name"
             fullWidth
+            error={nameErrors.length > 0}
+            helperText={nameErrors.join(" - ")}
           />
-          <InputPassword password={passphrase} setPassword={setPassphrase} />
+          {withPassphrase && (
+            <InputPassword password={passphrase} setPassword={setPassphrase} />
+          )}
         </Grid>
 
         <Grid item xs={12}>
@@ -109,8 +128,10 @@ export function CreateWithdrawl({ onCreate }: { onCreate: () => void }) {
             <LinearProgress></LinearProgress>
           ) : (
             <Button
-              disabled={status.loading || !name || !passphrase}
-              onClick={generateWithdrawlAccount}
+              disabled={
+                status.loading || !name || (!passphrase && withPassphrase)
+              }
+              onClick={generateAccount}
               className={classes.generate}
               variant="contained"
               color="primary"
@@ -120,6 +141,14 @@ export function CreateWithdrawl({ onCreate }: { onCreate: () => void }) {
             </Button>
           )}
         </Grid>
+
+        {status.error && (
+          <Grid item xs={12}>
+            <Box my={2}>
+              <ErrorView error={status.error} />
+            </Box>
+          </Grid>
+        )}
       </Grid>
     </React.Fragment>
   );

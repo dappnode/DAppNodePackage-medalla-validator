@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { CreateWithdrawl } from "./CreateWithdrawl";
-import { useApi } from "rpc";
+import { CreateAccount } from "./CreateAccount";
+import { useApi, api } from "rpc";
+import { responseInterface } from "swr";
 // Material UI
 import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core/styles";
@@ -16,6 +17,9 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { ErrorView } from "components/ErrorView";
+import { WalletType } from "./walletTypes";
+import { EthdoAccount } from "common";
+import { findFirstAvailableNum } from "utils";
 
 const useStyles = makeStyles((theme) => ({
   formGroup: {
@@ -34,6 +38,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+export function SelectValidatorAccount({
+  validatorAccount,
+  setValidatorAccount,
+}: {
+  validatorAccount: string;
+  setValidatorAccount: (id: string) => void;
+}) {
+  const validatorAccounts = useApi.accountValidatorList();
+  const placeholderName = validatorAccounts.data
+    ? findFirstAvailableNum(validatorAccounts.data.map(({ name }) => name))
+    : "1";
+  return (
+    <SelectAccount
+      wallet="validator"
+      placeholderName={placeholderName}
+      account={validatorAccount}
+      setAccount={setValidatorAccount}
+      accounts={validatorAccounts}
+      accountCreate={api.accountValidatorCreate}
+    />
+  );
+}
+
 export function SelectWithdrawlAccount({
   withdrawlAccount,
   setWithdrawlAccount,
@@ -42,36 +69,66 @@ export function SelectWithdrawlAccount({
   setWithdrawlAccount: (id: string) => void;
 }) {
   const withdrawlAccounts = useApi.accountWithdrawlList();
+  return (
+    <SelectAccount
+      wallet="withdrawl"
+      placeholderName="Primary"
+      withPassphrase={true}
+      account={withdrawlAccount}
+      setAccount={setWithdrawlAccount}
+      accounts={withdrawlAccounts}
+      accountCreate={api.accountWithdrawlCreate}
+    />
+  );
+}
+
+function SelectAccount({
+  wallet,
+  placeholderName,
+  withPassphrase,
+  account,
+  setAccount,
+  accounts,
+  accountCreate,
+}: {
+  wallet: WalletType;
+  placeholderName: string;
+  withPassphrase?: boolean;
+  account: string;
+  setAccount: (id: string) => void;
+  accounts: responseInterface<{ id: string; name: string }[], Error>;
+  accountCreate: (account: EthdoAccount) => Promise<void>;
+}) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (!withdrawlAccount && withdrawlAccounts.data) {
-      const first = withdrawlAccounts.data[0];
-      if (first) setWithdrawlAccount(first.id);
+    if (!account && accounts.data) {
+      const first = accounts.data[0];
+      if (first) setAccount(first.id);
     }
-  }, [withdrawlAccounts.data, withdrawlAccount, setWithdrawlAccount]);
+  }, [accounts.data, account, setAccount]);
 
   const openDialog = () => setOpen(true);
   const closeDialog = () => setOpen(false);
 
   const classes = useStyles();
 
-  if (withdrawlAccounts.data)
+  if (accounts.data)
     return (
       <div>
-        {withdrawlAccounts.data.length > 0 ? (
+        {accounts.data.length > 0 ? (
           <FormGroup row className={classes.formGroup}>
             <FormControl className={classes.formControlSelect}>
               <InputLabel id="demo-simple-select-helper-label">
-                Withdrawl account
+                {wallet} account
               </InputLabel>
               <Select
                 labelId="demo-simple-select-helper-label"
                 id="demo-simple-select-helper"
-                value={withdrawlAccount}
-                onChange={(e) => setWithdrawlAccount(e.target.value as string)}
+                value={account}
+                onChange={(e) => setAccount(e.target.value as string)}
               >
-                {withdrawlAccounts.data.map(({ id, name }) => (
+                {accounts.data.map(({ id, name }) => (
                   <MenuItem key={id} value={id}>
                     {name}
                   </MenuItem>
@@ -93,15 +150,24 @@ export function SelectWithdrawlAccount({
             color="primary"
             fullWidth
           >
-            Add withdrawl account
+            Add {wallet} account
           </Button>
         )}
 
         {/* Dialog to create a withdrawl account */}
         <Dialog open={open} onClose={closeDialog}>
           <DialogContent className={classes.dialogContent}>
-            <CreateWithdrawl
-              onCreate={() => setTimeout(() => closeDialog(), 500)}
+            <CreateAccount
+              wallet={wallet}
+              accounts={accounts.data || []}
+              placeholderName={placeholderName}
+              withPassphrase={withPassphrase}
+              accountCreate={(account) =>
+                accountCreate(account).then(() => {
+                  accounts.revalidate();
+                  setTimeout(() => closeDialog(), 500);
+                })
+              }
             />
           </DialogContent>
           <DialogActions>
@@ -115,16 +181,16 @@ export function SelectWithdrawlAccount({
         </Dialog>
       </div>
     );
-  if (withdrawlAccounts.isValidating)
+  if (accounts.isValidating)
     return (
       <Box my={2}>
         <LinearProgress />
       </Box>
     );
-  if (withdrawlAccounts.error)
+  if (accounts.error)
     return (
       <Box my={2}>
-        <ErrorView error={withdrawlAccounts.error} />
+        <ErrorView error={accounts.error} />
       </Box>
     );
   return null;

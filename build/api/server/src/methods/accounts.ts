@@ -1,4 +1,9 @@
-import { ValidatorAccount, WithdrawlAccount } from "../../common";
+import {
+  ValidatorAccount,
+  WithdrawlAccount,
+  EthdoAccount,
+  EthdoAccountNoPass
+} from "../../common";
 import { Ethdo } from "../ethdo";
 import { db } from "../db";
 import shell from "../utils/shell";
@@ -37,16 +42,20 @@ export async function newValidator(
   };
 }
 
-export async function accountWithdrawlCreate({
-  name,
-  passphrase
-}: {
-  name: string;
-  passphrase: string;
-}) {
-  await ethdo.createWithdrawlAccount({ account: name, passphrase });
+export async function accountWithdrawlCreate(accountReq: EthdoAccount) {
+  const account = await ethdo.createWithdrawlAccount(accountReq);
+}
+
+export async function accountValidatorCreate(accountReq: EthdoAccountNoPass) {
+  const account = await ethdo.createValidatorAccount(accountReq);
 }
 
 export async function accountWithdrawlList(): Promise<WithdrawlAccount[]> {
   return await ethdo.accountWithdrawlList();
+}
+
+export async function accountValidatorList(): Promise<
+  { name: string; id: string }[]
+> {
+  return await ethdo.accountValidatorList();
 }

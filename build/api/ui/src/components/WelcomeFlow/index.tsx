@@ -5,6 +5,7 @@ import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Typography from "@material-ui/core/Typography";
+import { StepSelectValidator } from "./StepSelectValidator";
 import { StepSelectWithdrawl } from "./StepSelectWithdrawl";
 import { StepDeposit } from "./StepDeposit";
 import { FooterNote } from "../FooterNote";
@@ -53,7 +54,8 @@ const useStyles = makeStyles((theme) => ({
 export function WelcomeFlow({ onExit }: { onExit: () => void }) {
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
-  const [withdrawlAccount, setWithdrawlAccount] = useState("");
+  const [validatorAccount, setValidatorAccount] = useState(""); // validator/1
+  const [withdrawlAccount, setWithdrawlAccount] = useState(""); // withdrawl/primary
   const [depositTxHash, setDepositTxHash] = useState("");
 
   const handleNext = () => {
@@ -64,10 +66,19 @@ export function WelcomeFlow({ onExit }: { onExit: () => void }) {
     setActiveStep(activeStep - 1);
   };
 
-  const steps = ["Withdrawl", "Deposit"];
+  const steps = ["Validator", "Withdrawl", "Deposit"];
   function getStepContent(step: number) {
     switch (step) {
       case 0:
+        return (
+          <StepSelectValidator
+            validatorAccount={validatorAccount}
+            setValidatorAccount={setValidatorAccount}
+            onNext={handleNext}
+            onBack={onExit}
+          />
+        );
+      case 1:
         return (
           <StepSelectWithdrawl
             withdrawlAccount={withdrawlAccount}
@@ -76,7 +87,7 @@ export function WelcomeFlow({ onExit }: { onExit: () => void }) {
             onBack={onExit}
           />
         );
-      case 1:
+      case 2:
         return (
           <StepDeposit
             withdrawlAccount={withdrawlAccount}
@@ -85,7 +96,7 @@ export function WelcomeFlow({ onExit }: { onExit: () => void }) {
             onBack={handleBack}
           />
         );
-      case 2:
+      case 3:
         return (
           <React.Fragment>
             <Typography variant="h5" gutterBottom>

@@ -1,18 +1,14 @@
 import crypto from "crypto";
 import { EthdoCmds } from "./cmds";
-import { EthdoWallets, WithdrawlAccount } from "../../common";
+import { EthdoWallets, WithdrawlAccount, EthdoAccount } from "../../common";
 
 const withdrawalWallet = "withdrawl";
 const validatorWallet = "validator";
+type WalletType = typeof validatorWallet | typeof withdrawalWallet;
 
-interface EthdoValidator {
+interface EthdoAccountNoPass {
   account: string;
-  passphrase: string;
-}
-
-interface AccountCredentials {
-  account: string;
-  passphrase: string;
+  passphrase?: string;
 }
 
 export class Ethdo extends EthdoCmds {
@@ -29,7 +25,7 @@ export class Ethdo extends EthdoCmds {
     return wallets;
   }
 
-  async newRandomValidatorAccount(): Promise<EthdoValidator> {
+  async newRandomValidatorAccount(): Promise<EthdoAccount> {
     await this.assertWalletExists(validatorWallet);
     const accounts = await this.walletAccounts({ wallet: validatorWallet });
     const accountIndex = findFirstAvailableNum(accounts);
@@ -52,27 +48,43 @@ export class Ethdo extends EthdoCmds {
     }
   }
 
-  async createWithdrawlAccount({
-    account,
-    passphrase
-  }: AccountCredentials): Promise<void> {
-    await this.assertWalletExists(withdrawalWallet);
-    await this.accountCreate({
-      account: `${withdrawalWallet}/${account}`,
-      passphrase
-    });
+  async createValidatorAccount(
+    account: EthdoAccountNoPass
+  ): Promise<EthdoAccount> {
+    return this.createAccount(account, validatorWallet);
+  }
+
+  async createWithdrawlAccount(account: EthdoAccount): Promise<EthdoAccount> {
+    return this.createAccount(account, withdrawalWallet);
+  }
+
+  async createAccount(
+    { account, passphrase }: EthdoAccountNoPass,
+    wallet: WalletType
+  ): Promise<EthdoAccount> {
+    await this.assertWalletExists(wallet);
+    account = formatAccount(account, wallet);
+    passphrase = passphrase || crypto.randomBytes(32).toString("hex");
+    await this.accountCreate({ account, passphrase });
+    return { account, passphrase };
   }
 
   async accountWithdrawlList(): Promise<WithdrawlAccount[]> {
-    const accounts = await this.walletAccounts({
-      wallet: withdrawalWallet
-    }).catch(e => {
+    return this.accountList(withdrawalWallet);
+  }
+
+  async accountValidatorList(): Promise<WithdrawlAccount[]> {
+    return this.accountList(validatorWallet);
+  }
+
+  async accountList(wallet: WalletType) {
+    const accounts = await this.walletAccounts({ wallet }).catch(e => {
       if (e.message.includes("wallet not found")) return [] as string[];
       else throw e;
     });
-    return accounts.map(name => ({
+    return accounts.sort().map(name => ({
       name,
-      id: `${withdrawalWallet}/${name}`
+      id: `${wallet}/${name}`
     }));
   }
 
@@ -80,7 +92,7 @@ export class Ethdo extends EthdoCmds {
    * Create a new validator account and generate deposit data
    */
   async getDepositData(
-    validator: EthdoValidator,
+    validator: EthdoAccount,
     withdrawalAccount: string
   ): Promise<string> {
     return await this.validatorDepositdata({
@@ -103,4 +115,15 @@ function findFirstAvailableNum(arr: string[]): string {
     if (!arr.includes(name)) return name;
   }
   return String(Math.random()).slice(2); // It's just a label ID
+}
+
+/**
+ * Makes sure account includes the wallet prefix
+ * @param account 1
+ * @param wallet validator
+ * @return validator/1
+ */
+function formatAccount(account: string, wallet: string): string {
+  if (account.startsWith(wallet)) return account;
+  else return `${wallet}/${account}`;
 }

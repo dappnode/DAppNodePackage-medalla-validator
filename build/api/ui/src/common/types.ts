@@ -14,3 +14,13 @@ export interface WithdrawlAccount {
   id: string;
   name: string;
 }
+
+export interface EthdoAccount {
+  account: string;
+  passphrase: string;
+}
+
+export interface EthdoAccountNoPass {
+  account: string;
+  passphrase?: string;
+}

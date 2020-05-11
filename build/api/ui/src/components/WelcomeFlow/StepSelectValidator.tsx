@@ -1,39 +1,39 @@
 import React from "react";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import { SelectWithdrawlAccount } from "components/Account/SelectAccount";
+import { SelectValidatorAccount } from "components/Account/SelectAccount";
 import { NavButtons } from "./NavButtons";
 
-export function StepSelectWithdrawl({
-  withdrawlAccount,
-  setWithdrawlAccount,
+export function StepSelectValidator({
+  validatorAccount,
+  setValidatorAccount,
   onNext,
   onBack,
 }: {
-  withdrawlAccount: string;
-  setWithdrawlAccount: (id: string) => void;
+  validatorAccount: string;
+  setValidatorAccount: (id: string) => void;
   onNext: () => void;
   onBack: () => void;
 }) {
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        Select withdrawl account
+        Select validator account
       </Typography>
       <Typography gutterBottom>
-        This account will receive the validator funds after an exit
+        This account will perform validator duties
       </Typography>
       <Box mt={3}>
-        <SelectWithdrawlAccount
-          withdrawlAccount={withdrawlAccount}
-          setWithdrawlAccount={setWithdrawlAccount}
+        <SelectValidatorAccount
+          validatorAccount={validatorAccount}
+          setValidatorAccount={setValidatorAccount}
         />
       </Box>
 
       <NavButtons
         onNext={onNext}
         onBack={onBack}
-        disableNext={!withdrawlAccount}
+        disableNext={!validatorAccount}
         nextLabel="Select account"
       ></NavButtons>
     </React.Fragment>
