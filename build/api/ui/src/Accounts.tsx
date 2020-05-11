@@ -79,6 +79,7 @@ export function Accounts({ addValidator }: { addValidator: () => void }) {
               <TableCell>Name</TableCell>
               <TableCell>PubKey</TableCell>
               <TableCell>Created</TableCell>
+              <TableCell>Deposit</TableCell>
               <TableCell>Status</TableCell>
               <TableCell align="right">Balance</TableCell>
             </TableRow>
@@ -96,7 +97,8 @@ export function Accounts({ addValidator }: { addValidator: () => void }) {
                 <TableCell>
                   <DepositEventsView depositEvents={account.depositEvents} />
                 </TableCell>
-                <TableCell align="right">{0}</TableCell>
+                <TableCell>{account.status}</TableCell>
+                <TableCell align="right">{account.balance}</TableCell>
               </TableRow>
             ))}
           </TableBody>

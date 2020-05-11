@@ -13,3 +13,6 @@ export const depositContractAddress =
   "0x5cA1e00004366Ac85f492887AAab12d0e6418876";
 export const depositContractCreationBlock = 2523557;
 export const depositAmountEth = "32.0";
+
+// Open Metrics
+export const openMetricsUrl = "http://localhost:8081/metrics";

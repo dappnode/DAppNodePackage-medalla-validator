@@ -9,6 +9,8 @@ import {
   EthdoAccountNoPass,
   ValidatorStats
 } from "../../common";
+import { getOpenMetrics } from "../services/openMetrics";
+import { logs } from "../logs";
 
 export async function accountCreate(name: string): Promise<void> {
   name;
@@ -71,7 +73,9 @@ export async function accountValidatorList(): Promise<WalletAccount[]> {
 }
 
 export async function validatorsStats(): Promise<ValidatorStats[]> {
-  return listValidators();
+  const accounts = await listValidators();
+
+  return accounts;
 }
 
 async function listValidators(): Promise<ValidatorStats[]> {
@@ -81,12 +85,23 @@ async function listValidators(): Promise<ValidatorStats[]> {
   // Fetch current known deposits
   const depositEventsByPubkey = db.deposits.depositEvents.get() || {};
 
+  // Fetch openMetrics
+  const metrics = await getOpenMetrics().catch(e => {
+    logs.warn(`Error fetching open metrics`, e);
+  });
+
   return accounts.map(account => {
+    const pubKey = account.publicKey;
+    const status = metrics ? metrics.validatorStatus[pubKey] || "" : "";
+    const balance = metrics ? metrics.validatorBalance[pubKey] || 0 : 0;
     const validator = (validators || {})[account.id] || {};
+
     return {
       ...account,
       // Metadata
       createdTimestamp: validator.createdTimestamp,
+      status,
+      balance,
       // Deposit data
       depositEvents: depositEventsByPubkey[account.publicKey] || {}
     };

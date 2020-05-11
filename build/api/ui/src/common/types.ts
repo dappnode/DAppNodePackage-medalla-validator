@@ -38,6 +38,8 @@ export interface ValidatorStats {
   depositEvents: {
     [txHashAndLogIndex: string]: DepositEvent;
   };
+  status: string;
+  balance: number;
 }
 
 export interface DepositEvent extends DepositEventArgs {
