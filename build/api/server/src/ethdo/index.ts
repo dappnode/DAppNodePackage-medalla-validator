@@ -1,6 +1,8 @@
 import crypto from "crypto";
 import { EthdoCmds } from "./cmds";
-import { EthdoWallets, WithdrawlAccount, EthdoAccount } from "../../common";
+import { EthdoWallets, WalletAccount, EthdoAccount } from "../../common";
+import { logs } from "../logs";
+import shell from "../utils/shell";
 
 const withdrawalWallet = "withdrawl";
 const validatorWallet = "validator";
@@ -69,23 +71,51 @@ export class Ethdo extends EthdoCmds {
     return { account, passphrase };
   }
 
-  async accountWithdrawlList(): Promise<WithdrawlAccount[]> {
+  async accountWithdrawlList(): Promise<WalletAccount[]> {
     return this.accountList(withdrawalWallet);
   }
 
-  async accountValidatorList(): Promise<WithdrawlAccount[]> {
+  async accountValidatorList(): Promise<WalletAccount[]> {
     return this.accountList(validatorWallet);
   }
 
-  async accountList(wallet: WalletType) {
-    const accounts = await this.walletAccounts({ wallet }).catch(e => {
-      if (e.message.includes("wallet not found")) return [] as string[];
-      else throw e;
-    });
-    return accounts.sort().map(name => ({
-      name,
-      id: `${wallet}/${name}`
-    }));
+  async accountList(wallet: WalletType): Promise<WalletAccount[]> {
+    try {
+      const accounts = await this.walletAccountsVerbose({ wallet });
+      return accounts.map(account => ({
+        id: `${wallet}/${account.name}`,
+        ...account
+      }));
+    } catch (e) {
+      // In case parsing the wallet account --verbose output fails, fetch each account
+      logs.warn(`Error on walletAccountsVerbose`, e);
+
+      const accounts = await this.walletAccounts({ wallet }).catch(e => {
+        if (e.message.includes("wallet not found")) return [] as string[];
+        else throw e;
+      });
+      return await Promise.all(
+        accounts.map(async name => {
+          const account = `${wallet}/${name}`;
+          const publicKey = await this.accountPublicKey(account);
+          return {
+            id: account,
+            name,
+            publicKey,
+            uuid: ""
+          };
+        })
+      );
+    }
+  }
+
+  async accountPublicKey(account: string): Promise<string> {
+    // publicKeyRes = "Public key: 0x9886f5efa28139ae94302a63dc139ab5b31833b14f8cdebb3314875c7cd890e76a9872aea18d408dba547b3d255e415e"
+    const publicKeyRes = await this.accountInfo({ account });
+    const publicKey = publicKeyRes.split(":")[1].trim();
+    if (!publicKey)
+      throw Error(`account info returns unexpected format: ${publicKeyRes}`);
+    return publicKey;
   }
 
   /**
@@ -104,6 +134,11 @@ export class Ethdo extends EthdoCmds {
     });
   }
 }
+
+/**
+ * Initialized ethdo instance with local shell
+ */
+export const ethdo = new Ethdo(shell);
 
 /**
  * Util: Given ["1", "3"] return the first available number: "2"

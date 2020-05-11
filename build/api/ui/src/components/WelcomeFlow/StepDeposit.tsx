@@ -5,11 +5,9 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import { RequestStatus } from "types";
 import { ErrorView } from "components/ErrorView";
-import { LinearProgress } from "@material-ui/core";
 import { NavButtons } from "./NavButtons";
 import { LoadingView } from "components/LoadingView";
 import { useApi, api } from "rpc";
@@ -65,7 +63,7 @@ export function StepDeposit({
   const eth1Account = useApi.eth1AccountGet();
   const eth1Address = eth1Account.data && eth1Account.data.address;
   const eth1Balance = eth1Account.data && eth1Account.data.balance;
-  const insufficientFunds = typeof eth1Balance === "number" && eth1Balance < 1;
+  const insufficientFunds = eth1Account.data?.insufficientFunds;
 
   useEffect(() => {
     const interval = setInterval(eth1Account.revalidate, 2000);
@@ -136,12 +134,12 @@ export function StepDeposit({
             <Typography align="right" noWrap>
               {eth1Balance}
             </Typography>
+          ) : eth1Account.error ? (
+            <ErrorView error={eth1Account.error} />
           ) : eth1Account.isValidating ? (
             <Typography align="right" noWrap>
               Loading...
             </Typography>
-          ) : eth1Account.error ? (
-            <ErrorView error={eth1Account.error} />
           ) : null}
         </Grid>
       </Grid>

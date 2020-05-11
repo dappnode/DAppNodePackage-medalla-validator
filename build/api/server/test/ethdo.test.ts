@@ -102,13 +102,34 @@ describe("ethdo module", () => {
   });
 
   it("Do UI flow", async () => {
-    await ethdo.createWithdrawlAccount("secret-passphrase" + Math.random());
+    const account = "Primary";
+    const passphrase = "secret-passphrase" + Math.random();
+    await ethdo.createWithdrawlAccount({ account, passphrase });
     const validator = await ethdo.newRandomValidatorAccount();
-    const depositData = await ethdo.getDepositData(validator);
+    const depositData = await ethdo.getDepositData(validator, account);
     logs.info({ validator, depositData });
     assert.equal(validator.account, "validator/1", "unexpected validator name");
     assert.equal(validator.passphrase.length, 64, "wrong rand passhr length");
     assertDepositData(depositData);
+  });
+
+  it("List wallet accounts with a private key", async () => {
+    const wallet = "withdrawl";
+    await ethdo.walletCreate({ wallet });
+    const accounts = ["primary", "secondary"].map(name => ({
+      account: `${wallet}/${name}`,
+      passphrase: "secret-passphrase" + Math.random()
+    }));
+    for (const account of accounts) await ethdo.createWithdrawlAccount(account);
+
+    const accountList = await ethdo.accountList(wallet);
+    assert.deepEqual(
+      accounts.map(({ account }) => account).sort(),
+      accountList.map(({ id }) => id).sort()
+    );
+    for (const account of accountList) {
+      assert.ok(account.publicKey, "Account should have publicKey");
+    }
   });
 
   afterEach("Remove test container", async () => {

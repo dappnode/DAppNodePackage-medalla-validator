@@ -1,17 +1,15 @@
 import React, { useState } from "react";
 import { Layout } from "./Layout";
-import { Chart } from "./Chart";
-import { Deposits } from "./Deposits";
+// import { Chart } from "./Chart";
+// import { Deposits } from "./Deposits";
 import { Accounts } from "./Accounts";
 import { SignIn } from "./components/SignIn";
 import { WelcomeFlow } from "./components/WelcomeFlow";
-import { useApi, api } from "./rpc";
-import { Button } from "@material-ui/core";
 
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(true);
   const [showValidatorFlow, setShowValidatorFlow] = useState(false);
-  // const accounts = useApi.accountsGet();
+  // const validatorsStats = useApi.validatorsStats();
   // async function addAccount(name: string) {
   //   try {
   //     await api.accountCreate(name);
@@ -27,22 +25,19 @@ export default function App() {
     setLoggedIn(true);
   }
 
+  function addValidator() {
+    setShowValidatorFlow(true);
+  }
+
   if (loggedIn)
     if (showValidatorFlow)
       return <WelcomeFlow onExit={() => setShowValidatorFlow(false)} />;
     else
       return (
         <Layout>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => setShowValidatorFlow(true)}
-          >
-            Add validator
-          </Button>
-          <Chart />
+          {/* <Chart /> */}
           {/* <Deposits /> */}
-          {/* <Accounts accounts={accounts.data || []} /> */}
+          <Accounts addValidator={addValidator} />
         </Layout>
       );
   else return <SignIn onSignIn={onSignIn} />;

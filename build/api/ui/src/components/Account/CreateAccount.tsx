@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { InputPassword } from "components/InputPassword";
-import { api } from "rpc";
 import { RequestStatus } from "types";
 // Material UI
 import { makeStyles } from "@material-ui/core/styles";
@@ -47,13 +46,13 @@ const useStyles = makeStyles((theme) => ({
 
 export function CreateAccount({
   wallet,
-  accounts,
+  existingAccounts,
   placeholderName,
   withPassphrase,
   accountCreate,
 }: {
   wallet: string;
-  accounts: { id: string; name: string }[];
+  existingAccounts: { id: string; name: string }[];
   placeholderName: string;
   withPassphrase?: boolean;
   accountCreate: (account: EthdoAccount) => Promise<void>;
@@ -75,7 +74,7 @@ export function CreateAccount({
   }
 
   const nameErrors: string[] = [];
-  if (accounts.some((account) => account.name === name))
+  if (existingAccounts.some((account) => account.name === name))
     nameErrors.push(`Account ${name} already exists`);
 
   const classes = useStyles();

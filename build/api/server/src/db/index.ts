@@ -1,13 +1,14 @@
 import { dbFactory } from "./dbFactory";
-import { merge } from "lodash";
+import { DepositEvent } from "../../common";
 
 interface DbValidator {
   account: string; // "Validator/1"
   passphrase: string;
   depositData?: string;
+  createdTimestamp: number; // in miliseconds
 }
 
-const dbInitialState: {
+const dbAccountsInitialState: {
   validatorAccounts: {
     [name: string]: DbValidator;
   };
@@ -22,12 +23,19 @@ const dbInitialState: {
   eth1Account: undefined
 };
 
-export const accounts = dbFactory("account-db.json", dbInitialState);
+const dbDepositsInitialState: {
+  depositEvents: {
+    [pubkey: string]: {
+      [txHashLogIndex: string]: DepositEvent;
+    };
+  };
+} = {
+  depositEvents: {}
+};
+
+export const accounts = dbFactory("account-db.json", dbAccountsInitialState);
+export const deposits = dbFactory("deposits-db.json", dbDepositsInitialState);
 
 export function updateValidator(validator: DbValidator) {
-  accounts.validatorAccounts.set(
-    merge(accounts.validatorAccounts.get(), {
-      [validator.account]: validator
-    })
-  );
+  accounts.validatorAccounts.merge({ [validator.account]: validator });
 }

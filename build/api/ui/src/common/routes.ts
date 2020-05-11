@@ -1,8 +1,13 @@
-import { WithdrawlAccount, EthdoAccount, EthdoAccountNoPass } from "./types";
+import {
+  WalletAccount,
+  EthdoAccount,
+  EthdoAccountNoPass,
+  ValidatorStats,
+} from "./types";
 
 export interface Routes {
-  accountValidatorList: () => Promise<{ name: string; id: string }[]>;
-  accountWithdrawlList: () => Promise<WithdrawlAccount[]>;
+  accountValidatorList: () => Promise<WalletAccount[]>;
+  accountWithdrawlList: () => Promise<WalletAccount[]>;
   accountWithdrawlCreate: (account: EthdoAccount) => Promise<void>;
   accountValidatorCreate: (account: EthdoAccountNoPass) => Promise<void>;
   getDepositData: (args: {
@@ -16,6 +21,8 @@ export interface Routes {
     insufficientFunds: boolean;
   }>;
   eth1MakeDeposit: (depositData: string) => Promise<string | undefined>;
+  // Validator stats
+  validatorsStats: () => Promise<ValidatorStats[]>;
 }
 
 export const routesData: { [P in keyof Routes]: {} } = {
@@ -26,6 +33,7 @@ export const routesData: { [P in keyof Routes]: {} } = {
   getDepositData: {},
   eth1AccountGet: {},
   eth1MakeDeposit: {},
+  validatorsStats: {},
 };
 
 // DO NOT REMOVE

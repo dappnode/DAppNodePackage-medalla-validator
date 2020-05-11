@@ -1,14 +1,14 @@
+import { isEmpty } from "lodash";
+import { addValidatorToKeymanager } from "../services/validator";
+import { ethdo } from "../ethdo";
+import * as db from "../db";
 import {
   ValidatorAccount,
-  WithdrawlAccount,
+  WalletAccount,
   EthdoAccount,
-  EthdoAccountNoPass
+  EthdoAccountNoPass,
+  ValidatorStats
 } from "../../common";
-import { Ethdo } from "../ethdo";
-import * as db from "../db";
-import shell from "../utils/shell";
-
-const ethdo = new Ethdo(shell);
 
 export async function accountCreate(name: string): Promise<void> {
   name;
@@ -42,15 +42,53 @@ export async function accountWithdrawlCreate(accountReq: EthdoAccount) {
 
 export async function accountValidatorCreate(accountReq: EthdoAccountNoPass) {
   const account = await ethdo.createValidatorAccount(accountReq);
-  db.updateValidator(account);
+  db.updateValidator({
+    ...account,
+    createdTimestamp: Date.now()
+  });
+  // Writes to keymanager and restart validator
+  addValidatorToKeymanager(account);
 }
 
-export async function accountWithdrawlList(): Promise<WithdrawlAccount[]> {
-  return await ethdo.accountWithdrawlList();
+export async function accountWithdrawlList(): Promise<WalletAccount[]> {
+  const accounts = await ethdo.accountWithdrawlList();
+
+  // All withdrawl accounts are available and can be reused
+  return accounts.map(account => ({
+    ...account,
+    available: true
+  }));
 }
 
-export async function accountValidatorList(): Promise<
-  { name: string; id: string }[]
-> {
-  return await ethdo.accountValidatorList();
+export async function accountValidatorList(): Promise<WalletAccount[]> {
+  const accounts = await listValidators();
+
+  // Return only validators that are not used yet
+  return accounts.map(account => ({
+    ...account,
+    available: isEmpty(account.depositEvents)
+  }));
+}
+
+export async function validatorsStats(): Promise<ValidatorStats[]> {
+  return listValidators();
+}
+
+async function listValidators(): Promise<ValidatorStats[]> {
+  const validators = db.accounts.validatorAccounts.get();
+  const accounts = await ethdo.accountValidatorList();
+
+  // Fetch current known deposits
+  const depositEventsByPubkey = db.deposits.depositEvents.get() || {};
+
+  return accounts.map(account => {
+    const validator = (validators || {})[account.id] || {};
+    return {
+      ...account,
+      // Metadata
+      createdTimestamp: validator.createdTimestamp,
+      // Deposit data
+      depositEvents: depositEventsByPubkey[account.publicKey] || {}
+    };
+  });
 }

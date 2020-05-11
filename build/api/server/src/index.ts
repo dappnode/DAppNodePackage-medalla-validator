@@ -1,5 +1,11 @@
 import { logs } from "./logs";
 import app from "./app";
+import { listenToDepositEvents } from "./services/eth1";
+
+/**
+ * Start services
+ */
+listenToDepositEvents();
 
 /**
  * Start Express server.

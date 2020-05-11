@@ -35,7 +35,8 @@ export const getRpcHandler = (
       res.send({ error: { code: e.code, message: e.message } });
     } else {
       // Unexpected error, log and send more details
-      logs.error(e);
+      const method: string = (req.body || {}).method;
+      logs.error(method, e);
       res.send({ error: { code: -32603, message: e.message, data: e.stack } });
     }
   }

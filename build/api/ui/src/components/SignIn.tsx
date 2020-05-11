@@ -57,6 +57,8 @@ export function SignIn({ onSignIn }: { onSignIn: () => void }) {
     }
   }
 
+  console.log({ status });
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />

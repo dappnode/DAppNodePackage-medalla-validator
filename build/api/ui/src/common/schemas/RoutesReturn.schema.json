@@ -4,25 +4,13 @@
     "accountValidatorList": {
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name"
-        ]
+        "$ref": "#/definitions/WalletAccount"
       }
     },
     "accountWithdrawlList": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/WithdrawlAccount"
+        "$ref": "#/definitions/WalletAccount"
       }
     },
     "accountWithdrawlCreate": {
@@ -58,10 +46,16 @@
         "null",
         "string"
       ]
+    },
+    "validatorsStats": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ValidatorStats"
+      }
     }
   },
   "definitions": {
-    "WithdrawlAccount": {
+    "WalletAccount": {
       "type": "object",
       "properties": {
         "id": {
@@ -69,11 +63,88 @@
         },
         "name": {
           "type": "string"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "publicKey": {
+          "type": "string"
+        },
+        "createdTimestamp": {
+          "type": "number"
         }
       },
       "required": [
         "id",
-        "name"
+        "name",
+        "publicKey",
+        "uuid"
+      ]
+    },
+    "ValidatorStats": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "publicKey": {
+          "type": "string"
+        },
+        "createdTimestamp": {
+          "type": "number"
+        },
+        "depositEvents": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/DepositEvent"
+          }
+        }
+      },
+      "required": [
+        "depositEvents",
+        "id",
+        "name",
+        "publicKey",
+        "uuid"
+      ]
+    },
+    "DepositEvent": {
+      "type": "object",
+      "properties": {
+        "blockNumber": {
+          "type": "number"
+        },
+        "txHash": {
+          "type": "string"
+        },
+        "pubkey": {
+          "type": "string"
+        },
+        "withdrawal_credentials": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "index": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "amount",
+        "index",
+        "pubkey",
+        "signature",
+        "withdrawal_credentials"
       ]
     }
   },

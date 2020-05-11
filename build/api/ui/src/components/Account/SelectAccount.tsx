@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { sortBy } from "lodash";
 import { CreateAccount } from "./CreateAccount";
 import { useApi, api } from "rpc";
 import { responseInterface } from "swr";
+import { WalletType } from "./walletTypes";
+import { EthdoAccount, WalletAccount } from "common";
 // Material UI
 import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core/styles";
@@ -17,8 +20,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { ErrorView } from "components/ErrorView";
-import { WalletType } from "./walletTypes";
-import { EthdoAccount } from "common";
+
 import { findFirstAvailableNum } from "utils";
 
 const useStyles = makeStyles((theme) => ({
@@ -96,17 +98,20 @@ function SelectAccount({
   withPassphrase?: boolean;
   account: string;
   setAccount: (id: string) => void;
-  accounts: responseInterface<{ id: string; name: string }[], Error>;
+  accounts: responseInterface<WalletAccount[], Error>;
   accountCreate: (account: EthdoAccount) => Promise<void>;
 }) {
   const [open, setOpen] = useState(false);
+  const accountsAvailable = useMemo(
+    () =>
+      accounts.data ? accounts.data.filter((account) => account.available) : [],
+    [accounts.data]
+  );
 
   useEffect(() => {
-    if (!account && accounts.data) {
-      const first = accounts.data[0];
-      if (first) setAccount(first.id);
-    }
-  }, [accounts.data, account, setAccount]);
+    const first = accountsAvailable[0];
+    if (!account && first) setAccount(first.id);
+  }, [accountsAvailable, account, setAccount]);
 
   const openDialog = () => setOpen(true);
   const closeDialog = () => setOpen(false);
@@ -116,7 +121,7 @@ function SelectAccount({
   if (accounts.data)
     return (
       <div>
-        {accounts.data.length > 0 ? (
+        {accountsAvailable.length > 0 ? (
           <FormGroup row className={classes.formGroup}>
             <FormControl className={classes.formControlSelect}>
               <InputLabel id="demo-simple-select-helper-label">
@@ -128,11 +133,16 @@ function SelectAccount({
                 value={account}
                 onChange={(e) => setAccount(e.target.value as string)}
               >
-                {accounts.data.map(({ id, name }) => (
-                  <MenuItem key={id} value={id}>
-                    {name}
-                  </MenuItem>
-                ))}
+                {sortBy(
+                  accountsAvailable,
+                  (account) => account.createdTimestamp || 0
+                )
+                  .reverse() // Sort by latest created account first
+                  .map(({ id, name }) => (
+                    <MenuItem key={id} value={id}>
+                      {name}
+                    </MenuItem>
+                  ))}
               </Select>
               <FormHelperText>Some important helper text</FormHelperText>
             </FormControl>
@@ -159,7 +169,7 @@ function SelectAccount({
           <DialogContent className={classes.dialogContent}>
             <CreateAccount
               wallet={wallet}
-              accounts={accounts.data || []}
+              existingAccounts={accounts.data || []}
               placeholderName={placeholderName}
               withPassphrase={withPassphrase}
               accountCreate={(account) =>
@@ -181,16 +191,17 @@ function SelectAccount({
         </Dialog>
       </div>
     );
-  if (accounts.isValidating)
-    return (
-      <Box my={2}>
-        <LinearProgress />
-      </Box>
-    );
+
   if (accounts.error)
     return (
       <Box my={2}>
         <ErrorView error={accounts.error} />
+      </Box>
+    );
+  if (accounts.isValidating)
+    return (
+      <Box my={2}>
+        <LinearProgress />
       </Box>
     );
   return null;

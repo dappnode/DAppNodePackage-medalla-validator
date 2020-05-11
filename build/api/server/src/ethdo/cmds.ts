@@ -2,6 +2,12 @@ import dargs from "dargs";
 
 type CmdRunner = (cmd: string) => Promise<string>;
 
+interface WalletAccountData {
+  name: string;
+  uuid: string;
+  publicKey: string;
+}
+
 function hidePassphrase(s: string = ""): string {
   return s.replace(/--\S*passphrase\S*/g, "********");
 }
@@ -35,28 +41,56 @@ export class EthdoCmds {
    * Operations
    * Spending
    * ```
-   *
-   * With the --verbose flag this will provide the public key of the accounts.
-   * ```
-   * $ ethdo wallet accounts --wallet="Personal wallet" --verbose
-   * Auctions: 0x812f340269c315c1d882ae7c13cdaddf862dbdbd482b1836798b2070160dd1e194088cc6f39347782028d1e56bd18674
-   * Operations: 0x8e2f9e8cc29658ff37ecc30e95a0807579b224586c185d128cb7a7490784c1ad9b0ab93dbe604ab075b40079931e6670
-   * Spending: 0x85dfc6dcee4c9da36f6473ec02fda283d6c920c641fc8e3a76113c5c227d4aeeb100efcfec977b12d20d571907d05650
-   * ```
    */
   async walletAccounts(options: {
     /**
      * the name of the wallet to create (defaults to "primary")
      */
     wallet: string;
-
-    /**
-     * With the --verbose flag this will provide the public key of the accounts.
-     */
-    verbose?: boolean;
   }): Promise<string[]> {
     const res = await this.run("wallet accounts", options);
     return res.split("\n");
+  }
+
+  /**
+   * ethdo wallet accounts lists the accounts within a wallet.
+   * With the --verbose flag this will provide the public key of the accounts.
+   * 2
+   *	UUID:		32ec701a-880b-4cfa-a409-74d88854ec64
+   *	Public key:	0x98552a5cfa4022f529eadafeb0d17c2ed748a42ecd799472dad244ffd21342a7b3e436a38abad1ece8afabfd13b42e60
+   * 1
+   * 	UUID:		7ec09618-c4df-46de-87bf-ecd6da8a580e
+   * 	Public key:	0x8498e2c928c5c6718157720239b0cf9968fbbcdf7893a5f46b32c70bd66390c2f6546263aa596a3a09b4447aa8b676fc
+   * 3
+   *  UUID:		972483d5-19f7-419e-8f48-3858daea1ca0
+   *	Public key:	0x98d2f1a38682dc4c3bd3ad1a28411d9507dd6423f8af6bcb9f3d827b7d309c8910825b6523359651a9b1ec16a754c2e4
+   */
+  async walletAccountsVerbose(options: {
+    /**
+     * the name of the wallet to create (defaults to "primary")
+     */
+    wallet: string;
+  }): Promise<WalletAccountData[]> {
+    const res = await this.run("wallet accounts", {
+      ...options,
+      verbose: true
+    });
+
+    const accounts: WalletAccountData[] = [];
+
+    const dataAfterColon = (s: string) => (s.split(":")[1] || s).trim();
+
+    const chunk = 3;
+    const parts = res.split("\n");
+    for (let i = 0; i < parts.length; i += chunk) {
+      const [name, uuid, publicKey] = parts.slice(i, i + chunk);
+      accounts.push({
+        name: name.trim(),
+        uuid: dataAfterColon(uuid),
+        publicKey: dataAfterColon(publicKey)
+      });
+    }
+    return accounts;
   }
 
   /**

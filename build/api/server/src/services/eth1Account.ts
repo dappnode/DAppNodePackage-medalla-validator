@@ -1,14 +1,7 @@
 import { ethers } from "ethers";
 import * as db from "../db";
 import { logs } from "../logs";
-
-// Old
-const depositContractAddress = "0x4689a3C63CE249355C8a573B5974db21D2d1b8Ef";
-const depositAmount = "3.2";
-
-// New
-// const depositContractAddress = "0x5cA1e00004366Ac85f492887AAab12d0e6418876";
-// const depositAmount = "32.0";
+import { depositAmountEth, depositContractAddress } from "../params";
 
 function getAccount(): {
   address: string;
@@ -38,12 +31,14 @@ export async function getAddressAndBalance(): Promise<{
 }> {
   const account = getAccount();
   const provider = getGoerliProvider();
+  if (!account.address)
+    throw Error(`Error getting eth1 account, empty address`);
   const balanceWei = await provider.getBalance(account.address);
   const balanceEth = parseFloat(ethers.utils.formatEther(balanceWei));
   return {
     address: account.address,
     balance: balanceEth,
-    insufficientFunds: balanceEth <= parseFloat(depositAmount)
+    insufficientFunds: balanceEth <= parseFloat(depositAmountEth)
   };
 }
 
@@ -61,9 +56,8 @@ export async function makeDeposit(
   const tx = {
     to: depositContractAddress,
     data: depositData,
-    value: ethers.utils.parseEther(depositAmount)
+    value: ethers.utils.parseEther(depositAmountEth)
   };
-  // Working deposit data "0x22895118000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120bc422fea5cc267aa219f69358cc5e8d655a6fc74da7875651e5be96a65e12f440000000000000000000000000000000000000000000000000000000000000030b71c2293c560956277fffe6ca28ce64065794388b3735b20bf9c33c7d68aff04cbcf5e4e748764e924908c1911049794000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020004e9ba6eeb0bf30da181ebccd441c68f8ebf6d7230a4c04dacba86c3a0ddcbd00000000000000000000000000000000000000000000000000000000000000608f5d934d5b65b6308016ea7b4490f5d9938f87c97fef4f426a67e227e2e3d767397ba1458213b9c5da92edba65141a32062681c13aa72c899fb807dc0b05529d75c7f1e2f41211dd80dd662ccf9e45275d4cbdac3e3a150a91ed89c916b8caa7"
 
   logs.info(`Sending deposit request`, tx);
   const txResponse = await wallet.sendTransaction(tx);

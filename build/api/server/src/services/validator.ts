@@ -35,6 +35,11 @@ export const validator = Supervisor(
   })
 );
 
+/**
+ * Add validator ethdo account name and passhrase to the keymanager.json
+ * Then, restarts or starts the validator
+ * @param validator
+ */
 export function addValidatorToKeymanager(validator: {
   account: string;
   passphrase: string;
