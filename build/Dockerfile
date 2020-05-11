@@ -63,7 +63,7 @@ ENV WORKDIR /app
 
 WORKDIR ${WORKDIR}
 
-ADD app/ssl /app/
+ADD app/ssl /app/ssl
 COPY --from=node:10.20.1-stretch-slim /usr/local/bin/node /usr/local/bin
 COPY --from=ethdo-binary /go/bin/ethdo /usr/local/bin/ 
 COPY --from=validator-binary /usr/local/bin/validator /usr/local/bin/
