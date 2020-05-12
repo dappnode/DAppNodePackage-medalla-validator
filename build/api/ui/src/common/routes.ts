@@ -3,6 +3,7 @@ import {
   EthdoAccount,
   EthdoAccountNoPass,
   ValidatorStats,
+  NodeStats,
 } from "./types";
 
 export interface Routes {
@@ -23,6 +24,8 @@ export interface Routes {
   eth1MakeDeposit: (depositData: string) => Promise<string | undefined>;
   // Validator stats
   validatorsStats: () => Promise<ValidatorStats[]>;
+  // Node stats
+  nodeStats: () => Promise<NodeStats>;
 }
 
 export const routesData: { [P in keyof Routes]: {} } = {
@@ -34,6 +37,7 @@ export const routesData: { [P in keyof Routes]: {} } = {
   eth1AccountGet: {},
   eth1MakeDeposit: {},
   validatorsStats: {},
+  nodeStats: {},
 };
 
 // DO NOT REMOVE

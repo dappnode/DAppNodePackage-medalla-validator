@@ -2,11 +2,12 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Layout } from "./Layout";
 import * as auth from "api/auth";
 // import { Chart } from "./Chart";
-// import { Deposits } from "./Deposits";
+import { Deposits } from "./components/Deposits";
 import { AccountsTable } from "./components/AccountsTable";
 import { SignIn } from "./components/SignIn";
 import { WelcomeFlow } from "./components/WelcomeFlow";
 import { LoadingView } from "components/LoadingView";
+import { Box } from "@material-ui/core";
 
 type LoginStatus = "login" | "logout" | "loading";
 
@@ -53,12 +54,16 @@ export default function App() {
       return (
         <Layout logout={logout}>
           {/* <Chart /> */}
-          {/* <Deposits /> */}
+          <Deposits />
           <AccountsTable addValidator={addValidator} />
         </Layout>
       );
 
   if (loginStatus === "logout") return <SignIn onSignIn={onSignIn} />;
 
-  return <LoadingView steps={["Connecting to server", "Retrieving session"]} />;
+  return (
+    <Box m={3}>
+      <LoadingView steps={["Connecting to server", "Retrieving session"]} />
+    </Box>
+  );
 }

@@ -9,8 +9,7 @@ import {
   EthdoAccountNoPass,
   ValidatorStats
 } from "../../common";
-import { getOpenMetrics } from "../services/openMetrics";
-import { logs } from "../logs";
+import { ethers } from "ethers";
 
 export async function accountCreate(name: string): Promise<void> {
   name;
@@ -79,29 +78,33 @@ export async function validatorsStats(): Promise<ValidatorStats[]> {
 async function listValidators(): Promise<ValidatorStats[]> {
   const validators = db.accounts.validatorAccounts.get();
   const accounts = await ethdo.accountValidatorList();
-
-  // Fetch current known deposits
   const depositEventsByPubkey = db.deposits.depositEvents.get() || {};
+  const metricsByPubkey = db.metrics.current.get();
 
-  // Fetch openMetrics
-  const metrics = await getOpenMetrics().catch(e => {
-    logs.warn(`Error fetching open metrics`, e);
-  });
+  return accounts.map(
+    (account): ValidatorStats => {
+      const pubKey = account.publicKey;
+      const validator = (validators || {})[account.id] || {};
 
-  return accounts.map(account => {
-    const pubKey = account.publicKey;
-    const status = metrics ? metrics.validatorStatus[pubKey] || "" : "";
-    const balance = metrics ? metrics.validatorBalance[pubKey] || 0 : 0;
-    const validator = (validators || {})[account.id] || {};
+      const basicData = {
+        ...account,
+        createdTimestamp: validator.createdTimestamp,
+        depositEvents: depositEventsByPubkey[account.publicKey] || {}
+      };
 
-    return {
-      ...account,
-      // Metadata
-      createdTimestamp: validator.createdTimestamp,
-      status,
-      balance,
-      // Deposit data
-      depositEvents: depositEventsByPubkey[account.publicKey] || {}
-    };
-  });
+      if (!metricsByPubkey || !metricsByPubkey[pubKey]) return basicData;
+      const metrics = metricsByPubkey[pubKey];
+
+      return {
+        ...basicData,
+        status: metrics.status,
+        balance: formatDecimals(metrics.balance),
+        effectiveBalance: formatDecimals(metrics.effectiveBalance)
+      };
+    }
+  );
+}
+
+function formatDecimals(s?: string): string {
+  return s ? ethers.utils.formatUnits(s, 9) : "";
 }

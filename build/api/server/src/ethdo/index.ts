@@ -1,6 +1,11 @@
 import crypto from "crypto";
 import { EthdoCmds } from "./cmds";
-import { EthdoWallets, WalletAccount, EthdoAccount } from "../../common";
+import {
+  EthdoWallets,
+  WalletAccount,
+  EthdoAccount,
+  EthdoAccountResult
+} from "../../common";
 import { logs } from "../logs";
 import shell from "../utils/shell";
 import { findFirstAvailableNum } from "../utils/names";
@@ -42,41 +47,50 @@ export class Ethdo extends EthdoCmds {
 
   async createValidatorAccount(
     account: EthdoAccountNoPass
-  ): Promise<EthdoAccount> {
+  ): Promise<EthdoAccountResult> {
     return this.createAccount(account, validatorWallet);
   }
 
-  async createWithdrawlAccount(account: EthdoAccount): Promise<EthdoAccount> {
+  async createWithdrawlAccount(
+    account: EthdoAccount
+  ): Promise<EthdoAccountResult> {
     return this.createAccount(account, withdrawalWallet);
   }
 
   async createAccount(
     { account, passphrase }: EthdoAccountNoPass,
     wallet: WalletType
-  ): Promise<EthdoAccount> {
+  ): Promise<EthdoAccountResult> {
     await this.assertWalletExists(wallet);
     account = formatAccount(account, wallet);
     passphrase = passphrase || getRandomToken();
     await this.accountCreate({ account, passphrase });
-    return { account, passphrase };
+    const publicKey = await this.accountPublicKey(account);
+    return { account, publicKey, passphrase };
   }
 
   // Account imports
 
-  async importValidator(privateKey: string): Promise<EthdoAccount> {
+  async importValidator(privateKey: string): Promise<EthdoAccountResult> {
     const account = await ethdo.randomValidatorName();
-    const passphrase = getRandomToken();
     await this.assertWalletExists(validatorWallet);
-    await ethdo.accountImport({ account, passphrase, key: privateKey });
-    return { account, passphrase };
+    return this.importAccount(account, privateKey);
   }
 
-  async importWithdrawl(privateKey: string): Promise<EthdoAccount> {
+  async importWithdrawl(privateKey: string): Promise<EthdoAccountResult> {
     const account = await ethdo.randomWithdrawlName();
-    const passphrase = getRandomToken();
     await this.assertWalletExists(validatorWallet);
+    return this.importAccount(account, privateKey);
+  }
+
+  async importAccount(
+    account: string,
+    privateKey: string
+  ): Promise<EthdoAccountResult> {
+    const passphrase = getRandomToken();
     await ethdo.accountImport({ account, passphrase, key: privateKey });
-    return { account, passphrase };
+    const publicKey = await this.accountPublicKey(account);
+    return { account, publicKey, passphrase };
   }
 
   // Account listing

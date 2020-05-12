@@ -16,6 +16,7 @@ services:
     environment:
       - PASSWORD=edu
       - VERBOSITY=info
+      - LOG_LEVEL=debug
       - EXTRA_OPTS=--enable-account-metrics
     ports:
       - "8080:80"

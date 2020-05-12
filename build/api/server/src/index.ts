@@ -3,10 +3,13 @@ import app from "./app";
 import { listenToDepositEvents } from "./services/eth1";
 import { readKeymanager, validatorBinary } from "./services/validator";
 import { migrateLegacyKeys } from "./services/migratePrysmKeys";
+import { collectValidatorMetrics } from "./services/metrics";
 
 if (readKeymanager().accounts.length > 0) validatorBinary.restart();
 // Connect to a Goerli node
 listenToDepositEvents();
+// Collect latest metrics for available validators
+collectValidatorMetrics();
 // Migrate keys previously controlled by the validator binary to ethdo
 migrateLegacyKeys();
 

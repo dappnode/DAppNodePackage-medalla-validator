@@ -8,6 +8,10 @@ export const verbosity = process.env.VERBOSITY || "info";
 export const keymanagerFile = dataPath + "/keymanager.json";
 export const beaconRpcProvider = "prysm-beacon-chain.public.dappnode:4000";
 
+// To collect metrics
+export const beaconGrpcGatewayUrl =
+  "http://prysm-beacon-chain.public.dappnode:4001";
+
 // Eth1 Deposit contract
 export const depositContractAddress =
   "0x5cA1e00004366Ac85f492887AAab12d0e6418876";

@@ -19,6 +19,12 @@ export interface WalletAccount {
   available?: boolean;
 }
 
+export interface EthdoAccountResult {
+  account: string;
+  publicKey: string;
+  passphrase: string;
+}
+
 export interface EthdoAccount {
   account: string;
   passphrase: string;
@@ -38,13 +44,20 @@ export interface ValidatorStats {
   depositEvents: {
     [txHashAndLogIndex: string]: DepositEvent;
   };
-  status: string;
-  balance: number;
+  status?: string;
+  balance?: string;
+  effectiveBalance?: string;
 }
 
 export interface DepositEvent extends DepositEventArgs {
   blockNumber: number | undefined;
   txHash: string | undefined;
+}
+
+export interface NodeStats {
+  peers: BeaconNodePeer[] | null;
+  syncing: { syncing: boolean } | null;
+  chainhead: BeaconNodeChainhead | null;
 }
 
 // Prysm deposit contract
@@ -69,3 +82,61 @@ export const depositEventAbi = {
   anonymous: false,
   type: "event",
 };
+
+// Metrics from Node's gRPC gateway
+
+export type ValidatorMetrics = ValidatorStatus &
+  ValidatorData &
+  ValidatorBalance;
+
+export interface ValidatorStatus {
+  /**
+   * DEPOSITED - validator's deposit has been recognized by Ethereum 1, not yet recognized by Ethereum 2.
+   * PENDING - validator is in Ethereum 2's activation queue.
+   * ACTIVE - validator is active.
+   * EXITING - validator has initiated an an exit request, or has dropped below the ejection balance and is being kicked out.
+   * EXITED - validator is no longer validating.
+   * SLASHING - validator has been kicked out due to meeting a slashing condition.
+   * UNKNOWN_STATUS - validator does not have a known status in the network.
+   */
+  status: string; // "UNKNOWN_STATUS";
+  eth1DepositBlockNumber: string;
+  depositInclusionSlot: string;
+  activationEpoch: string; // "213"
+  positionInActivationQueue: string; // "0"
+}
+
+export interface ValidatorData {
+  publicKey: string; // "tO1tB5njWwO5oc5MrJJ46P6PwGxKjKzsz48yxDQ/G9RJHcURtY6v4UQGDsrNijf3",
+  withdrawalCredentials: string; // "ANYN9tCy0rm4uUARNiT9qT2N2xwREjiRJqfsfTZBG9A="
+  effectiveBalance: string; // "32000000000"
+  slashed: boolean; // false
+  activationEligibilityEpoch: string; // "0"
+  activationEpoch: string; // "0"
+  exitEpoch: string; // "18446744073709551615"
+  withdrawableEpoch: string; // "18446744073709551615"
+}
+
+export interface ValidatorBalance {
+  balance: string;
+}
+
+export interface BeaconNodePeer {
+  address: string; // '/ip4/104.36.201.234/tcp/13210/p2p/16Uiu2HAm5RX4gAQtwqArBmuuGugUXAViKaKBx6ugDJb1L1RFcpfK',
+  direction: string; // 'OUTBOUND'
+}
+
+export interface BeaconNodeChainhead {
+  headSlot: string; // '177684',
+  headEpoch: string; // '5552',
+  headBlockRoot: string; // 'y1GDABJ0iPgZhdcWBXTon4r2TgEnpS3XFISckLyqa+U=',
+  finalizedSlot: string; // '177600',
+  finalizedEpoch: string; // '5550',
+  finalizedBlockRoot: string; // 'Bb/6F2NfmtilyxQb+2tItGlD1WNwR17gMVd5kIxjgCQ=',
+  justifiedSlot: string; // '177632',
+  justifiedEpoch: string; // '5551',
+  justifiedBlockRoot: string; // 'e+1HeaYj+a/u9gPyUfyUhrGDyv/5BkpOXiF8KnXcItc=',
+  previousJustifiedSlot: string; // '177600',
+  previousJustifiedEpoch: string; // '5550',
+  previousJustifiedBlockRoot: string; // 'Bb/6F2NfmtilyxQb+2tItGlD1WNwR17gMVd5kIxjgCQ=' }
+}

@@ -1,6 +1,11 @@
 import path from "path";
 import { lowDbStaticFactory } from "./dbFactory";
-import { DepositEvent } from "../../common";
+import {
+  DepositEvent,
+  ValidatorMetrics,
+  BeaconNodePeer,
+  BeaconNodeChainhead
+} from "../../common";
 import { getRandomToken } from "../utils/token";
 
 export const dbDir = process.env.DB_API_DIR || "db-api";
@@ -8,9 +13,11 @@ export const sessionsPath = path.join(dbDir, "sessions");
 const serverDbPath = path.join(dbDir, "server-db.json");
 const accountsDbPath = path.join(dbDir, "account-db.json");
 const depositsDbPath = path.join(dbDir, "deposits-db.json");
+const metricsDbPath = path.join(dbDir, "metrics-db.json");
 
 interface DbValidator {
   account: string; // "Validator/1"
+  publicKey: string;
   passphrase: string;
   depositData?: string;
   createdTimestamp: number; // in miliseconds
@@ -57,9 +64,26 @@ const dbDepositsState: {
   depositEvents: {}
 };
 
+const dbMetricsState: {
+  current: {
+    [pubKey: string]: Partial<ValidatorMetrics>;
+  };
+  peers: BeaconNodePeer[];
+  syncing: {
+    syncing: boolean;
+  } | null;
+  chainhead: BeaconNodeChainhead | null;
+} = {
+  current: {},
+  peers: [],
+  syncing: null,
+  chainhead: null
+};
+
 export const server = lowDbStaticFactory(serverDbPath, dbServerState);
 export const accounts = lowDbStaticFactory(accountsDbPath, dbAccountsState);
 export const deposits = lowDbStaticFactory(depositsDbPath, dbDepositsState);
+export const metrics = lowDbStaticFactory(metricsDbPath, dbMetricsState);
 
 export function updateValidator(validator: DbValidator) {
   accounts.validatorAccounts.merge({ [validator.account]: validator });
@@ -67,6 +91,10 @@ export function updateValidator(validator: DbValidator) {
 
 export function updateWithdrawl(withdrawl: DbWithdrawl) {
   accounts.withdrawlAccounts.merge({ [withdrawl.account]: withdrawl });
+}
+
+export function updateMetrics(pubKey: string, data: Partial<ValidatorMetrics>) {
+  metrics.current.merge({ [pubKey]: data });
 }
 
 export function getSessionsSecretKey() {
