@@ -5,17 +5,10 @@ import path from "path";
 import FileSync from "lowdb/adapters/FileSync";
 import { logs } from "../logs";
 
-export function dbFactory<State extends { [key: string]: any }>(
+export function lowDbFactory(
   dbPath: string,
-  initialState: State
-): {
-  [K in keyof State]: {
-    get: () => State[K] | undefined;
-    set: (newValue: State[K]) => void;
-    merge: (newValue: State[K]) => void;
-    del: () => void;
-  };
-} {
+  options?: low.AdapterOptions<any>
+): low.LowdbSync<any> {
   // Define dbPath and make sure it exists (mkdir -p)
   if (fs.existsSync(dbPath)) {
     logs.info(`Connecting to existing lowdb ${dbPath}`);
@@ -27,8 +20,22 @@ export function dbFactory<State extends { [key: string]: any }>(
   }
 
   // Initialize db
-  const adapter = new FileSync(dbPath);
-  const db = low(adapter);
+  const adapter = new FileSync(dbPath, options);
+  return low(adapter);
+}
+
+export function lowDbStaticFactory<State extends { [key: string]: any }>(
+  dbPath: string,
+  initialState: State
+): {
+  [K in keyof State]: {
+    get: () => State[K] | undefined;
+    set: (newValue: State[K]) => void;
+    merge: (newValue: State[K]) => void;
+    del: () => void;
+  };
+} {
+  const db = lowDbFactory(dbPath);
 
   function formatKey(key: string): string {
     key = key.replace(/\./g, "");

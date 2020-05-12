@@ -5,11 +5,14 @@ import compression from "compression";
 import path from "path";
 import logger from "morgan";
 import cors from "cors";
-import { api } from "./routes";
 import { getRpcHandler } from "./routes/rpc";
 import * as methods from "./methods";
+import * as db from "./db";
+import * as auth from "./auth";
+import { wrapRoute, wrapMiddleware } from "./utils/express";
 // Display stack traces with source-maps
 import "source-map-support/register";
+const LowdbStore = require("lowdb-session-store")(session);
 
 const app = express();
 
@@ -23,16 +26,21 @@ app.use(logger("dev")); // Log requests in "dev" format
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(filesPath, { maxAge: "1d" })); // Express uses "ETags" (hashes of the files requested) to know when the file changed
 app.use(
   session({
     resave: true,
     saveUninitialized: true,
-    secret: "keyboard cat" // ### Make unique per server
+    secret: db.getSessionsSecretKey(),
+    store: new LowdbStore(db.sessions, { ttl: 86400 })
   })
 );
-app.use(express.static(filesPath, { maxAge: "1d" })); // Express uses "ETags" (hashes of the files requested) to know when the file changed
-app.use("/api", api);
-app.post("/rpc", rpcHandler);
+
+app.get("/login", wrapRoute(auth.onlyAdmin));
+app.post("/login", wrapRoute(auth.loginAdmin));
+app.get("/logout", wrapRoute(auth.logoutAdmin));
+app.post("/rpc", wrapMiddleware(auth.onlyAdmin), rpcHandler);
+app.get("/ping", (req, res) => res.send(`DAppNode Prysm dashboard`));
 app.get("*", (_0, res) => res.sendFile(path.resolve(filesPath, "index.html"))); // React-router, index.html at all routes
 
 export default app;

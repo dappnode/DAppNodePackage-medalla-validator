@@ -17,6 +17,7 @@ import Paper from "@material-ui/core/Paper";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { mainListItems, secondaryListItems } from "./listItems";
 import { FooterNote } from "./components/FooterNote";
 
@@ -98,7 +99,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Layout: React.FC = ({ children }) => {
+export const Layout: React.FC<{ logout: () => void }> = ({
+  logout,
+  children,
+}) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const handleDrawerOpen = () => {
@@ -145,6 +149,9 @@ export const Layout: React.FC = ({ children }) => {
             <Badge badgeContent={4} color="secondary">
               <NotificationsIcon />
             </Badge>
+          </IconButton>
+          <IconButton color="inherit" onClick={logout}>
+            <ExitToAppIcon />
           </IconButton>
         </Toolbar>
       </AppBar>

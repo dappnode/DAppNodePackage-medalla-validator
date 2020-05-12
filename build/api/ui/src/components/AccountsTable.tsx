@@ -12,10 +12,10 @@ import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import LaunchIcon from "@material-ui/icons/Launch";
 import { Title } from "./Title";
-import { DepositEvent } from "./common/types";
+import { DepositEvent } from "../common/types";
 import { goerliTxViewer, beaconAccountViewer } from "common/params";
 import { LinearProgress } from "@material-ui/core";
-import { useApi } from "rpc";
+import { useApi } from "api/rpc";
 import { ErrorView } from "components/ErrorView";
 import { newTabProps } from "utils";
 
@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function Accounts({ addValidator }: { addValidator: () => void }) {
+export function AccountsTable({ addValidator }: { addValidator: () => void }) {
   const validatorsStats = useApi.validatorsStats();
 
   useEffect(() => {
@@ -92,7 +92,9 @@ export function Accounts({ addValidator }: { addValidator: () => void }) {
                   <PublicKeyView publicKey={account.publicKey} />
                 </TableCell>
                 <TableCell>
-                  {moment(account.createdTimestamp).fromNow()}
+                  {account.createdTimestamp
+                    ? moment(account.createdTimestamp).fromNow()
+                    : "-"}
                 </TableCell>
                 <TableCell>
                   <DepositEventsView depositEvents={account.depositEvents} />

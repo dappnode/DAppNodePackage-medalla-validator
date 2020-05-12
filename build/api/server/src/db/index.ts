@@ -1,8 +1,11 @@
 import path from "path";
-import { dbFactory } from "./dbFactory";
+import { lowDbFactory, lowDbStaticFactory } from "./dbFactory";
 import { DepositEvent } from "../../common";
+import { getRandomToken } from "../utils/token";
 
 const dbDir = process.env.DB_API_DIR || "db-api";
+const sessionsDbPath = path.join(dbDir, "sessions-db.json");
+const serverDbPath = path.join(dbDir, "server-db.json");
 const accountsDbPath = path.join(dbDir, "account-db.json");
 const depositsDbPath = path.join(dbDir, "deposits-db.json");
 
@@ -19,7 +22,13 @@ interface DbWithdrawl {
   createdTimestamp: number; // in miliseconds
 }
 
-const dbAccountsInitialState: {
+const dbServerState: {
+  sessionsSecret: string | null;
+} = {
+  sessionsSecret: null
+};
+
+const dbAccountsState: {
   validatorAccounts: {
     [name: string]: DbValidator;
   };
@@ -38,7 +47,7 @@ const dbAccountsInitialState: {
   eth1Account: undefined
 };
 
-const dbDepositsInitialState: {
+const dbDepositsState: {
   depositEvents: {
     [pubkey: string]: {
       [txHashLogIndex: string]: DepositEvent;
@@ -48,8 +57,10 @@ const dbDepositsInitialState: {
   depositEvents: {}
 };
 
-export const accounts = dbFactory(accountsDbPath, dbAccountsInitialState);
-export const deposits = dbFactory(depositsDbPath, dbDepositsInitialState);
+export const sessions = lowDbFactory(sessionsDbPath, { defaultValue: [] });
+export const server = lowDbStaticFactory(serverDbPath, dbServerState);
+export const accounts = lowDbStaticFactory(accountsDbPath, dbAccountsState);
+export const deposits = lowDbStaticFactory(depositsDbPath, dbDepositsState);
 
 export function updateValidator(validator: DbValidator) {
   accounts.validatorAccounts.merge({ [validator.account]: validator });
@@ -57,4 +68,13 @@ export function updateValidator(validator: DbValidator) {
 
 export function updateWithdrawl(withdrawl: DbWithdrawl) {
   accounts.withdrawlAccounts.merge({ [withdrawl.account]: withdrawl });
+}
+
+export function getSessionsSecretKey() {
+  let secret = server.sessionsSecret.get();
+  if (!secret) {
+    secret = getRandomToken();
+    server.sessionsSecret.set(secret);
+  }
+  return secret;
 }

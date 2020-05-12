@@ -11,16 +11,24 @@ export function InputPassword({
   password,
   setPassword,
   id = "password-toogle-show",
+  error,
   ...props
 }: {
   password: string;
   setPassword: (password: string) => void;
   id?: string;
+  error?: boolean;
 }) {
   const [show, setShow] = useState(false);
 
   return (
-    <FormControl variant="outlined" margin="normal" fullWidth required>
+    <FormControl
+      error={error}
+      variant="outlined"
+      margin="normal"
+      fullWidth
+      required
+    >
       <InputLabel htmlFor={id}>Password</InputLabel>
       <OutlinedInput
         id={id}

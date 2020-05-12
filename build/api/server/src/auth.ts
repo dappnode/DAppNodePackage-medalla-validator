@@ -1,5 +1,5 @@
 import express from "express";
-import { HttpError } from "./utils/routes";
+import { HttpError } from "./utils/express";
 import { logs } from "./logs";
 
 const adminPassword = process.env.PASSWORD || "test-password";

@@ -2921,6 +2921,11 @@ log-symbols@3.0.0:
   dependencies:
     chalk "^2.4.2"
 
+lowdb-session-store@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/lowdb-session-store/-/lowdb-session-store-1.1.0.tgz#bcd9ffe3964aafe4cba649e692d6d8b77ac7f70a"
+  integrity sha512-Qr74aci732WgeHiTImZlORnUgw4Zg91iPKRGRfC2axIBuE1p5d0wVwSEFtW+/qHNChgdB510fH/O/V7raUbbEg==
+
 lowdb@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/lowdb/-/lowdb-1.0.0.tgz#5243be6b22786ccce30e50c9a33eac36b20c8064"

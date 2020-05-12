@@ -1,10 +1,8 @@
 import { mapValues } from "lodash";
 import useSWR, { responseInterface } from "swr";
 import { routesData, Routes, ResolvedType } from "../common/routes";
-
-const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:8080";
-const rpcUrl = `${apiUrl}/rpc`;
-console.log({ apiUrl });
+import * as paths from "./paths";
+import { parseRpcResponse } from "./utils";
 
 /**
  * Call a RPC route through an autobahn session
@@ -13,16 +11,12 @@ console.log({ apiUrl });
  * @param args ["bitcoin.dnp.dappnode.eth"]
  */
 export async function callRoute(route: string, args: any[]) {
-  const res = await fetch(rpcUrl, {
+  const res = await fetch(paths.rpc, {
     method: "post",
     body: JSON.stringify({ method: route, params: args }),
     headers: { "Content-Type": "application/json" },
-  }).then((res) => res.json());
-
-  if (res.error)
-    if (res.error.data) throw Error(res.error.message + "\n" + res.error.data);
-    else throw Error(res.error.message);
-  else return res.result;
+  });
+  return parseRpcResponse<any>(res);
 }
 
 export const api: Routes = mapValues(

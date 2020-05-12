@@ -10,7 +10,7 @@ import { RequestStatus } from "types";
 import { ErrorView } from "components/ErrorView";
 import { NavButtons } from "./NavButtons";
 import { LoadingView } from "components/LoadingView";
-import { useApi, api } from "rpc";
+import { useApi, api } from "api/rpc";
 
 const useStyles = makeStyles((theme) => ({
   root: {

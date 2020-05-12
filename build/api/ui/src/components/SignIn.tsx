@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import * as auth from "api/auth";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -11,12 +12,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { FooterNote } from "./FooterNote";
 import { InputPassword } from "./InputPassword";
-
-interface RequestStatus {
-  success?: boolean;
-  loading?: boolean;
-  error?: string;
-}
+import { RequestStatus } from "types";
+import { ErrorView } from "./ErrorView";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -40,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 
 export function SignIn({ onSignIn }: { onSignIn: () => void }) {
   const [input, setInput] = useState("");
-  const [status, setStatus] = useState<RequestStatus>({});
+  const [status, setStatus] = useState<RequestStatus<string>>({});
   const classes = useStyles();
 
   async function signIn(e: React.FormEvent<HTMLFormElement>) {
@@ -48,16 +45,16 @@ export function SignIn({ onSignIn }: { onSignIn: () => void }) {
     try {
       // Do signIn
       setStatus({ loading: true });
-      await new Promise((r) => setTimeout(r, 1000));
-      setStatus({ success: true });
-      onSignIn();
+      const result = await auth.login(input);
+      setStatus({ result });
+      console.log("Logged in", result);
     } catch (e) {
       console.error(e);
       setStatus({ error: e.message });
+    } finally {
+      onSignIn();
     }
   }
-
-  console.log({ status });
 
   return (
     <Container component="main" maxWidth="xs">
@@ -70,13 +67,21 @@ export function SignIn({ onSignIn }: { onSignIn: () => void }) {
           Sign in
         </Typography>
         <form className={classes.form} noValidate onSubmit={signIn}>
-          <InputPassword password={input} setPassword={setInput} />
+          <InputPassword
+            password={input}
+            setPassword={setInput}
+            error={Boolean(status.error)}
+          />
+
+          {status.error && <ErrorView error={status.error} />}
+
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
+            disabled={status.loading}
           >
             Sign In
           </Button>

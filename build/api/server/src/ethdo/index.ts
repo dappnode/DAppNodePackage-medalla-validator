@@ -4,6 +4,7 @@ import { EthdoWallets, WalletAccount, EthdoAccount } from "../../common";
 import { logs } from "../logs";
 import shell from "../utils/shell";
 import { findFirstAvailableNum } from "../utils/names";
+import { getRandomToken } from "../utils/token";
 
 const withdrawalWallet = "withdrawl";
 const validatorWallet = "validator";
@@ -55,7 +56,7 @@ export class Ethdo extends EthdoCmds {
   ): Promise<EthdoAccount> {
     await this.assertWalletExists(wallet);
     account = formatAccount(account, wallet);
-    passphrase = passphrase || this.randomPassphrase();
+    passphrase = passphrase || getRandomToken();
     await this.accountCreate({ account, passphrase });
     return { account, passphrase };
   }
@@ -64,7 +65,7 @@ export class Ethdo extends EthdoCmds {
 
   async importValidator(privateKey: string): Promise<EthdoAccount> {
     const account = await ethdo.randomValidatorName();
-    const passphrase = ethdo.randomPassphrase();
+    const passphrase = getRandomToken();
     await this.assertWalletExists(validatorWallet);
     await ethdo.accountImport({ account, passphrase, key: privateKey });
     return { account, passphrase };
@@ -72,7 +73,7 @@ export class Ethdo extends EthdoCmds {
 
   async importWithdrawl(privateKey: string): Promise<EthdoAccount> {
     const account = await ethdo.randomWithdrawlName();
-    const passphrase = ethdo.randomPassphrase();
+    const passphrase = getRandomToken();
     await this.assertWalletExists(validatorWallet);
     await ethdo.accountImport({ account, passphrase, key: privateKey });
     return { account, passphrase };
@@ -145,10 +146,6 @@ export class Ethdo extends EthdoCmds {
   }
 
   // Utils
-
-  randomPassphrase() {
-    return crypto.randomBytes(32).toString("hex");
-  }
 
   async randomValidatorName(): Promise<string> {
     const accounts = await this.accountValidatorList();

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { sortBy } from "lodash";
 import { CreateAccount } from "./CreateAccount";
-import { useApi, api } from "rpc";
+import { useApi, api } from "api/rpc";
 import { responseInterface } from "swr";
 import { WalletType } from "./walletTypes";
 import { EthdoAccount, WalletAccount } from "common";
