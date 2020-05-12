@@ -3,7 +3,7 @@ import { Layout } from "./Layout";
 import * as auth from "api/auth";
 import * as apiPaths from "api/paths";
 // import { Chart } from "./Chart";
-import { Deposits } from "./components/Deposits";
+import { SummaryStats } from "./components/SummaryStats";
 import { AccountsTable } from "./components/AccountsTable";
 import { SignIn } from "./components/SignIn";
 import { WelcomeFlow } from "./components/WelcomeFlow";
@@ -20,8 +20,7 @@ export default function App() {
   const checkLogin = useCallback(() => {
     auth
       .loginStatus()
-      .then((res) => {
-        console.log(`Login check ok`, res);
+      .then(() => {
         setLoginStatus("login");
         setIsOffline(false);
       })
@@ -61,7 +60,7 @@ export default function App() {
       return (
         <Layout logout={logout}>
           {/* <Chart /> */}
-          <Deposits />
+          <SummaryStats />
           <AccountsTable addValidator={addValidator} />
         </Layout>
       );

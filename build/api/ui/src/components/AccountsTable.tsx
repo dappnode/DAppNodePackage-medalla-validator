@@ -14,10 +14,10 @@ import LaunchIcon from "@material-ui/icons/Launch";
 import { Title } from "./Title";
 import { DepositEvent } from "../common/types";
 import { goerliTxViewer, beaconAccountViewer } from "common/params";
-import { LinearProgress } from "@material-ui/core";
+import { LinearProgress, Typography } from "@material-ui/core";
 import { useApi } from "api/rpc";
 import { ErrorView } from "components/ErrorView";
-import { newTabProps } from "utils";
+import { newTabProps, getEstimatedBalanceFormDepositEvents } from "utils";
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
@@ -85,24 +85,37 @@ export function AccountsTable({ addValidator }: { addValidator: () => void }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {validatorsStats.data.map((account) => (
-              <TableRow key={account.name}>
-                <TableCell>{account.name}</TableCell>
-                <TableCell>
-                  <PublicKeyView publicKey={account.publicKey} />
-                </TableCell>
-                <TableCell>
-                  {account.createdTimestamp
-                    ? moment(account.createdTimestamp).fromNow()
-                    : "-"}
-                </TableCell>
-                <TableCell>
-                  <DepositEventsView depositEvents={account.depositEvents} />
-                </TableCell>
-                <TableCell>{account.status}</TableCell>
-                <TableCell align="right">{account.balance}</TableCell>
-              </TableRow>
-            ))}
+            {validatorsStats.data.map((account) => {
+              const balance = account.balance;
+              const balanceOk = typeof balance === "number";
+              const estimatedBalance = balanceOk
+                ? null
+                : getEstimatedBalanceFormDepositEvents(account.depositEvents);
+              return (
+                <TableRow key={account.name}>
+                  <TableCell>{account.name}</TableCell>
+                  <TableCell>
+                    <PublicKeyView publicKey={account.publicKey} />
+                  </TableCell>
+                  <TableCell>
+                    {account.createdTimestamp
+                      ? moment(account.createdTimestamp).fromNow()
+                      : "-"}
+                  </TableCell>
+                  <TableCell>
+                    <DepositEventsView depositEvents={account.depositEvents} />
+                  </TableCell>
+                  <TableCell>{account.status}</TableCell>
+                  <TableCell align="right">
+                    {balanceOk
+                      ? balance
+                      : estimatedBalance
+                      ? `${estimatedBalance} (estimated)`
+                      : "-"}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
 

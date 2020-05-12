@@ -1,3 +1,5 @@
+import { DepositEvent } from "common";
+
 /**
  * Util: Given ["1", "3"] return the first available number: "2"
  * @param arr
@@ -36,4 +38,39 @@ export function urlJoin(...args: string[]): string {
       // Duplicate slashes in the front
       .replace(/^(\/)+/, "/")
   );
+}
+
+const amount32Eth = "0x0040597307000000";
+
+/**
+ * Fetches the highest amount from various deposit events
+ * @param depositEvents
+ */
+export function getEstimatedBalanceFormDepositEvents(depositEvents: {
+  [txHashAndLogIndex: string]: DepositEvent;
+}): number | undefined {
+  const events = Object.values(depositEvents);
+  const estimatedBalances = events.map((event) => {
+    try {
+      return parseDepositAmount(event.amount);
+    } catch (e) {
+      console.error(`Error parsing deposit amount`, e);
+      return event.amount === amount32Eth ? 32 : 0;
+    }
+  });
+  return estimatedBalances.length ? Math.max(...estimatedBalances) : undefined;
+}
+
+function parseDepositAmount(amount: string): number {
+  return parseInt("0x" + changeEndianness(amount.replace("0x", ""))) / 1e9;
+}
+
+function changeEndianness(string: string) {
+  const result = [];
+  let len = string.length - 2;
+  while (len >= 0) {
+    result.push(string.substr(len, 2));
+    len -= 2;
+  }
+  return result.join("");
 }
