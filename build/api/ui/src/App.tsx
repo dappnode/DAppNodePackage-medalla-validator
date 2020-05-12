@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Layout } from "./Layout";
 import * as auth from "api/auth";
+import * as apiPaths from "api/paths";
 // import { Chart } from "./Chart";
 import { Deposits } from "./components/Deposits";
 import { AccountsTable } from "./components/AccountsTable";
@@ -14,6 +15,7 @@ type LoginStatus = "login" | "logout" | "loading";
 export default function App() {
   const [showValidatorFlow, setShowValidatorFlow] = useState(false);
   const [loginStatus, setLoginStatus] = useState<LoginStatus>();
+  const [isOffline, setIsOffline] = useState<boolean>();
 
   const checkLogin = useCallback(() => {
     auth
@@ -21,10 +23,15 @@ export default function App() {
       .then((res) => {
         console.log(`Login check ok`, res);
         setLoginStatus("login");
+        setIsOffline(false);
       })
       .catch((e) => {
         console.log(`Login check error`, e);
         setLoginStatus("logout");
+        fetch(apiPaths.ping).then(
+          (res) => setIsOffline(!res.ok),
+          () => setIsOffline(true)
+        );
       });
   }, [setLoginStatus]);
 
@@ -59,7 +66,8 @@ export default function App() {
         </Layout>
       );
 
-  if (loginStatus === "logout") return <SignIn onSignIn={onSignIn} />;
+  if (loginStatus === "logout")
+    return <SignIn onSignIn={onSignIn} isOffline={isOffline} />;
 
   return (
     <Box m={3}>

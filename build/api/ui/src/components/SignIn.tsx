@@ -35,7 +35,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function SignIn({ onSignIn }: { onSignIn: () => void }) {
+export function SignIn({
+  onSignIn,
+  isOffline,
+}: {
+  onSignIn: () => void;
+  isOffline?: boolean;
+}) {
   const [input, setInput] = useState("");
   const [status, setStatus] = useState<RequestStatus<string>>({});
   const classes = useStyles();
@@ -94,6 +100,17 @@ export function SignIn({ onSignIn }: { onSignIn: () => void }) {
           </Grid>
         </form>
       </div>
+
+      {isOffline && (
+        <Box m={4}>
+          <Typography color="secondary" align="center">
+            Cannot connect with the server
+            <br />
+            are you online?
+          </Typography>
+        </Box>
+      )}
+
       <Box mt={8}>
         <FooterNote />
       </Box>
