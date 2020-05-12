@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
-import Link from "@material-ui/core/Link";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { Title } from "./Title";
 import { useApi } from "api/rpc";
 import { getEstimatedBalanceFormDepositEvents } from "utils";
-import { Box, Grid } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   depositContext: {
@@ -49,7 +48,6 @@ export function TotalBalance() {
     if (!validatorsStats.data) return { sum: null };
     let isEstimated = false;
     let isPartial = false;
-    const balances = validatorsStats.data.map((validator) => validator.balance);
     const sum = validatorsStats.data.reduce((total, validator) => {
       if (validator.balance) return total + parseFloat(validator.balance);
       const estimedBalance = getEstimatedBalanceFormDepositEvents(
@@ -62,15 +60,13 @@ export function TotalBalance() {
       isPartial = true;
       return total;
     }, 0);
-    const unknown = balances.every((n) => typeof n === "undefined");
-    const partial = balances.some((n) => typeof n === "undefined");
     if (!sum) return { sum: null };
     else return { sum, isEstimated, isPartial };
   }
 
   const totalBalance = computeBalance();
 
-  if (totalBalance === null) return null;
+  if (totalBalance.sum === null) return null;
 
   return (
     <Grid item xs={12} sm={6}>

@@ -14,7 +14,7 @@ import LaunchIcon from "@material-ui/icons/Launch";
 import { Title } from "./Title";
 import { DepositEvent } from "../common/types";
 import { goerliTxViewer, beaconAccountViewer } from "common/params";
-import { LinearProgress, Typography } from "@material-ui/core";
+import { LinearProgress } from "@material-ui/core";
 import { useApi } from "api/rpc";
 import { ErrorView } from "components/ErrorView";
 import { newTabProps, getEstimatedBalanceFormDepositEvents } from "utils";
@@ -120,9 +120,9 @@ export function AccountsTable({ addValidator }: { addValidator: () => void }) {
         </Table>
 
         <div className={classes.seeMore}>
-          <Link color="primary" href="#">
+          {/* <Link color="primary" href="#">
             See more validators
-          </Link>
+          </Link> */}
         </div>
       </React.Fragment>
     );

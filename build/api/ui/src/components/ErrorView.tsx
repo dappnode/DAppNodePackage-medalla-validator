@@ -25,7 +25,7 @@ export function ErrorView({ error }: { error: Error | string }) {
   const { message, detail } = parseError(error);
 
   return (
-    <Box color="secondary" className={classes.error}>
+    <Box color="error" className={classes.error}>
       <details>
         <summary>{message.split("\n")[0]}</summary>
         <pre className={classes.pre}>{detail}</pre>

@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.primary.main,
   },
   form: {
     width: "100%", // Fix IE 11 issue.
@@ -103,7 +103,7 @@ export function SignIn({
 
       {isOffline && (
         <Box m={4}>
-          <Typography color="secondary" align="center">
+          <Typography color="error" align="center">
             Cannot connect with the server
             <br />
             are you online?

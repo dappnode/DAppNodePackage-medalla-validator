@@ -1,7 +1,7 @@
 import React from "react";
 import clsx from "clsx";
+import dappnodeLogo from "img/dappnode-logo.png";
 import { makeStyles } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
 import Box from "@material-ui/core/Box";
 import AppBar from "@material-ui/core/AppBar";
@@ -10,14 +10,14 @@ import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
-import Badge from "@material-ui/core/Badge";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import NotificationsIcon from "@material-ui/icons/Notifications";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import Brightness7Icon from "@material-ui/icons/Brightness7";
+import Brightness4Icon from "@material-ui/icons/Brightness4";
 import { mainListItems, secondaryListItems } from "./listItems";
 import { FooterNote } from "./components/FooterNote";
 
@@ -36,6 +36,10 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "flex-end",
     padding: "0 8px",
     ...theme.mixins.toolbar,
+  },
+  topBarLogo: {
+    height: "30px",
+    marginRight: "10px",
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -86,10 +90,21 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: "100vh",
     overflow: "auto",
+    display: "flex",
+    flexDirection: "column",
   },
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
+    flex: "auto",
+    display: "flex",
+    flexDirection: "column",
+  },
+  footer: {
+    flex: "auto",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-end",
   },
   paper: {
     padding: theme.spacing(2),
@@ -99,10 +114,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Layout: React.FC<{ logout: () => void }> = ({
-  logout,
-  children,
-}) => {
+export const Layout: React.FC<{
+  darkMode?: boolean;
+  switchDark: () => void;
+  logout: () => void;
+}> = ({ logout, darkMode, switchDark, children }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const handleDrawerOpen = () => {
@@ -116,11 +132,11 @@ export const Layout: React.FC<{ logout: () => void }> = ({
 
   return (
     <div className={classes.root}>
-      <CssBaseline />
-
       {/* Top nav bar */}
       <AppBar
+        elevation={2}
         position="absolute"
+        color="inherit"
         className={clsx(classes.appBar, open && classes.appBarShift)}
       >
         <Toolbar className={classes.toolbar}>
@@ -136,6 +152,7 @@ export const Layout: React.FC<{ logout: () => void }> = ({
           >
             <MenuIcon />
           </IconButton>
+          <img src={dappnodeLogo} className={classes.topBarLogo} alt="logo" />
           <Typography
             component="h1"
             variant="h6"
@@ -143,13 +160,19 @@ export const Layout: React.FC<{ logout: () => void }> = ({
             noWrap
             className={classes.title}
           >
-            Dashboard
+            Validator dashboard
           </Typography>
-          <IconButton color="inherit">
+
+          <IconButton color="inherit" onClick={switchDark}>
+            {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+          </IconButton>
+
+          {/* <IconButton color="inherit">
             <Badge badgeContent={4} color="secondary">
               <NotificationsIcon />
             </Badge>
-          </IconButton>
+          </IconButton> */}
+
           <IconButton color="inherit" onClick={logout}>
             <ExitToAppIcon />
           </IconButton>
@@ -187,7 +210,7 @@ export const Layout: React.FC<{ logout: () => void }> = ({
               </Grid>
             ))}
           </Grid>
-          <Box pt={4}>
+          <Box pt={4} className={classes.footer}>
             <FooterNote />
           </Box>
         </Container>
