@@ -2,7 +2,7 @@ import "mocha";
 import assert from "assert";
 import { parseOpenMetrics } from "../src/services/openMetrics";
 
-describe.only("Parse open metrics", () => {
+describe("Parse open metrics", () => {
   it("Should parse open metrics", () => {
     const res = `# HELP promhttp_metric_handler_requests_in_flight Current number of scrapes being served.
     # TYPE promhttp_metric_handler_requests_in_flight gauge

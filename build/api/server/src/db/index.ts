@@ -13,9 +13,18 @@ interface DbValidator {
   createdTimestamp: number; // in miliseconds
 }
 
+interface DbWithdrawl {
+  account: string; // "Validator/1"
+  passphrase?: string;
+  createdTimestamp: number; // in miliseconds
+}
+
 const dbAccountsInitialState: {
   validatorAccounts: {
     [name: string]: DbValidator;
+  };
+  withdrawlAccounts: {
+    [name: string]: DbWithdrawl;
   };
   eth1Account:
     | {
@@ -25,6 +34,7 @@ const dbAccountsInitialState: {
     | undefined;
 } = {
   validatorAccounts: {},
+  withdrawlAccounts: {},
   eth1Account: undefined
 };
 
@@ -43,4 +53,8 @@ export const deposits = dbFactory(depositsDbPath, dbDepositsInitialState);
 
 export function updateValidator(validator: DbValidator) {
   accounts.validatorAccounts.merge({ [validator.account]: validator });
+}
+
+export function updateWithdrawl(withdrawl: DbWithdrawl) {
+  accounts.withdrawlAccounts.merge({ [withdrawl.account]: withdrawl });
 }

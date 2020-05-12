@@ -22,7 +22,7 @@ interface Keymanager {
   passphrases: string[];
 }
 
-export const validator = Supervisor(
+export const validatorBinary = Supervisor(
   "validator",
   dargs({
     "tls-cert": tlsCert,
@@ -68,5 +68,5 @@ export function readKeymanager(): Keymanager {
 
 function writeKeymanager(keymanager: Keymanager): void {
   fs.writeFileSync(keymanagerFile, JSON.stringify(keymanager, null, 2));
-  validator.restart();
+  validatorBinary.restart();
 }

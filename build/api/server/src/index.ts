@@ -1,13 +1,14 @@
 import { logs } from "./logs";
 import app from "./app";
 import { listenToDepositEvents } from "./services/eth1";
-import { readKeymanager, validator } from "./services/validator";
+import { readKeymanager, validatorBinary } from "./services/validator";
+import { migrateLegacyKeys } from "./services/migratePrysmKeys";
 
-/**
- * Start services
- */
+if (readKeymanager().accounts.length > 0) validatorBinary.restart();
+// Connect to a Goerli node
 listenToDepositEvents();
-if (readKeymanager().accounts.length > 0) validator.restart();
+// Migrate keys previously controlled by the validator binary to ethdo
+migrateLegacyKeys();
 
 /**
  * Start Express server.

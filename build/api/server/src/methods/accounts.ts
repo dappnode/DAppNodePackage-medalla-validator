@@ -40,14 +40,12 @@ export async function getDepositData({
 
 export async function accountWithdrawlCreate(accountReq: EthdoAccount) {
   const account = await ethdo.createWithdrawlAccount(accountReq);
+  db.updateWithdrawl({ ...account, createdTimestamp: Date.now() });
 }
 
 export async function accountValidatorCreate(accountReq: EthdoAccountNoPass) {
   const account = await ethdo.createValidatorAccount(accountReq);
-  db.updateValidator({
-    ...account,
-    createdTimestamp: Date.now()
-  });
+  db.updateValidator({ ...account, createdTimestamp: Date.now() });
   // Writes to keymanager and restart validator
   addValidatorToKeymanager(account);
 }
