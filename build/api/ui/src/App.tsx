@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Layout } from "./Layout";
-import useSWR from "swr";
 import * as auth from "api/auth";
 // import { Chart } from "./Chart";
 // import { Deposits } from "./Deposits";
@@ -9,32 +8,45 @@ import { SignIn } from "./components/SignIn";
 import { WelcomeFlow } from "./components/WelcomeFlow";
 import { LoadingView } from "components/LoadingView";
 
+type LoginStatus = "login" | "logout" | "loading";
+
 export default function App() {
   const [showValidatorFlow, setShowValidatorFlow] = useState(false);
-  const login = useSWR("login", auth.loginStatus, { revalidateOnFocus: true });
-  const loggedIn = login.data;
-  const isFirstLoad = !login.data && !login.error && login.isValidating;
+  const [loginStatus, setLoginStatus] = useState<LoginStatus>();
+
+  const checkLogin = useCallback(() => {
+    auth
+      .loginStatus()
+      .then((res) => {
+        console.log(`Login check ok`, res);
+        setLoginStatus("login");
+      })
+      .catch((e) => {
+        console.log(`Login check error`, e);
+        setLoginStatus("logout");
+      });
+  }, [setLoginStatus]);
 
   // If it's logged in, keep checking for logged in
   useEffect(() => {
-    if (!loggedIn) return;
-    const interval = setInterval(login.revalidate, 5000);
+    if (loginStatus === "logout") return;
+    const interval = setInterval(checkLogin, 5000);
     return () => clearInterval(interval);
-  }, [loggedIn, login.revalidate]);
+  }, [loginStatus, checkLogin]);
 
   function onSignIn() {
-    login.revalidate();
+    checkLogin();
   }
 
   function logout() {
-    auth.logout().then(login.revalidate).catch(console.error);
+    auth.logout().then(checkLogin).catch(console.error);
   }
 
   function addValidator() {
     setShowValidatorFlow(true);
   }
 
-  if (loggedIn)
+  if (loginStatus === "login")
     if (showValidatorFlow)
       return <WelcomeFlow onExit={() => setShowValidatorFlow(false)} />;
     else
@@ -46,10 +58,7 @@ export default function App() {
         </Layout>
       );
 
-  if (isFirstLoad)
-    return (
-      <LoadingView steps={["Connecting to server", "Retrieving session"]} />
-    );
+  if (loginStatus === "logout") return <SignIn onSignIn={onSignIn} />;
 
-  return <SignIn onSignIn={onSignIn} />;
+  return <LoadingView steps={["Connecting to server", "Retrieving session"]} />;
 }

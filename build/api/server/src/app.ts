@@ -12,7 +12,7 @@ import * as auth from "./auth";
 import { wrapRoute, wrapMiddleware } from "./utils/express";
 // Display stack traces with source-maps
 import "source-map-support/register";
-const LowdbStore = require("lowdb-session-store")(session);
+const FileStore = require("session-file-store")(session);
 
 const app = express();
 
@@ -32,7 +32,7 @@ app.use(
     resave: true,
     saveUninitialized: true,
     secret: db.getSessionsSecretKey(),
-    store: new LowdbStore(db.sessions, { ttl: 86400 })
+    store: new FileStore({ path: db.sessionsPath, ttl: 86400 })
   })
 );
 

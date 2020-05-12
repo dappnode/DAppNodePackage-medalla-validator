@@ -1,10 +1,10 @@
 import path from "path";
-import { lowDbFactory, lowDbStaticFactory } from "./dbFactory";
+import { lowDbStaticFactory } from "./dbFactory";
 import { DepositEvent } from "../../common";
 import { getRandomToken } from "../utils/token";
 
-const dbDir = process.env.DB_API_DIR || "db-api";
-const sessionsDbPath = path.join(dbDir, "sessions-db.json");
+export const dbDir = process.env.DB_API_DIR || "db-api";
+export const sessionsPath = path.join(dbDir, "sessions");
 const serverDbPath = path.join(dbDir, "server-db.json");
 const accountsDbPath = path.join(dbDir, "account-db.json");
 const depositsDbPath = path.join(dbDir, "deposits-db.json");
@@ -57,7 +57,6 @@ const dbDepositsState: {
   depositEvents: {}
 };
 
-export const sessions = lowDbFactory(sessionsDbPath, { defaultValue: [] });
 export const server = lowDbStaticFactory(serverDbPath, dbServerState);
 export const accounts = lowDbStaticFactory(accountsDbPath, dbAccountsState);
 export const deposits = lowDbStaticFactory(depositsDbPath, dbDepositsState);

@@ -29,5 +29,11 @@ export const newTabProps = { rel: "noopener noreferrer", target: "_blank" };
  * @return "http://ipfs.io/ipfs/Qm"
  */
 export function urlJoin(...args: string[]): string {
-  return args.join("/").replace(/([^:]\/)\/+/g, "$1");
+  return (
+    args
+      .join("/")
+      .replace(/([^:]\/)\/+/g, "$1")
+      // Duplicate slashes in the front
+      .replace(/^(\/)+/, "/")
+  );
 }
