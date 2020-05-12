@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
+import {
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Grid,
+  Button,
+} from "@material-ui/core";
 import { RequestStatus } from "types";
 import { ErrorView } from "components/ErrorView";
 import { NavButtons } from "./NavButtons";

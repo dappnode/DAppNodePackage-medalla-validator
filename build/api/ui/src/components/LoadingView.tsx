@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
+import { LinearProgress, Typography, Box } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   progress: {

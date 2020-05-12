@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Stepper from "@material-ui/core/Stepper";
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
-import Typography from "@material-ui/core/Typography";
+import {
+  Paper,
+  Stepper,
+  Step,
+  StepLabel,
+  Typography,
+  Link,
+} from "@material-ui/core";
 import { StepSelectValidator } from "./StepSelectValidator";
 import { StepSelectWithdrawl } from "./StepSelectWithdrawl";
 import { StepDeposit } from "./StepDeposit";
 import { FooterNote } from "../FooterNote";
 import { NavButtons } from "./NavButtons";
-import { Link } from "@material-ui/core";
 import { goerliTxViewer } from "common/params";
 
 const useStyles = makeStyles((theme) => ({

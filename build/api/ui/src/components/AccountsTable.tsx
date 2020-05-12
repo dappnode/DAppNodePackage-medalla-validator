@@ -1,20 +1,22 @@
 import React, { useEffect } from "react";
 import moment from "moment";
-import Link from "@material-ui/core/Link";
 import { makeStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Button from "@material-ui/core/Button";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
+import {
+  Link,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Button,
+  Box,
+  Grid,
+  LinearProgress,
+} from "@material-ui/core";
 import LaunchIcon from "@material-ui/icons/Launch";
 import { Title } from "./Title";
 import { DepositEvent } from "../common/types";
 import { goerliTxViewer, beaconAccountViewer } from "common/params";
-import { LinearProgress } from "@material-ui/core";
 import { useApi } from "api/rpc";
 import { ErrorView } from "components/ErrorView";
 import { newTabProps, getEstimatedBalanceFormDepositEvents } from "utils";

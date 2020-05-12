@@ -29,6 +29,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "schemas-generate": "node src/common/generateSchemas",
     "schemas-watch": "nodemon -w src/common --ext js,ts -x npm run schemas-generate"
   },
@@ -48,6 +49,7 @@
     ]
   },
   "devDependencies": {
+    "source-map-explorer": "^2.4.2",
     "typescript-json-schema": "^0.42.0"
   }
 }

@@ -1,10 +1,9 @@
 import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
+import { Typography, Grid } from "@material-ui/core";
 import { Title } from "./Title";
 import { useApi } from "api/rpc";
 import { getEstimatedBalanceFormDepositEvents } from "utils";
-import { Grid } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   depositContext: {

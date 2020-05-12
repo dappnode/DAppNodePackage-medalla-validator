@@ -3,13 +3,15 @@ import { InputPassword } from "components/InputPassword";
 import { RequestStatus } from "types";
 // Material UI
 import { makeStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import TextField from "@material-ui/core/TextField";
-import BottomNavigation from "@material-ui/core/BottomNavigation";
-import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
+import {
+  Button,
+  Typography,
+  Grid,
+  Box,
+  TextField,
+  BottomNavigation,
+  BottomNavigationAction,
+} from "@material-ui/core";
 import ShuffleIcon from "@material-ui/icons/Shuffle";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import { LinearProgress } from "@material-ui/core";

@@ -6,21 +6,22 @@ import { responseInterface } from "swr";
 import { WalletType } from "./walletTypes";
 import { EthdoAccount, WalletAccount } from "common";
 // Material UI
-import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core/styles";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
-import FormGroup from "@material-ui/core/FormGroup";
-import Select from "@material-ui/core/Select";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import LinearProgress from "@material-ui/core/LinearProgress";
+import {
+  Box,
+  InputLabel,
+  MenuItem,
+  FormHelperText,
+  FormControl,
+  FormGroup,
+  Select,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  LinearProgress,
+} from "@material-ui/core";
 import { ErrorView } from "components/ErrorView";
-
 import { findFirstAvailableNum } from "utils";
 
 const useStyles = makeStyles((theme) => ({
