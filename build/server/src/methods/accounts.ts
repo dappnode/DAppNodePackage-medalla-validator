@@ -38,19 +38,19 @@ export async function getDepositData({
 }
 
 export async function accountWithdrawlCreate(accountReq: EthdoAccount) {
-  const account = await ethdo.createWithdrawlAccount(accountReq);
+  const account = await ethdo.createAccount(accountReq, "withdrawl");
   db.updateWithdrawl({ ...account, createdTimestamp: Date.now() });
 }
 
 export async function accountValidatorCreate(accountReq: EthdoAccountNoPass) {
-  const account = await ethdo.createValidatorAccount(accountReq);
+  const account = await ethdo.createAccount(accountReq, "validator");
   db.updateValidator({ ...account, createdTimestamp: Date.now() });
   // Writes to keymanager and restart validator
   addValidatorToKeymanager(account);
 }
 
 export async function accountWithdrawlList(): Promise<WalletAccount[]> {
-  const accounts = await ethdo.accountWithdrawlList();
+  const accounts = await ethdo.accountList("withdrawl");
 
   // All withdrawl accounts are available and can be reused
   return accounts.map(account => ({
@@ -77,7 +77,7 @@ export async function validatorsStats(): Promise<ValidatorStats[]> {
 
 async function listValidators(): Promise<ValidatorStats[]> {
   const validators = db.accounts.validatorAccounts.get();
-  const accounts = await ethdo.accountValidatorList();
+  const accounts = await ethdo.accountList("validator");
   const depositEventsByPubkey = db.deposits.depositEvents.get() || {};
   const metricsByPubkey = db.metrics.current.get();
 

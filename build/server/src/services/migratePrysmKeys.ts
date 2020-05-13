@@ -20,26 +20,22 @@ async function migrateKeyIfExists(
     if (!fs.existsSync(keystorePath)) return;
     if (!password) throw Error(`ENV PASSWORD not defined`);
 
-    let accountName: string;
     const { privateKey, lastMod } = await readKeystore(keystorePath, password);
+    const account = await ethdo.importAccount(privateKey, wallet);
     switch (wallet) {
-      case "validator": {
-        const account = await ethdo.importValidator(privateKey);
+      case "validator":
         db.updateValidator({ ...account, createdTimestamp: lastMod });
         // Writes to keymanager and restart validator
         addValidatorToKeymanager(account);
-        accountName = account.account;
-      }
 
-      case "withdrawl": {
-        const account = await ethdo.importWithdrawl(privateKey);
+      case "withdrawl":
         db.updateWithdrawl({ ...account, createdTimestamp: lastMod });
-        accountName = account.account;
-      }
     }
 
     fs.unlinkSync(keystorePath);
-    logs.info(`Migrated ${wallet} keystore ${keystorePath} > ${accountName}`);
+    logs.info(
+      `Migrated ${wallet} keystore ${keystorePath} > ${account.account}`
+    );
   } catch (e) {
     logs.error(`Error migrating ${wallet} keystore ${keystorePath}`, e);
   }
