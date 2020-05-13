@@ -4,7 +4,7 @@ import { Link, Typography } from "@material-ui/core";
 export function FooterNote() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-      {"APLv2 - "}
+      {"GPLv3 - "}
       <Link color="inherit" href="https://dappnode.io/">
         DAppNode
       </Link>{" "}
