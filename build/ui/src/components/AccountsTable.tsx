@@ -99,7 +99,7 @@ export function AccountsTable({ addValidator }: { addValidator: () => void }) {
           </TableHead>
           <TableBody>
             {validatorsStats.data.map((account, i) => (
-              <AccountRow key={account.id || i} account={account} />
+              <AccountRow key={account.account || i} account={account} />
             ))}
           </TableBody>
         </Table>

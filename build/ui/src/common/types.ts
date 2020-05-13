@@ -11,7 +11,7 @@ export interface ValidatorAccount {
 }
 
 export interface WalletAccount {
-  id: string;
+  account: string;
   name: string;
   uuid: string;
   publicKey: string;
@@ -36,7 +36,7 @@ export interface EthdoAccountNoPass {
 }
 
 export interface ValidatorStats {
-  id: string;
+  account: string;
   name: string;
   uuid: string;
   publicKey: string;

@@ -1,8 +1,5 @@
 import { isEmpty } from "lodash";
-import {
-  addValidatorToKeymanager,
-  readAccountFromKeymanager
-} from "../services/validator";
+import { addValidatorToKeymanager } from "../services/validator";
 import { ethdo } from "../ethdo";
 import * as db from "../db";
 import {
@@ -13,6 +10,7 @@ import {
   ValidatorStats
 } from "../../common";
 import { ethers } from "ethers";
+import { recoverValidatorAccount } from "../services/accountManager";
 
 export async function accountCreate(name: string): Promise<void> {
   name;
@@ -79,18 +77,6 @@ export async function validatorsStats(): Promise<ValidatorStats[]> {
   return accounts;
 }
 
-async function recoverValidatorAccount(account: string) {
-  const recoveredValidator = readAccountFromKeymanager(account);
-  const publicKey = await ethdo.accountPublicKey(account);
-  const validator = {
-    ...recoveredValidator,
-    publicKey,
-    createdTimestamp: Date.now()
-  };
-  db.updateValidator(validator);
-  return validator;
-}
-
 async function listValidators(): Promise<ValidatorStats[]> {
   const validators = db.accounts.validatorAccounts.get();
   const accounts = await ethdo.accountList("validator");
@@ -100,7 +86,7 @@ async function listValidators(): Promise<ValidatorStats[]> {
   return accounts.map(
     (account): ValidatorStats => {
       const pubKey = account.publicKey;
-      const validator = (validators || {})[account.id] || {};
+      const validator = (validators || {})[account.account] || {};
 
       const basicData = {
         ...account,

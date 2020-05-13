@@ -54,7 +54,7 @@ export function CreateAccount({
   accountCreate,
 }: {
   wallet: string;
-  existingAccounts: { id: string; name: string }[];
+  existingAccounts: { name: string }[];
   placeholderName: string;
   withPassphrase?: boolean;
   accountCreate: (account: EthdoAccount) => Promise<void>;

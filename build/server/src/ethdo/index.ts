@@ -82,7 +82,7 @@ export class Ethdo extends EthdoCmds {
     try {
       const accounts = await this.walletAccountsVerbose({ wallet });
       return accounts.map(account => ({
-        id: formatAccount(account.name, wallet),
+        account: formatAccount(account.name, wallet),
         ...account
       }));
     } catch (e) {
@@ -99,7 +99,7 @@ export class Ethdo extends EthdoCmds {
           const account = formatAccount(name, wallet);
           const publicKey = await this.accountPublicKey(account);
           return {
-            id: account,
+            account: account,
             name,
             publicKey,
             uuid: ""

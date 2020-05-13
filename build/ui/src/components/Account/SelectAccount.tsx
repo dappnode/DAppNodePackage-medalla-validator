@@ -46,7 +46,7 @@ export function SelectValidatorAccount({
   setValidatorAccount,
 }: {
   validatorAccount: string;
-  setValidatorAccount: (id: string) => void;
+  setValidatorAccount: (account: string) => void;
 }) {
   const validatorAccounts = useApi.accountValidatorList();
   const placeholderName = validatorAccounts.data
@@ -89,7 +89,7 @@ function SelectAccount({
   wallet,
   placeholderName,
   withPassphrase,
-  account,
+  account: selectedAccount,
   setAccount,
   accounts,
   accountCreate,
@@ -111,8 +111,8 @@ function SelectAccount({
 
   useEffect(() => {
     const first = accountsAvailable[0];
-    if (!account && first) setAccount(first.id);
-  }, [accountsAvailable, account, setAccount]);
+    if (!selectedAccount && first) setAccount(first.account);
+  }, [accountsAvailable, selectedAccount, setAccount]);
 
   const openDialog = () => setOpen(true);
   const closeDialog = () => setOpen(false);
@@ -131,7 +131,7 @@ function SelectAccount({
               <Select
                 labelId="demo-simple-select-helper-label"
                 id="demo-simple-select-helper"
-                value={account}
+                value={selectedAccount}
                 onChange={(e) => setAccount(e.target.value as string)}
               >
                 {sortBy(
@@ -139,8 +139,8 @@ function SelectAccount({
                   (account) => account.createdTimestamp || 0
                 )
                   .reverse() // Sort by latest created account first
-                  .map(({ id, name }) => (
-                    <MenuItem key={id} value={id}>
+                  .map(({ account, name }) => (
+                    <MenuItem key={account} value={account}>
                       {name}
                     </MenuItem>
                   ))}

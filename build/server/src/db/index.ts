@@ -37,10 +37,10 @@ const dbServerState: {
 
 const dbAccountsState: {
   validatorAccounts: {
-    [name: string]: DbValidator;
+    [account: string]: DbValidator;
   };
   withdrawlAccounts: {
-    [name: string]: DbWithdrawl;
+    [account: string]: DbWithdrawl;
   };
   eth1Account:
     | {
