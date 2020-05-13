@@ -2,7 +2,7 @@ import dargs from "dargs";
 
 type CmdRunner = (cmd: string) => Promise<string>;
 
-interface WalletAccountData {
+export interface WalletAccountData {
   name: string;
   uuid: string;
   publicKey: string;
@@ -77,22 +77,7 @@ export class EthdoCmds {
       ...options,
       verbose: true
     });
-
-    const accounts: WalletAccountData[] = [];
-
-    const dataAfterColon = (s: string) => (s.split(":")[1] || s).trim();
-
-    const chunk = 3;
-    const parts = res.split("\n");
-    for (let i = 0; i < parts.length; i += chunk) {
-      const [name, uuid, publicKey] = parts.slice(i, i + chunk);
-      accounts.push({
-        name: name.trim(),
-        uuid: dataAfterColon(uuid),
-        publicKey: dataAfterColon(publicKey)
-      });
-    }
-    return accounts;
+    return parseWalletAccountsVerbose(res);
   }
 
   /**
@@ -240,4 +225,58 @@ export class EthdoCmds {
   }): Promise<string> {
     return await this.run("validator depositdata", options);
   }
+}
+
+/**
+ * ethdo wallet accounts lists the accounts within a wallet.
+ * With the --verbose flag this will provide the public key of the accounts.
+ * 2
+ *	UUID:		32ec701a-880b-4cfa-a409-74d88854ec64
+ *	Public key:	0x98552a5cfa4022f529eadafeb0d17c2ed748a42ecd799472dad244ffd21342a7b3e436a38abad1ece8afabfd13b42e60
+ * 1
+ * 	UUID:		7ec09618-c4df-46de-87bf-ecd6da8a580e
+ * 	Public key:	0x8498e2c928c5c6718157720239b0cf9968fbbcdf7893a5f46b32c70bd66390c2f6546263aa596a3a09b4447aa8b676fc
+ * 3
+ *  UUID:		972483d5-19f7-419e-8f48-3858daea1ca0
+ *	Public key:	0x98d2f1a38682dc4c3bd3ad1a28411d9507dd6423f8af6bcb9f3d827b7d309c8910825b6523359651a9b1ec16a754c2e4
+ */
+export function parseWalletAccountsVerbose(res: string): WalletAccountData[] {
+  const accounts: WalletAccountData[] = [];
+
+  // Exit early if there's no data
+  res = res.trim();
+  if (!res) return [];
+
+  const chunk = 3;
+  const parts = res.split("\n");
+  for (let i = 0; i < parts.length; i += chunk) {
+    const [name, uuid, publicKey] = parts.slice(i, i + chunk);
+    if (!name) throw Error(`Unknown row format, no name: ${res}`);
+    if (!uuid) throw Error(`Unknown row format, no uuid: ${res}`);
+    if (!publicKey) throw Error(`Unknown row format, no publicKey: ${res}`);
+    accounts.push({
+      name: name.trim(),
+      uuid: dataAfterColon(uuid, /uuid/i),
+      publicKey: dataAfterColon(publicKey, /public.key/i)
+    });
+  }
+  return accounts;
+}
+
+/**
+ * Parses data after a colon separated key value
+ * @param row "UUID:		32ec701a-880b-4cfa-a409-74d88854ec64"
+ * @param tag /uuid/i
+ */
+function dataAfterColon(row: string, tagRegex: RegExp): string {
+  if (!row) throw Error(`Unknown row format, empty row: ${row}`);
+  const [tag, value] = row
+    .trim()
+    .split(":")
+    .map(v => (v || "").trim());
+  if (!tag) throw Error(`Unknown row format, empty tag: ${row}`);
+  if (!tagRegex.test(tag))
+    throw Error(`Unknown row format, it should include ${tagRegex}: ${row}`);
+  if (!value) throw Error(`Unknown row format, empty value: ${row}`);
+  return value;
 }

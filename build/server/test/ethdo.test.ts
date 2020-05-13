@@ -1,6 +1,10 @@
 import "mocha";
 import assert from "assert";
 import { Ethdo } from "../src/ethdo";
+import {
+  WalletAccountData,
+  parseWalletAccountsVerbose
+} from "../src/ethdo/cmds";
 import shell from "../src/utils/shell";
 import { logs } from "../src/logs";
 
@@ -135,6 +139,76 @@ describe("ethdo module", () => {
 
   afterEach("Remove test container", async () => {
     if (id) await shell(`docker rm -f --volumes ${id}`);
+  });
+});
+
+describe.only("ethdo parsers", () => {
+  describe("wallet accounts verbose", () => {
+    const cases: {
+      id: string;
+      res: string;
+      data: WalletAccountData[];
+    }[] = [
+      {
+        id: "Full case",
+        res: `2
+	UUID:		32ec701a-880b-4cfa-a409-74d88854ec64
+	Public key:	0x98552a5cfa4022f529eadafeb0d17c2ed748a42ecd799472dad244ffd21342a7b3e436a38abad1ece8afabfd13b42e60
+ 1
+ 	UUID:		7ec09618-c4df-46de-87bf-ecd6da8a580e
+ 	Public key:	0x8498e2c928c5c6718157720239b0cf9968fbbcdf7893a5f46b32c70bd66390c2f6546263aa596a3a09b4447aa8b676fc
+ 3
+  UUID:		972483d5-19f7-419e-8f48-3858daea1ca0
+	Public key:	0x98d2f1a38682dc4c3bd3ad1a28411d9507dd6423f8af6bcb9f3d827b7d309c8910825b6523359651a9b1ec16a754c2e4`,
+        data: [
+          {
+            name: "2",
+            uuid: "32ec701a-880b-4cfa-a409-74d88854ec64",
+            publicKey:
+              "0x98552a5cfa4022f529eadafeb0d17c2ed748a42ecd799472dad244ffd21342a7b3e436a38abad1ece8afabfd13b42e60"
+          },
+          {
+            name: "1",
+            uuid: "7ec09618-c4df-46de-87bf-ecd6da8a580e",
+            publicKey:
+              "0x8498e2c928c5c6718157720239b0cf9968fbbcdf7893a5f46b32c70bd66390c2f6546263aa596a3a09b4447aa8b676fc"
+          },
+          {
+            name: "3",
+            uuid: "972483d5-19f7-419e-8f48-3858daea1ca0",
+            publicKey:
+              "0x98d2f1a38682dc4c3bd3ad1a28411d9507dd6423f8af6bcb9f3d827b7d309c8910825b6523359651a9b1ec16a754c2e4"
+          }
+        ]
+      },
+      {
+        id: "Single account",
+        res: `Primary
+	UUID:		32ec701a-880b-4cfa-a409-74d88854ec64
+	Public key:	0x98552a5cfa4022f529eadafeb0d17c2ed748a42ecd799472dad244ffd21342a7b3e436a38abad1ece8afabfd13b42e60`,
+        data: [
+          {
+            name: "Primary",
+            uuid: "32ec701a-880b-4cfa-a409-74d88854ec64",
+            publicKey:
+              "0x98552a5cfa4022f529eadafeb0d17c2ed748a42ecd799472dad244ffd21342a7b3e436a38abad1ece8afabfd13b42e60"
+          }
+        ]
+      },
+      {
+        id: "Empty response",
+        res: "",
+        data: []
+      }
+    ];
+
+    for (const { id, res, data } of cases) {
+      it(`Parse ${id} output`, () => {
+        const dataResult = parseWalletAccountsVerbose(res);
+        console.log(dataResult);
+        assert.deepEqual(dataResult, data, "Wrong data");
+      });
+    }
   });
 });
 
