@@ -104,8 +104,8 @@ describe("ethdo module", () => {
   it("Do UI flow", async () => {
     const account = "Primary";
     const passphrase = "secret-passphrase" + Math.random();
-    await ethdo.createWithdrawlAccount({ account, passphrase });
-    const validator = await ethdo.newRandomValidatorAccount();
+    await ethdo.createAccount({ account, passphrase }, "withdrawl");
+    const validator = await ethdo.createAccount({ account: "1" }, "validator");
     const depositData = await ethdo.getDepositData(validator, account);
     logs.info({ validator, depositData });
     assert.equal(validator.account, "validator/1", "unexpected validator name");
@@ -120,7 +120,8 @@ describe("ethdo module", () => {
       account: `${wallet}/${name}`,
       passphrase: "secret-passphrase" + Math.random()
     }));
-    for (const account of accounts) await ethdo.createWithdrawlAccount(account);
+    for (const account of accounts)
+      await ethdo.createAccount(account, "withdrawl");
 
     const accountList = await ethdo.accountList(wallet);
     assert.deepEqual(

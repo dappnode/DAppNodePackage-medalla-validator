@@ -51,7 +51,7 @@ async function migrateKeyIfExists(
  */
 function getPassword(): string {
   try {
-    return fs.readFileSync(legacyPasswordPath, "utf8");
+    return fs.readFileSync(legacyPasswordPath, "utf8").trim();
   } catch (e) {
     if (e.code !== "ENOENT") throw e;
     if (!adminPassword)
