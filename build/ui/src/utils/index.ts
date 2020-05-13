@@ -44,8 +44,9 @@ export function urlJoin(...args: string[]): string {
  * Format an ETH value to a reasonable amount of decimal places
  * @param value
  */
-export function formatEth(value: string | number): number {
+export function formatEth(value: string | number): number | string {
   const num = typeof value === "string" ? parseFloat(value) : value;
+  if (isNaN(num)) return value;
   return +num.toFixed(3);
 }
 
