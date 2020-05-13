@@ -4,9 +4,9 @@
 FROM node:stretch-slim as build-ui
 WORKDIR /app
 # Copy and install deps first to cache
-COPY api/ui/package.json api/ui/yarn.lock ./
+COPY ui/package.json ui/yarn.lock ./
 RUN yarn
-COPY api/ui .
+COPY ui .
 RUN yarn schemas-generate
 RUN yarn build
 # Results in build/*
@@ -16,9 +16,9 @@ RUN yarn build
 ################
 FROM node:stretch-slim as build-server
 WORKDIR /app
-COPY api/server/package.json api/server/yarn.lock ./
+COPY server/package.json server/yarn.lock ./
 RUN yarn
-COPY api/server .
+COPY server .
 COPY --from=build-ui /app/src/common ../ui/src/common
 RUN yarn build
 # Results in build/index.js
@@ -63,7 +63,7 @@ ENV WORKDIR /app
 
 WORKDIR ${WORKDIR}
 
-ADD app/ssl /app/ssl
+ADD ssl /app/ssl
 COPY --from=node:10.20.1-stretch-slim /usr/local/bin/node /usr/local/bin
 COPY --from=ethdo-binary /go/bin/ethdo /usr/local/bin/ 
 COPY --from=validator-binary /usr/local/bin/validator /usr/local/bin/

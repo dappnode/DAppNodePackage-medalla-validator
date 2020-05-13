@@ -2,5 +2,6 @@ build_*
 .env
 node_modules/
 
-build/api/server/build
-build/api/server/db-api/
+build/server/build
+build/server/db-api/
+build/ui/build

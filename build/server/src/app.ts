@@ -22,7 +22,7 @@ const filesPath = path.resolve(process.env.CLIENT_FILES_PATH || "../ui/build");
 // Express configuration
 app.set("port", process.env.SERVER_PORT || 8080);
 app.use(cors()); // default options. ALL CORS
-app.use(logger("dev")); // Log requests in "dev" format
+app.use(logger("dev", { skip: (req, res) => res.statusCode < 400 })); // Log error requests in "dev" format
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
