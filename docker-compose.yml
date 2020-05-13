@@ -3,8 +3,8 @@ services:
   prysm-validator.public.dappnode.eth:
     image: "prysm-validator.public.dappnode.eth:1.0.7"
     build:
-      context: ./build
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: build/Dockerfile
       args:
         - VERSION=v1.0.0-alpha.6
     volumes:
@@ -17,8 +17,8 @@ services:
       - VERBOSITY=info
       - LOG_LEVEL=
       - EXTRA_OPTS=--enable-account-metrics
-      - BEACON_GRPC_URL=prysm-beacon-chain.public.dappnode:4000
-      - BEACON_GRPC_GATEWAY_URL=http://prysm-beacon-chain.public.dappnode:4001
+      - "BEACON_GRPC_URL=prysm-beacon-chain.public.dappnode:4000"
+      - "BEACON_GRPC_GATEWAY_URL=http://prysm-beacon-chain.public.dappnode:4001"
 volumes:
   data: {}
   db-api: {}

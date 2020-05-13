@@ -4,9 +4,9 @@
 FROM node:stretch-slim as build-ui
 WORKDIR /app
 # Copy and install deps first to cache
-COPY ui/package.json ui/yarn.lock ./
+COPY build/ui/package.json build/ui/yarn.lock ./
 RUN yarn
-COPY ui .
+COPY build/ui .
 RUN yarn schemas-generate
 RUN yarn build
 # Results in build/*
@@ -16,12 +16,24 @@ RUN yarn build
 ################
 FROM node:stretch-slim as build-server
 WORKDIR /app
-COPY server/package.json server/yarn.lock ./
+COPY build/server/package.json build/server/yarn.lock ./
 RUN yarn
-COPY server .
+COPY build/server .
 COPY --from=build-ui /app/src/common ../ui/src/common
 RUN yarn build
 # Results in build/index.js
+
+################
+# Git data
+################
+FROM node:stretch-slim as git-data
+WORKDIR /app
+RUN apt update && apt install --assume-yes git
+COPY .git .git
+COPY dappnode_package.json .
+COPY build/getGitData.js .
+RUN node getGitData /app/.git-data.json
+# Results in /app/.git-data.json
 
 ################
 # ethdo binary
@@ -59,16 +71,18 @@ ENV SERVER_PORT 80
 ENV CLIENT_FILES_PATH dist
 ENV DATA_PATH /app/data
 ENV DB_API_DIR /app/db-api
+ENV GIT_DATA_PATH /app/.git-data.json
 ENV WORKDIR /app
 
 WORKDIR ${WORKDIR}
 
-ADD ssl /app/ssl
+ADD build/ssl /app/ssl
 COPY --from=node:10.20.1-stretch-slim /usr/local/bin/node /usr/local/bin
 COPY --from=ethdo-binary /go/bin/ethdo /usr/local/bin/ 
 COPY --from=validator-binary /usr/local/bin/validator /usr/local/bin/
 COPY --from=build-ui /app/build ${CLIENT_FILES_PATH}
 COPY --from=build-server /app/build server
+COPY --from=git-data /app/.git-data.json $GIT_DATA_PATH
 
 RUN ln -s /root/.config/ethereum2 ${DATA_PATH}
 

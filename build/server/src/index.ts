@@ -4,6 +4,7 @@ import { listenToDepositEvents } from "./services/eth1";
 import { readKeymanager, validatorBinary } from "./services/validator";
 import { migrateLegacyKeys } from "./services/migratePrysmKeys";
 import { collectValidatorMetrics } from "./services/metrics";
+import { printGitData } from "./services/printGitData";
 
 if (readKeymanager().accounts.length > 0) validatorBinary.restart();
 // Connect to a Goerli node
@@ -12,6 +13,8 @@ listenToDepositEvents();
 collectValidatorMetrics();
 // Migrate keys previously controlled by the validator binary to ethdo
 migrateLegacyKeys();
+// For debugging only: print DNP version, git branch and commit
+printGitData();
 
 /**
  * Start Express server.

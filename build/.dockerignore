@@ -1,9 +1,0 @@
-**/node_modules
-node_modules/
-data/
-build/
-server/build/
-server/dist
-ui/build
-Dockerfile*
-db-api/

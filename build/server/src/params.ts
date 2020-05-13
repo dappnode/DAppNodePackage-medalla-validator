@@ -36,3 +36,6 @@ export const logDebug = logLevel === "debug" || logLevel === "DEBUG";
 export const uiFilesPath = process.env.CLIENT_FILES_PATH || "../ui/build";
 export const serverPort = process.env.SERVER_PORT || 8080;
 export const dbDir = process.env.DB_API_DIR || "db-api";
+
+// Other
+export const gitDataPath = process.env.GIT_DATA_PATH;
