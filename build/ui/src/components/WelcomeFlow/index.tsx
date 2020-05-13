@@ -14,6 +14,7 @@ import { StepDeposit } from "./StepDeposit";
 import { FooterNote } from "../FooterNote";
 import { NavButtons } from "./NavButtons";
 import { goerliTxViewer } from "common/params";
+import { urlJoin } from "utils";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -109,7 +110,7 @@ export function WelcomeFlow({ onExit }: { onExit: () => void }) {
               takes about 2 hours. You can track in the main panel when you get
               assigned.
             </Typography>
-            <Link href={`${goerliTxViewer}/${depositTxHash}`}>
+            <Link href={urlJoin(goerliTxViewer, depositTxHash)}>
               {depositTxHash}
             </Link>
             <NavButtons onNext={onExit}></NavButtons>

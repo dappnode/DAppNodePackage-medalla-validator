@@ -24,6 +24,7 @@ import {
   newTabProps,
   getEstimatedBalanceFormDepositEvents,
   formatEth,
+  urlJoin,
 } from "utils";
 import { prysmStatusDescription } from "text";
 
@@ -187,7 +188,7 @@ function DepositEventsView({
           Deposited: {depositEvent.blockNumber}
           <Link
             className={classes.linkIcon}
-            href={`${goerliTxViewer}/${depositEvent.txHash}`}
+            href={urlJoin(goerliTxViewer, depositEvent.txHash || "")}
             {...newTabProps}
           >
             <LaunchIcon fontSize="inherit" />
