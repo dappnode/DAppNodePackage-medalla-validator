@@ -5,10 +5,9 @@ import cors from "cors";
 import errorhandler from "errorhandler";
 import * as methods from "./methods";
 import { getRpcHandler } from "../src/routes/rpc";
+import { serverPort } from "../src/params";
 // Display stack traces with source-maps
 import "source-map-support/register";
-
-const rpcHandler = getRpcHandler(methods);
 
 if (process.env.NODE_ENV !== "development")
   throw Error(`This is a mock server only intended for development`);
@@ -16,12 +15,12 @@ if (process.env.NODE_ENV !== "development")
 const app = express();
 
 // Express configuration
-app.set("port", process.env.SERVER_PORT || 8080);
+app.set("port", serverPort);
 app.use(cors()); // default options. ALL CORS
 app.use(logger("dev")); // Log requests in "dev" format
 app.use(errorhandler());
 app.use(bodyParser.json());
-app.post("/rpc", rpcHandler);
+app.post("/rpc", getRpcHandler(methods));
 
 app.listen(app.get("port"), () => {
   /* eslint-disable-next-line no-console */

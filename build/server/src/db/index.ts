@@ -7,8 +7,8 @@ import {
   BeaconNodeChainhead
 } from "../../common";
 import { getRandomToken } from "../utils/token";
+import { dbDir } from "../params";
 
-export const dbDir = process.env.DB_API_DIR || "db-api";
 export const sessionsPath = path.join(dbDir, "sessions");
 const serverDbPath = path.join(dbDir, "server-db.json");
 const accountsDbPath = path.join(dbDir, "account-db.json");

@@ -1,4 +1,5 @@
-const LOG_LEVEL = process.env.LOG_LEVEL;
+import { logDebug } from "./params";
+
 const cwd = __dirname;
 
 const tags = {
@@ -13,15 +14,11 @@ const tags = {
 export const logs = {
   /**
    * Allows to log any type of data. Strings will be shown first.
-   * Only shown if `process.env.LOG_LEVEL === "debug"`
    * ```js
    * logs.debug("some process", ["arg", "arg"], id);
    * ```
    */
-  debug: formatLogger(
-    tags.debug,
-    LOG_LEVEL === "debug" ? console.debug : () => {}
-  ),
+  debug: formatLogger(tags.debug, logDebug ? console.debug : () => {}),
   /**
    * Allows to log any type of data. Strings will be shown first.
    * ```js

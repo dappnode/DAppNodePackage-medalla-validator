@@ -1,28 +1,22 @@
 import fs from "fs";
-import path from "path";
 import * as db from "../db";
 import { ethers } from "ethers";
 import { ethdo, WalletType } from "../ethdo";
 import { addValidatorToKeymanager } from "./validator";
 import { logs } from "../logs";
-
-const validatorPath = "validatorprivatekey";
-const withdrawalPath = "shardwithdrawalkey";
-const password = process.env.PASSWORD;
-const dataPath = process.env.DATA_PATH;
+import { legacyValidatorPath, legacyWithdrawalPath, password } from "../params";
 
 export function migrateLegacyKeys(): void {
-  migrateKeyIfExists(validatorPath, "validator", password);
-  migrateKeyIfExists(withdrawalPath, "withdrawl", password);
+  migrateKeyIfExists(legacyValidatorPath, "validator", password);
+  migrateKeyIfExists(legacyWithdrawalPath, "withdrawl", password);
 }
 
 async function migrateKeyIfExists(
-  keystoreName: string,
+  keystorePath: string,
   wallet: WalletType,
   password: string | undefined
 ): Promise<void> {
   try {
-    const keystorePath = path.join(dataPath || ".", keystoreName);
     if (!fs.existsSync(keystorePath)) return;
     if (!password) throw Error(`ENV PASSWORD not defined`);
 
@@ -47,7 +41,7 @@ async function migrateKeyIfExists(
     fs.unlinkSync(keystorePath);
     logs.info(`Migrated ${wallet} keystore ${keystorePath} > ${accountName}`);
   } catch (e) {
-    logs.error(`Error migrating ${wallet} keystore ${keystoreName}`, e);
+    logs.error(`Error migrating ${wallet} keystore ${keystorePath}`, e);
   }
 }
 

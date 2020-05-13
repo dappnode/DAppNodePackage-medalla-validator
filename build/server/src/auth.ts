@@ -1,9 +1,10 @@
 import express from "express";
 import { HttpError } from "./utils/express";
 import { logs } from "./logs";
+import * as params from "./params";
 
-const adminPassword = process.env.PASSWORD || "test-password";
-const disablePassword = process.env.DISABLE_PASSWORD;
+const adminPassword = params.password || "test-password";
+const disablePassword = params.disablePassword;
 if (disablePassword) logs.warn(`Warning! PASSWORD_DISABLED, anyone can access`);
 
 export function onlyAdmin(req: express.Request): string {
