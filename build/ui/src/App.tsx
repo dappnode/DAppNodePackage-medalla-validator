@@ -27,7 +27,7 @@ const useStyles = makeStyles({
 });
 
 export default function App() {
-  const [showValidatorFlow, setShowValidatorFlow] = useState(false);
+  const [showValidatorFlow, setShowValidatorFlow] = useState(true);
   const [loginStatus, setLoginStatus] = useState<LoginStatus>();
   const [isOffline, setIsOffline] = useState<boolean>();
   const [darkMode, setDarkMode] = useState<boolean>();

@@ -7,6 +7,8 @@ import {
   ListItemText,
   Grid,
   Button,
+  Box,
+  TextField,
 } from "@material-ui/core";
 import { RequestStatus } from "types";
 import { ErrorView } from "components/ErrorView";
@@ -33,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     opacity: 0.4,
     margin: theme.spacing(3, 0),
   },
-  accountDetails: {
+  depositData: {
     color: theme.palette.text.secondary,
   },
   code: {
@@ -57,6 +59,7 @@ export function StepDeposit({
   onBack: () => void;
 }) {
   const [depositStatus, setDepositStatus] = useState<RequestStatus<TxHash>>({});
+  const [showGetFunds, setShowGetFunds] = useState<boolean>(); // Never go back to show get funds
   const depositData = useApi.getDepositData({
     validatorAccount,
     withdrawlAccount,
@@ -66,6 +69,10 @@ export function StepDeposit({
   const eth1Address = eth1Account.data && eth1Account.data.address;
   const eth1Balance = eth1Account.data && eth1Account.data.balance;
   const insufficientFunds = eth1Account.data?.insufficientFunds;
+  useEffect(() => {
+    if (insufficientFunds && showGetFunds === undefined) setShowGetFunds(true);
+    if (!insufficientFunds && showGetFunds === true) setShowGetFunds(false);
+  }, [insufficientFunds]);
 
   useEffect(() => {
     const interval = setInterval(eth1Account.revalidate, 2000);
@@ -113,19 +120,14 @@ export function StepDeposit({
         Send deposit
       </Typography>
 
-      {depositData.data ? (
-        <details className={classes.accountDetails}>
-          <summary>With internal Eth1 account</summary>
-          <Typography>Account:</Typography>
-          <code className={classes.code}>{eth1Address || "Loading..."}</code>
-          <Typography>Deposit data:</Typography>
-          <code className={classes.code}>{depositData.data}</code>
-        </details>
-      ) : depositData.error ? (
-        <ErrorView error={depositData.error} />
-      ) : depositData.isValidating ? (
-        <LoadingView steps={["Computing deposit data"]} />
-      ) : null}
+      <TextField
+        label="Internal Eth1 account"
+        inputProps={{ paddingTop: 10 }}
+        variant="outlined"
+        disabled
+        value={eth1Address || "Loading..."}
+        fullWidth
+      />
 
       <Grid container>
         <Grid item xs={6}>
@@ -146,11 +148,27 @@ export function StepDeposit({
         </Grid>
       </Grid>
 
-      {insufficientFunds && (
+      {showGetFunds && (
         <Button color="primary" variant="contained" fullWidth>
           Get funds
         </Button>
       )}
+
+      <Box>
+        <Typography gutterBottom>Deposit data:</Typography>
+        {depositData.data ? (
+          <details className={classes.depositData}>
+            <summary>
+              <Typography>View</Typography>
+            </summary>
+            <code className={classes.code}>{depositData.data}</code>
+          </details>
+        ) : depositData.error ? (
+          <ErrorView error={depositData.error} />
+        ) : depositData.isValidating ? (
+          <LoadingView steps={["Computing deposit data"]} />
+        ) : null}
+      </Box>
 
       <Button
         color="primary"
