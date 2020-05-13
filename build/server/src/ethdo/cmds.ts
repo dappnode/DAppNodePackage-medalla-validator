@@ -9,7 +9,9 @@ interface WalletAccountData {
 }
 
 function hidePassphrase(s: string = ""): string {
-  return s.replace(/--\S*passphrase\S*/g, "********");
+  return s
+    .replace(/--\S*passphrase\S*/g, "********")
+    .replace(/--\S*key\S*/g, "********");
 }
 
 export class EthdoCmds {
