@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import moment from "moment";
+import { useApi } from "api/rpc";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Link,
@@ -17,9 +18,10 @@ import LaunchIcon from "@material-ui/icons/Launch";
 import { Title } from "./Title";
 import { DepositEvent } from "../common/types";
 import { goerliTxViewer, beaconAccountViewer } from "common/params";
-import { useApi } from "api/rpc";
 import { ErrorView } from "components/ErrorView";
+import { HelpText } from "components/HelpText";
 import { newTabProps, getEstimatedBalanceFormDepositEvents } from "utils";
+import { prysmStatusDescription } from "text";
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
@@ -82,7 +84,11 @@ export function AccountsTable({ addValidator }: { addValidator: () => void }) {
               <TableCell>PubKey</TableCell>
               <TableCell>Created</TableCell>
               <TableCell>Deposit</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell>
+                <span className={classes.centerLink}>
+                  Status <HelpText table={prysmStatusDescription} />
+                </span>
+              </TableCell>
               <TableCell align="right">Balance</TableCell>
             </TableRow>
           </TableHead>
