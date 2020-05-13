@@ -66,6 +66,20 @@ export function readKeymanager(): Keymanager {
   }
 }
 
+export function readAccountFromKeymanager(
+  account: string
+): { account: string; passphrase: string } {
+  const keymanager = readKeymanager();
+  const accountIndex = keymanager.accounts.findIndex(a => a === account);
+  if (accountIndex < 0) throw Error(`Account ${account} not found`);
+  const passphrase = keymanager.accounts[accountIndex];
+  if (typeof passphrase === "undefined")
+    throw Error(
+      `No passphrase found for account ${account} at index ${accountIndex}`
+    );
+  return { account, passphrase };
+}
+
 function writeKeymanager(keymanager: Keymanager): void {
   fs.writeFileSync(keymanagerFile, JSON.stringify(keymanager, null, 2));
   validatorBinary.restart();

@@ -29,7 +29,7 @@ export function lowDbStaticFactory<State extends { [key: string]: any }>(
   initialState: State
 ): {
   [K in keyof State]: {
-    get: () => State[K] | undefined;
+    get: () => State[K];
     set: (newValue: State[K]) => void;
     merge: (newValue: State[K]) => void;
     del: () => void;

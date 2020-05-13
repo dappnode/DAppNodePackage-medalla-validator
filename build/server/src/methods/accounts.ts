@@ -1,5 +1,8 @@
 import { isEmpty } from "lodash";
-import { addValidatorToKeymanager } from "../services/validator";
+import {
+  addValidatorToKeymanager,
+  readAccountFromKeymanager
+} from "../services/validator";
 import { ethdo } from "../ethdo";
 import * as db from "../db";
 import {
@@ -27,8 +30,9 @@ export async function getDepositData({
   withdrawlAccount: string;
 }): Promise<string> {
   const validators = db.accounts.validatorAccounts.get();
-  if (!validators) throw Error(`No validators in DB`);
-  const validator = validators[validatorAccount];
+  let validator = validators[validatorAccount];
+  // A validator may not be in the api's DB but in the keymanager.json, go fetch it
+  if (!validator) validator = await recoverValidatorAccount(validatorAccount);
   if (!validator) throw Error(`Validator ${validatorAccount} not found`);
 
   const depositData = await ethdo.getDepositData(validator, withdrawlAccount);
@@ -73,6 +77,18 @@ export async function validatorsStats(): Promise<ValidatorStats[]> {
   const accounts = await listValidators();
 
   return accounts;
+}
+
+async function recoverValidatorAccount(account: string) {
+  const recoveredValidator = readAccountFromKeymanager(account);
+  const publicKey = await ethdo.accountPublicKey(account);
+  const validator = {
+    ...recoveredValidator,
+    publicKey,
+    createdTimestamp: Date.now()
+  };
+  db.updateValidator(validator);
+  return validator;
 }
 
 async function listValidators(): Promise<ValidatorStats[]> {
