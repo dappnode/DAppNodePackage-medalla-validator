@@ -20,7 +20,11 @@ import { DepositEvent } from "../common/types";
 import { goerliTxViewer, beaconAccountViewer } from "common/params";
 import { ErrorView } from "components/ErrorView";
 import { HelpText } from "components/HelpText";
-import { newTabProps, getEstimatedBalanceFormDepositEvents } from "utils";
+import {
+  newTabProps,
+  getEstimatedBalanceFormDepositEvents,
+  formatEth,
+} from "utils";
 import { prysmStatusDescription } from "text";
 
 const useStyles = makeStyles((theme) => ({
@@ -95,10 +99,10 @@ export function AccountsTable({ addValidator }: { addValidator: () => void }) {
           <TableBody>
             {validatorsStats.data.map((account) => {
               const balance = account.balance;
-              const balanceOk = typeof balance === "number";
-              const estimatedBalance = balanceOk
-                ? null
-                : getEstimatedBalanceFormDepositEvents(account.depositEvents);
+              const estimatedBalance =
+                typeof balance === "number" || typeof balance === "string"
+                  ? null
+                  : getEstimatedBalanceFormDepositEvents(account.depositEvents);
               return (
                 <TableRow key={account.name}>
                   <TableCell>{account.name}</TableCell>
@@ -115,8 +119,8 @@ export function AccountsTable({ addValidator }: { addValidator: () => void }) {
                   </TableCell>
                   <TableCell>{account.status}</TableCell>
                   <TableCell align="right">
-                    {balanceOk
-                      ? balance
+                    {typeof balance === "number" || typeof balance === "string"
+                      ? formatEth(balance)
                       : estimatedBalance
                       ? `${estimatedBalance} (estimated)`
                       : "-"}

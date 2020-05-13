@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Grid } from "@material-ui/core";
 import { Title } from "./Title";
 import { useApi } from "api/rpc";
-import { getEstimatedBalanceFormDepositEvents } from "utils";
+import { getEstimatedBalanceFormDepositEvents, formatEth } from "utils";
 
 const useStyles = makeStyles((theme) => ({
   depositContext: {
@@ -71,7 +71,7 @@ export function TotalBalance() {
     <Grid item xs={12} sm={6}>
       <Title>Total balance</Title>
       <Typography component="p" variant="h4">
-        {totalBalance.sum}
+        {formatEth(totalBalance.sum)}
         {totalBalance.isEstimated ? "*" : ""}{" "}
         {totalBalance.isPartial ? "**" : ""} ETH
       </Typography>

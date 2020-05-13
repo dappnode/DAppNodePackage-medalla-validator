@@ -40,6 +40,15 @@ export function urlJoin(...args: string[]): string {
   );
 }
 
+/**
+ * Format an ETH value to a reasonable amount of decimal places
+ * @param value
+ */
+export function formatEth(value: string | number): number {
+  const num = typeof value === "string" ? parseFloat(value) : value;
+  return +num.toFixed(3);
+}
+
 const amount32Eth = "0x0040597307000000";
 
 /**
