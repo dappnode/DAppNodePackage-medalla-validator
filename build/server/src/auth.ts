@@ -1,14 +1,13 @@
 import express from "express";
 import { HttpError } from "./utils/express";
 import { logs } from "./logs";
-import * as params from "./params";
+import { adminPassword, disablePassword } from "./params";
 
-const adminPassword = params.password || "test-password";
-const disablePassword = params.disablePassword;
+if (!adminPassword) logs.warn(`Warning! No password set, anyone can access`);
 if (disablePassword) logs.warn(`Warning! PASSWORD_DISABLED, anyone can access`);
 
 export function onlyAdmin(req: express.Request): string {
-  if (disablePassword) return "PASSWORD_DISABLED";
+  if (!adminPassword || disablePassword) return "PASSWORD_DISABLED";
 
   if (!req.session) throw new HttpError("No session");
   if (!req.header("cookie")) throw new HttpError("No cookie", 400);

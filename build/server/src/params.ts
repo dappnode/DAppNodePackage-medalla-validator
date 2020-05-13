@@ -11,7 +11,7 @@ export const beaconRpcProvider =
   process.env.BEACON_GRPC_URL || "prysm-beacon-chain.public.dappnode:4000";
 
 // Login password
-export const password = process.env.PASSWORD;
+export const adminPassword = process.env.PASSWORD;
 export const disablePassword = process.env.DISABLE_PASSWORD;
 
 // To collect metrics
@@ -26,6 +26,7 @@ export const depositContractCreationBlock = 2523557;
 export const depositAmountEth = "32.0";
 
 // Legacy account file names
+export const legacyPasswordPath = path.join(dataPath, "password");
 export const legacyValidatorPath = path.join(dataPath, "validatorprivatekey");
 export const legacyWithdrawalPath = path.join(dataPath, "shardwithdrawalkey");
 

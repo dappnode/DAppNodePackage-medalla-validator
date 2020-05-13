@@ -4,21 +4,25 @@ import { ethers } from "ethers";
 import { ethdo, WalletType } from "../ethdo";
 import { addValidatorToKeymanager } from "./validator";
 import { logs } from "../logs";
-import { legacyValidatorPath, legacyWithdrawalPath, password } from "../params";
+import {
+  legacyValidatorPath,
+  legacyWithdrawalPath,
+  legacyPasswordPath,
+  adminPassword
+} from "../params";
 
 export function migrateLegacyKeys(): void {
-  migrateKeyIfExists(legacyValidatorPath, "validator", password);
-  migrateKeyIfExists(legacyWithdrawalPath, "withdrawl", password);
+  migrateKeyIfExists(legacyValidatorPath, "validator");
+  migrateKeyIfExists(legacyWithdrawalPath, "withdrawl");
 }
 
 async function migrateKeyIfExists(
   keystorePath: string,
-  wallet: WalletType,
-  password: string | undefined
+  wallet: WalletType
 ): Promise<void> {
   try {
     if (!fs.existsSync(keystorePath)) return;
-    if (!password) throw Error(`ENV PASSWORD not defined`);
+    const password = getPassword();
 
     const { privateKey, lastMod } = await readKeystore(keystorePath, password);
     const account = await ethdo.importAccount(privateKey, wallet);
@@ -38,6 +42,26 @@ async function migrateKeyIfExists(
     );
   } catch (e) {
     logs.error(`Error migrating ${wallet} keystore ${keystorePath}`, e);
+  }
+}
+
+/**
+ * Fetch the password to decrypt the legacy keystores from a local filepath
+ * Or use the env.PASSWORD as a backup
+ */
+function getPassword(): string {
+  try {
+    return fs.readFileSync(legacyPasswordPath, "utf8");
+  } catch (e) {
+    if (e.code !== "ENOENT") throw e;
+    if (!adminPassword)
+      throw Error(
+        `Legacy password file ${legacyPasswordPath} not found. Set the ENV PASSWORD to migrate the legacy accounts`
+      );
+    logs.warn(
+      `Legacy password file ${legacyPasswordPath} not found. Using ENV PASSWORD`
+    );
+    return adminPassword;
   }
 }
 
