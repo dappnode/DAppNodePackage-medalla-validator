@@ -13,7 +13,7 @@ import {
 
 export function migrateLegacyKeys(): void {
   migrateKeyIfExists(legacyValidatorPath, "validator");
-  migrateKeyIfExists(legacyWithdrawalPath, "withdrawl");
+  migrateKeyIfExists(legacyWithdrawalPath, "withdrawal");
 }
 
 async function migrateKeyIfExists(
@@ -32,8 +32,8 @@ async function migrateKeyIfExists(
         // Writes to keymanager and restart validator
         addValidatorToKeymanager(account);
 
-      case "withdrawl":
-        db.updateWithdrawl({ ...account, createdTimestamp: lastMod });
+      case "withdrawal":
+        db.updateWithdrawal({ ...account, createdTimestamp: lastMod });
     }
 
     fs.unlinkSync(keystorePath);

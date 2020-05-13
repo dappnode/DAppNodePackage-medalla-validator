@@ -22,10 +22,10 @@ export async function accountsGet(): Promise<ValidatorAccount[]> {
 
 export async function getDepositData({
   validatorAccount,
-  withdrawlAccount
+  withdrawalAccount
 }: {
   validatorAccount: string;
-  withdrawlAccount: string;
+  withdrawalAccount: string;
 }): Promise<string> {
   const validators = db.accounts.validatorAccounts.get();
   let validator = validators[validatorAccount];
@@ -33,15 +33,15 @@ export async function getDepositData({
   if (!validator) validator = await recoverValidatorAccount(validatorAccount);
   if (!validator) throw Error(`Validator ${validatorAccount} not found`);
 
-  const depositData = await ethdo.getDepositData(validator, withdrawlAccount);
+  const depositData = await ethdo.getDepositData(validator, withdrawalAccount);
   db.updateValidator({ ...validator, depositData });
 
   return depositData;
 }
 
-export async function accountWithdrawlCreate(accountReq: EthdoAccount) {
-  const account = await ethdo.createAccount(accountReq, "withdrawl");
-  db.updateWithdrawl({ ...account, createdTimestamp: Date.now() });
+export async function accountWithdrawalCreate(accountReq: EthdoAccount) {
+  const account = await ethdo.createAccount(accountReq, "withdrawal");
+  db.updateWithdrawal({ ...account, createdTimestamp: Date.now() });
 }
 
 export async function accountValidatorCreate(accountReq: EthdoAccountNoPass) {
@@ -51,10 +51,10 @@ export async function accountValidatorCreate(accountReq: EthdoAccountNoPass) {
   addValidatorToKeymanager(account);
 }
 
-export async function accountWithdrawlList(): Promise<WalletAccount[]> {
-  const accounts = await ethdo.accountList("withdrawl");
+export async function accountWithdrawalList(): Promise<WalletAccount[]> {
+  const accounts = await ethdo.accountList("withdrawal");
 
-  // All withdrawl accounts are available and can be reused
+  // All withdrawal accounts are available and can be reused
   return accounts.map(account => ({
     ...account,
     available: true

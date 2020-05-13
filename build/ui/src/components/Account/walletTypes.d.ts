@@ -1,1 +1,1 @@
-export type WalletType = "validator" | "withdrawl";
+export type WalletType = "validator" | "withdrawal";

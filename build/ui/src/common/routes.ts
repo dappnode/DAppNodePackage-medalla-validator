@@ -8,12 +8,12 @@ import {
 
 export interface Routes {
   accountValidatorList: () => Promise<WalletAccount[]>;
-  accountWithdrawlList: () => Promise<WalletAccount[]>;
-  accountWithdrawlCreate: (account: EthdoAccount) => Promise<void>;
+  accountWithdrawalList: () => Promise<WalletAccount[]>;
+  accountWithdrawalCreate: (account: EthdoAccount) => Promise<void>;
   accountValidatorCreate: (account: EthdoAccountNoPass) => Promise<void>;
   getDepositData: (args: {
     validatorAccount: string;
-    withdrawlAccount: string;
+    withdrawalAccount: string;
   }) => Promise<string>;
   // Internal Eth1 account
   eth1AccountGet: () => Promise<{
@@ -30,9 +30,9 @@ export interface Routes {
 
 export const routesData: { [P in keyof Routes]: {} } = {
   accountValidatorList: {},
-  accountWithdrawlList: {},
+  accountWithdrawalList: {},
   accountValidatorCreate: {},
-  accountWithdrawlCreate: {},
+  accountWithdrawalCreate: {},
   getDepositData: {},
   eth1AccountGet: {},
   eth1MakeDeposit: {},

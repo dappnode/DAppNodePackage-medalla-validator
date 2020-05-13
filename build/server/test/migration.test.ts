@@ -17,7 +17,7 @@ describe("Import accounts controlled by validator to ethdo", () => {
         "0x2ac2527e3ff205fd2f9212ff6dd2d51a9f1d45220451bfdf17eede2b829adfe3"
     },
     {
-      id: "Test withdrawl",
+      id: "Test withdrawal",
       password: "password",
       keystore: `{"publickey":"b318b4d5fb94cae426ba5d0a47cbd45e1acd0b49d231c34c48c66674bb88788a75c7468484d74e2e98e9bd0f147b8971","crypto":{"cipher":"aes-128-ctr","ciphertext":"167483ea9a59a1af95f0c94e65bd89907bcc5bf307f9ed7877a7b71202c60cdc","cipherparams":{"iv":"38595537498bb9d95642164c3298b71c"},"kdf":"scrypt","kdfparams":{"dklen":32,"n":262144,"p":1,"r":8,"salt":"3d768457015bd1cfc8226608f5fb4ee0829244850efa1d27c156f9eee69c3a16"},"mac":"e9851dcd50516823783958e0914366cde392fee85080f1f2e9496d03cb419732"},"id":"c5de97bb-6d50-4d06-a737-27f24bc5d147"}`,
       privateKey:
@@ -31,7 +31,7 @@ describe("Import accounts controlled by validator to ethdo", () => {
         "0x66a07f2ffcaa8ddaafb26c433f258d13faa8d97272a074efb82c4732e4b08a51"
     },
     {
-      id: "Edu withdrawl",
+      id: "Edu withdrawal",
       password: "0",
       keystore: `{"publickey":"af49565e75d8c841a1df2031e3c87cbdb3a4aed89fabe6dfd2dfda13d205b8689e3dbf5801cfb32c2f5e3551597884dc","crypto":{"cipher":"aes-128-ctr","ciphertext":"9409f62e1fc076bfdb623ca620f6bcaeeeb65837d64bffa1b17ffca6c2f50527","cipherparams":{"iv":"9c0a76194e84fe1af033f828998deccd"},"kdf":"scrypt","kdfparams":{"dklen":32,"n":262144,"p":1,"r":8,"salt":"71310264e0cd03af2f7e6a2619554aef0022713e024f022dbd2effbfab82d86d"},"mac":"d2c413d204cc66f71b86c4003582d8375eaf4e0d9276bc49ebea7dfdc79e2474"},"id":"9bb2d87d-a384-41e9-bca4-58541e63242a"}`,
       privateKey:

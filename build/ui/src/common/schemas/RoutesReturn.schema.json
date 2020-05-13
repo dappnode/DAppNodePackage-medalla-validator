@@ -7,13 +7,13 @@
         "$ref": "#/definitions/WalletAccount"
       }
     },
-    "accountWithdrawlList": {
+    "accountWithdrawalList": {
       "type": "array",
       "items": {
         "$ref": "#/definitions/WalletAccount"
       }
     },
-    "accountWithdrawlCreate": {
+    "accountWithdrawalCreate": {
       "type": "null"
     },
     "accountValidatorCreate": {
@@ -35,17 +35,10 @@
           "type": "boolean"
         }
       },
-      "required": [
-        "address",
-        "balance",
-        "insufficientFunds"
-      ]
+      "required": ["address", "balance", "insufficientFunds"]
     },
     "eth1MakeDeposit": {
-      "type": [
-        "null",
-        "string"
-      ]
+      "type": ["null", "string"]
     },
     "validatorsStats": {
       "type": "array",
@@ -74,12 +67,7 @@
           "type": "number"
         }
       },
-      "required": [
-        "id",
-        "name",
-        "publicKey",
-        "uuid"
-      ]
+      "required": ["id", "name", "publicKey", "uuid"]
     },
     "ValidatorStats": {
       "type": "object",
@@ -106,13 +94,7 @@
           }
         }
       },
-      "required": [
-        "depositEvents",
-        "id",
-        "name",
-        "publicKey",
-        "uuid"
-      ]
+      "required": ["depositEvents", "id", "name", "publicKey", "uuid"]
     },
     "DepositEvent": {
       "type": "object",

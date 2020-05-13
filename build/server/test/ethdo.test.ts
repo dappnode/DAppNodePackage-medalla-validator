@@ -48,12 +48,12 @@ describe("ethdo module", () => {
         { name: "2", pass: "validator/2-secret" }
       ]
     };
-    const walletWithdrawl: EthdoWallets = {
+    const walletWithdrawal: EthdoWallets = {
       name: "withdrawal",
       pass: "withdrawal-secret",
       accounts: [{ name: "primary", pass: "withdrawal/primary-secret" }]
     };
-    const wallets = [walletValidator, walletWithdrawl];
+    const wallets = [walletValidator, walletWithdrawal];
 
     // Create wallets
     for (const { name, pass } of wallets)
@@ -88,7 +88,7 @@ describe("ethdo module", () => {
       validatoraccount:
         walletValidator.name + "/" + walletValidator.accounts[0].name,
       withdrawalaccount:
-        walletWithdrawl.name + "/" + walletWithdrawl.accounts[0].name,
+        walletWithdrawal.name + "/" + walletWithdrawal.accounts[0].name,
       depositvalue: "32Ether",
       passphrase: walletValidator.accounts[0].pass,
       raw: true
@@ -108,7 +108,7 @@ describe("ethdo module", () => {
   it("Do UI flow", async () => {
     const account = "Primary";
     const passphrase = "secret-passphrase" + Math.random();
-    await ethdo.createAccount({ account, passphrase }, "withdrawl");
+    await ethdo.createAccount({ account, passphrase }, "withdrawal");
     const validator = await ethdo.createAccount({ account: "1" }, "validator");
     const depositData = await ethdo.getDepositData(validator, account);
     logs.info({ validator, depositData });
@@ -118,14 +118,14 @@ describe("ethdo module", () => {
   });
 
   it("List wallet accounts with a private key", async () => {
-    const wallet = "withdrawl";
+    const wallet = "withdrawal";
     await ethdo.walletCreate({ wallet });
     const accounts = ["primary", "secondary"].map(name => ({
       account: `${wallet}/${name}`,
       passphrase: "secret-passphrase" + Math.random()
     }));
     for (const account of accounts)
-      await ethdo.createAccount(account, "withdrawl");
+      await ethdo.createAccount(account, "withdrawal");
 
     const accountList = await ethdo.accountList(wallet);
     assert.deepEqual(

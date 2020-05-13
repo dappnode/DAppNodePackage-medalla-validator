@@ -11,7 +11,7 @@ import shell from "../utils/shell";
 import { findFirstAvailableNum } from "../utils/names";
 import { getRandomToken } from "../utils/token";
 
-const withdrawalWallet = "withdrawl";
+const withdrawalWallet = "withdrawal";
 const validatorWallet = "validator";
 export type WalletType = typeof validatorWallet | typeof withdrawalWallet;
 const PRIMARY = "primary";
@@ -140,7 +140,7 @@ export class Ethdo extends EthdoCmds {
     const accounts = await this.accountList(wallet);
     const names = accounts.map(({ name }) => name);
     const name =
-      wallet === "withdrawl" && !names.includes(PRIMARY)
+      wallet === "withdrawal" && !names.includes(PRIMARY)
         ? PRIMARY
         : findFirstAvailableNum(names);
     return formatAccount(name || "1", wallet);

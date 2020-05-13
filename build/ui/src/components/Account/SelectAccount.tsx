@@ -64,23 +64,23 @@ export function SelectValidatorAccount({
   );
 }
 
-export function SelectWithdrawlAccount({
-  withdrawlAccount,
-  setWithdrawlAccount,
+export function SelectWithdrawalAccount({
+  withdrawalAccount,
+  setWithdrawalAccount,
 }: {
-  withdrawlAccount: string;
-  setWithdrawlAccount: (id: string) => void;
+  withdrawalAccount: string;
+  setWithdrawalAccount: (id: string) => void;
 }) {
-  const withdrawlAccounts = useApi.accountWithdrawlList();
+  const withdrawalAccounts = useApi.accountWithdrawalList();
   return (
     <SelectAccount
-      wallet="withdrawl"
+      wallet="withdrawal"
       placeholderName="Primary"
       withPassphrase={true}
-      account={withdrawlAccount}
-      setAccount={setWithdrawlAccount}
-      accounts={withdrawlAccounts}
-      accountCreate={api.accountWithdrawlCreate}
+      account={withdrawalAccount}
+      setAccount={setWithdrawalAccount}
+      accounts={withdrawalAccounts}
+      accountCreate={api.accountWithdrawalCreate}
     />
   );
 }
@@ -165,7 +165,7 @@ function SelectAccount({
           </Button>
         )}
 
-        {/* Dialog to create a withdrawl account */}
+        {/* Dialog to create a withdrawal account */}
         <Dialog open={open} onClose={closeDialog}>
           <DialogContent className={classes.dialogContent}>
             <CreateAccount

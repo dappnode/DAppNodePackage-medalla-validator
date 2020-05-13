@@ -9,7 +9,7 @@ import {
   Link,
 } from "@material-ui/core";
 import { StepSelectValidator } from "./StepSelectValidator";
-import { StepSelectWithdrawl } from "./StepSelectWithdrawl";
+import { StepSelectWithdrawal } from "./StepSelectWithdrawal";
 import { StepDeposit } from "./StepDeposit";
 import { FooterNote } from "../FooterNote";
 import { NavButtons } from "./NavButtons";
@@ -57,7 +57,7 @@ export function WelcomeFlow({ onExit }: { onExit: () => void }) {
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
   const [validatorAccount, setValidatorAccount] = useState(""); // validator/1
-  const [withdrawlAccount, setWithdrawlAccount] = useState(""); // withdrawl/primary
+  const [withdrawalAccount, setWithdrawalAccount] = useState(""); // withdrawal/primary
   const [depositTxHash, setDepositTxHash] = useState("");
 
   const handleNext = () => {
@@ -68,7 +68,7 @@ export function WelcomeFlow({ onExit }: { onExit: () => void }) {
     setActiveStep(activeStep - 1);
   };
 
-  const steps = ["Validator", "Withdrawl", "Deposit"];
+  const steps = ["Validator", "Withdrawal", "Deposit"];
   function getStepContent(step: number) {
     switch (step) {
       case 0:
@@ -82,9 +82,9 @@ export function WelcomeFlow({ onExit }: { onExit: () => void }) {
         );
       case 1:
         return (
-          <StepSelectWithdrawl
-            withdrawlAccount={withdrawlAccount}
-            setWithdrawlAccount={setWithdrawlAccount}
+          <StepSelectWithdrawal
+            withdrawalAccount={withdrawalAccount}
+            setWithdrawalAccount={setWithdrawalAccount}
             onNext={handleNext}
             onBack={onExit}
           />
@@ -93,7 +93,7 @@ export function WelcomeFlow({ onExit }: { onExit: () => void }) {
         return (
           <StepDeposit
             validatorAccount={validatorAccount}
-            withdrawlAccount={withdrawlAccount}
+            withdrawalAccount={withdrawalAccount}
             setDepositTxHash={setDepositTxHash}
             onNext={handleNext}
             onBack={handleBack}

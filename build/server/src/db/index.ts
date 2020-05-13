@@ -23,7 +23,7 @@ interface DbValidator {
   createdTimestamp: number; // in miliseconds
 }
 
-interface DbWithdrawl {
+interface DbWithdrawal {
   account: string; // "Validator/1"
   passphrase?: string;
   createdTimestamp: number; // in miliseconds
@@ -39,8 +39,8 @@ const dbAccountsState: {
   validatorAccounts: {
     [account: string]: DbValidator;
   };
-  withdrawlAccounts: {
-    [account: string]: DbWithdrawl;
+  withdrawalAccounts: {
+    [account: string]: DbWithdrawal;
   };
   eth1Account:
     | {
@@ -50,7 +50,7 @@ const dbAccountsState: {
     | undefined;
 } = {
   validatorAccounts: {},
-  withdrawlAccounts: {},
+  withdrawalAccounts: {},
   eth1Account: undefined
 };
 
@@ -89,8 +89,8 @@ export function updateValidator(validator: DbValidator) {
   accounts.validatorAccounts.merge({ [validator.account]: validator });
 }
 
-export function updateWithdrawl(withdrawl: DbWithdrawl) {
-  accounts.withdrawlAccounts.merge({ [withdrawl.account]: withdrawl });
+export function updateWithdrawal(withdrawal: DbWithdrawal) {
+  accounts.withdrawalAccounts.merge({ [withdrawal.account]: withdrawal });
 }
 
 export function updateMetrics(pubKey: string, data: Partial<ValidatorMetrics>) {

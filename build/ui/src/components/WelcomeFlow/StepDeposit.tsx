@@ -47,13 +47,13 @@ type TxHash = string | undefined;
 
 export function StepDeposit({
   validatorAccount,
-  withdrawlAccount,
+  withdrawalAccount,
   setDepositTxHash,
   onNext,
   onBack,
 }: {
   validatorAccount: string;
-  withdrawlAccount: string;
+  withdrawalAccount: string;
   setDepositTxHash: (txHash: string) => void;
   onNext: () => void;
   onBack: () => void;
@@ -62,7 +62,7 @@ export function StepDeposit({
   const [showGetFunds, setShowGetFunds] = useState<boolean>(); // Never go back to show get funds
   const depositData = useApi.getDepositData({
     validatorAccount,
-    withdrawlAccount,
+    withdrawalAccount,
   });
 
   const eth1Account = useApi.eth1AccountGet();
@@ -108,8 +108,8 @@ export function StepDeposit({
           <Typography variant="body2">{validatorAccount}</Typography>
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={"Withdrawl"} secondary={""} />
-          <Typography variant="body2">{withdrawlAccount}</Typography>
+          <ListItemText primary={"Withdrawal"} secondary={""} />
+          <Typography variant="body2">{withdrawalAccount}</Typography>
         </ListItem>
       </List>
 
