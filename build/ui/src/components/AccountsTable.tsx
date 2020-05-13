@@ -134,6 +134,13 @@ function AccountRow({ account }: { account: ValidatorStats }) {
     typeof balance === "number" || typeof balance === "string"
       ? null
       : getEstimatedBalanceFormDepositEvents(account.depositEvents);
+
+  const hasDeposited = Object.values(account.depositEvents).length > 0;
+  const status =
+    (!account.status || account.status.includes("UNKNOWN")) && !hasDeposited
+      ? "PENDING DEPOSIT"
+      : account.status;
+
   return (
     <TableRow key={account.name}>
       <TableCell>{account.name}</TableCell>
@@ -148,7 +155,7 @@ function AccountRow({ account }: { account: ValidatorStats }) {
       <TableCell>
         <DepositEventsView depositEvents={account.depositEvents} />
       </TableCell>
-      <TableCell>{account.status}</TableCell>
+      <TableCell>{status}</TableCell>
       <TableCell align="right">
         {typeof balance === "number" || typeof balance === "string"
           ? formatEth(balance)
