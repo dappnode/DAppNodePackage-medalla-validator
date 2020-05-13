@@ -20,18 +20,11 @@
   "requirements": {
     "minimumDappnodeVersion": "0.2.22"
   },
-  "categories": [
-    "Blockchain",
-    "ETH2.0"
-  ],
+  "categories": ["Blockchain", "ETH2.0"],
   "backup": [
     {
       "name": "data",
-      "path": "/data"
-    },
-    {
-      "name": "keymanager",
-      "path": "/keymanager"
+      "path": "/app/data"
     }
   ],
   "links": {
@@ -39,7 +32,5 @@
     "prysm": "https://prylabs.net",
     "validators": "https://goerli.etherscan.io/address/0x5ca1e00004366ac85f492887aaab12d0e6418876"
   },
-  "dependencies": {
-    "prysm-beacon-chain.public.dappnode.eth": "latest"
-  }
+  "dependencies": {}
 }
