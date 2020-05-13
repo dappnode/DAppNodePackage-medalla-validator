@@ -16,7 +16,7 @@ import {
 } from "@material-ui/core";
 import LaunchIcon from "@material-ui/icons/Launch";
 import { Title } from "./Title";
-import { DepositEvent } from "../common/types";
+import { DepositEvent, ValidatorStats } from "../common/types";
 import { goerliTxViewer, beaconAccountViewer } from "common/params";
 import { ErrorView } from "components/ErrorView";
 import { HelpText } from "components/HelpText";
@@ -98,37 +98,9 @@ export function AccountsTable({ addValidator }: { addValidator: () => void }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {validatorsStats.data.map((account) => {
-              const balance = account.balance;
-              const estimatedBalance =
-                typeof balance === "number" || typeof balance === "string"
-                  ? null
-                  : getEstimatedBalanceFormDepositEvents(account.depositEvents);
-              return (
-                <TableRow key={account.name}>
-                  <TableCell>{account.name}</TableCell>
-                  <TableCell>
-                    <PublicKeyView publicKey={account.publicKey} />
-                  </TableCell>
-                  <TableCell>
-                    {account.createdTimestamp
-                      ? moment(account.createdTimestamp).fromNow()
-                      : "-"}
-                  </TableCell>
-                  <TableCell>
-                    <DepositEventsView depositEvents={account.depositEvents} />
-                  </TableCell>
-                  <TableCell>{account.status}</TableCell>
-                  <TableCell align="right">
-                    {typeof balance === "number" || typeof balance === "string"
-                      ? formatEth(balance)
-                      : estimatedBalance
-                      ? `${estimatedBalance} (estimated)`
-                      : "-"}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+            {validatorsStats.data.map((account, i) => (
+              <AccountRow key={account.id || i} account={account} />
+            ))}
           </TableBody>
         </Table>
 
@@ -154,6 +126,38 @@ export function AccountsTable({ addValidator }: { addValidator: () => void }) {
       </Box>
     );
   return null;
+}
+
+function AccountRow({ account }: { account: ValidatorStats }) {
+  const balance = account.balance;
+  const estimatedBalance =
+    typeof balance === "number" || typeof balance === "string"
+      ? null
+      : getEstimatedBalanceFormDepositEvents(account.depositEvents);
+  return (
+    <TableRow key={account.name}>
+      <TableCell>{account.name}</TableCell>
+      <TableCell>
+        <PublicKeyView publicKey={account.publicKey} />
+      </TableCell>
+      <TableCell>
+        {account.createdTimestamp
+          ? moment(account.createdTimestamp).fromNow()
+          : "-"}
+      </TableCell>
+      <TableCell>
+        <DepositEventsView depositEvents={account.depositEvents} />
+      </TableCell>
+      <TableCell>{account.status}</TableCell>
+      <TableCell align="right">
+        {typeof balance === "number" || typeof balance === "string"
+          ? formatEth(balance)
+          : estimatedBalance
+          ? `${estimatedBalance} (estimated)`
+          : "-"}
+      </TableCell>
+    </TableRow>
+  );
 }
 
 function PublicKeyView({ publicKey }: { publicKey: string }) {
