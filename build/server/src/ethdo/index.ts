@@ -39,7 +39,8 @@ export class Ethdo extends EthdoCmds {
     try {
       await this.walletInfo({ wallet });
     } catch (e) {
-      await this.walletCreate({ wallet });
+      if (e.message.includes("not found")) await this.walletCreate({ wallet });
+      else throw e;
     }
   }
 
@@ -164,7 +165,7 @@ export class Ethdo extends EthdoCmds {
   async randomValidatorName(): Promise<string> {
     const accounts = await this.accountValidatorList();
     const names = accounts.map(({ name }) => name);
-    const name = findFirstAvailableNum(names);
+    const name = findFirstAvailableNum(names) || "1";
     return formatAccount(name, validatorWallet);
   }
 
@@ -185,11 +186,13 @@ export const ethdo = new Ethdo(shell);
 
 /**
  * Makes sure account includes the wallet prefix
- * @param account 1
+ * @param name 1
  * @param wallet validator
  * @return validator/1
  */
 function formatAccount(account: string, wallet: WalletType): string {
+  if (!account || account === `${wallet}/`)
+    throw Error(`account name must not be empty: ${account}`);
   if (account.startsWith(wallet)) return account;
   else return `${wallet}/${account}`;
 }
