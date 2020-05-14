@@ -4,12 +4,11 @@ import {
   Eth1AccountStats,
   NodeStats
 } from "../../common";
-import { ethers } from "ethers";
 
 // New state
 
 let validatorCount = 0;
-const pendingValidator: PendingValidator[] = [];
+let pendingValidators: { [name: string]: PendingValidator } = {};
 const validator: { [name: string]: ValidatorStats } = {};
 let eth1Balance = 32.462112364172;
 
@@ -21,13 +20,34 @@ export async function addValidators(
   const names: string[] = [];
   for (let i = 0; i < count; i++) names.push(String(validatorCount++));
 
-  return await Promise.all(
+  pendingValidators = {};
+
+  const results = await Promise.all(
     names.map(
       async (name): Promise<PendingValidator> => {
-        await waitMs(1000 + 1000 * Math.random());
         const publicKey = String(Math.random());
         const transactionHash = String(Math.random());
         const blockNumber = Math.ceil(100000 * Math.random());
+
+        pendingValidators[name] = {
+          account: name,
+          publicKey,
+          status: "pending"
+        };
+
+        // Simulate mined
+        await waitMs(2000 + 2000 * Math.random());
+
+        pendingValidators[name] = {
+          account: name,
+          publicKey,
+          status: "mined",
+          transactionHash
+        };
+
+        // Simulate waiting for confirmation
+        await waitMs(2000 + 2000 * Math.random());
+
         validator[name] = {
           name,
           publicKey,
@@ -40,20 +60,36 @@ export async function addValidators(
             isEstimated: true
           }
         };
-        return {
-          account: name,
-          publicKey: String(Math.random()),
-          status: "confirmed",
-          transactionHash: String(Math.random()),
-          blockNumber: Math.ceil(100000 * Math.random())
-        };
+
+        if (Math.random() > 0.66)
+          return {
+            account: name,
+            publicKey,
+            status: "confirmed",
+            transactionHash,
+            blockNumber
+          };
+        else
+          return {
+            account: name,
+            publicKey,
+            status: "error",
+            transactionHash,
+            blockNumber,
+            error:
+              "Error: VM Exception while processing transaction: revert Not registered."
+          };
       }
     )
   );
+
+  pendingValidators = {};
+
+  return results;
 }
 
 export async function getPendingValidators(): Promise<PendingValidator[]> {
-  return [];
+  return Object.values(pendingValidators);
 }
 
 export async function getValidators(): Promise<ValidatorStats[]> {

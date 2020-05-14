@@ -64,17 +64,16 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: 1,
     fontWeight: 500,
   },
-  // ProgressBar
-  progressBar: {
-    height: "16px",
-  },
 }));
 
-export function Eth1Account() {
+export function Eth1Account({
+  addValidators,
+  addingValidators,
+}: {
+  addValidators: (num: number) => Promise<void>;
+  addingValidators?: boolean;
+}) {
   const [count, setCount] = useState(3);
-  const [statusAddingValidators, setStatusAddingValidators] = useState<
-    RequestStatus<PendingValidator[]>
-  >({});
   const eth1Account = useApi.eth1AccountGet();
   const classes = useStyles();
 
@@ -84,18 +83,6 @@ export function Eth1Account() {
     }, 2000);
     return () => clearInterval(interval);
   }, [eth1Account]);
-
-  async function addValidators() {
-    try {
-      setStatusAddingValidators({ loading: true });
-      const result = await api.addValidators(count);
-      setStatusAddingValidators({ result });
-      console.log(`Added ${count} validators`, result);
-    } catch (e) {
-      setStatusAddingValidators({ error: e });
-      console.error(`Error adding ${count} validators`, e);
-    }
-  }
 
   if (eth1Account.data) {
     const { address, balance } = eth1Account.data;
@@ -134,20 +121,14 @@ export function Eth1Account() {
             Get funds
           </Button>
           <Button
-            onClick={addValidators}
-            disabled={statusAddingValidators && statusAddingValidators.loading}
+            onClick={() => addValidators(count)}
+            disabled={addingValidators}
             variant="contained"
             color="primary"
           >
             Add validators
           </Button>
         </Grid>
-
-        {statusAddingValidators && (
-          <Grid item xs={12}>
-            <AddingValidatorsFeeback status={statusAddingValidators} />
-          </Grid>
-        )}
       </Grid>
     );
   }
@@ -158,97 +139,4 @@ export function Eth1Account() {
     return <LoadingView steps={["Loading Eth1 account"]}></LoadingView>;
 
   return null;
-}
-
-function AddingValidatorsFeeback({
-  status,
-}: {
-  status: RequestStatus<PendingValidator[]>;
-}) {
-  const { result, loading, error } = status;
-
-  const pendings: PendingValidator[] = [
-    {
-      account: "4",
-      publicKey: "761876238712683712683618726381276387126387123",
-      status: "pending",
-      transactionHash: "761876238712683712683618726381276387126387123",
-      blockNumber: 6462343,
-      amountEth: 32,
-      error: "",
-    },
-    {
-      account: "4",
-      publicKey: "761876238712683712683618726381276387126387123",
-      status: "mined",
-      transactionHash: "761876238712683712683618726381276387126387123",
-      blockNumber: 6462343,
-      amountEth: 32,
-      error: "",
-    },
-    {
-      account: "4",
-      publicKey: "761876238712683712683618726381276387126387123",
-      status: "confirmed",
-      transactionHash: "761876238712683712683618726381276387126387123",
-      blockNumber: 6462343,
-      amountEth: 32,
-      error: "",
-    },
-    {
-      account: "4",
-      publicKey: "761876238712683712683618726381276387126387123",
-      status: "error",
-      transactionHash: "761876238712683712683618726381276387126387123",
-      blockNumber: 6462343,
-      amountEth: 32,
-      error: "",
-    },
-  ];
-
-  const totalProgress =
-    (100 *
-      pendings.reduce(
-        (total, item) => total + progressPoints(item.status),
-        0
-      )) /
-    pendings.length;
-
-  const classes = useStyles();
-
-  if (2 > 1)
-    return (
-      <LinearProgress
-        variant="determinate"
-        value={totalProgress}
-        className={classes.progressBar}
-      />
-    );
-
-  if (result)
-    return (
-      <div>
-        {result.map((validator) => (
-          <div>{JSON.stringify(validator, null, 2)}</div>
-        ))}
-      </div>
-    );
-  if (error) return <ErrorView error={error} />;
-  if (loading) return <LoadingView steps={["Adding validators..."]} />;
-
-  return null;
-}
-
-function progressPoints(status: PendingValidator["status"]): number {
-  switch (status) {
-    case "confirmed":
-    case "error":
-      return 1;
-    case "mined":
-      return 0.5;
-    case "pending":
-      return 0;
-    default:
-      return 0;
-  }
 }

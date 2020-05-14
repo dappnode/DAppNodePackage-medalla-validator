@@ -1,6 +1,4 @@
-import React, { useEffect } from "react";
-import moment from "moment";
-import { useApi } from "api/rpc";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Link,
@@ -9,24 +7,16 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Button,
-  Box,
-  Grid,
-  LinearProgress,
 } from "@material-ui/core";
 import LaunchIcon from "@material-ui/icons/Launch";
 import { Title } from "./Title";
-import { DepositEvent, ValidatorStats, DepositEvents } from "../common/types";
-import { goerliTxViewer, beaconAccountViewer } from "common/params";
-import { ErrorView } from "components/ErrorView";
+import { ValidatorStats } from "../common/types";
+import { goerliTxViewer } from "common/params";
 import { HelpText } from "components/HelpText";
-import {
-  newTabProps,
-  getEstimatedBalanceFormDepositEvents,
-  formatEth,
-  urlJoin,
-} from "utils";
+import { newTabProps, urlJoin } from "utils";
 import { prysmStatusDescription } from "text";
+import { PublicKeyView } from "./PublicKeyView";
+import { DepositEventsView } from "./Eth1TransactionView";
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
@@ -46,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function AccountsTable({
+export function ValidatorsTable({
   validators,
 }: {
   validators: ValidatorStats[];
@@ -97,51 +87,5 @@ export function AccountsTable({
           </Link> */}
       </div>
     </React.Fragment>
-  );
-}
-
-function PublicKeyView({ publicKey }: { publicKey: string }) {
-  const classes = useStyles();
-  const shortHex = publicKey.substr(0, 6) + "..." + publicKey.substr(-4);
-  return (
-    <div className={classes.centerLink}>
-      {shortHex}
-      <Link
-        className={classes.linkIcon}
-        href={`${beaconAccountViewer}/${publicKey}`}
-        {...newTabProps}
-      >
-        <LaunchIcon fontSize="inherit" />
-      </Link>
-    </div>
-  );
-}
-
-function DepositEventsView({
-  depositEvents,
-}: {
-  depositEvents: {
-    [transactionHash: string]: {
-      transactionHash?: string;
-      blockNumber?: number;
-    };
-  };
-}) {
-  const classes = useStyles();
-  return (
-    <div>
-      {Object.entries(depositEvents).map(([key, depositEvent]) => (
-        <div key={key} className={classes.centerLink}>
-          Deposited: {depositEvent.blockNumber}
-          <Link
-            className={classes.linkIcon}
-            href={urlJoin(goerliTxViewer, depositEvent.transactionHash || "")}
-            {...newTabProps}
-          >
-            <LaunchIcon fontSize="inherit" />
-          </Link>
-        </div>
-      ))}
-    </div>
   );
 }

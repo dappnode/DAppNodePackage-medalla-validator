@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Layout } from "./Layout";
 import * as auth from "api/auth";
 import * as apiPaths from "api/paths";
 // import { Chart } from "./Chart";
-import { SummaryStats } from "./components/SummaryStats";
-import { AccountsTable } from "./components/AccountsTable";
+import { Layout } from "./Layout";
+import { LayoutItem } from "LayoutItem";
 import { SignIn } from "./components/SignIn";
 import { LoadingView } from "components/LoadingView";
 import {
@@ -14,8 +13,14 @@ import {
   makeStyles,
   CssBaseline,
 } from "@material-ui/core";
-import { useApi } from "api/rpc";
+import { useApi, api } from "api/rpc";
 import { Eth1Account } from "components/Eth1Account";
+import { ValidatorsTable } from "./components/ValidatorsTable";
+import { ValidatorsProgress } from "components/ValidatorsProgress";
+import { NodeStats } from "components/NodeStats";
+import { TotalBalance } from "components/TotalBalance";
+import { RequestStatus } from "types";
+import { PendingValidator } from "common";
 
 type LoginStatus = "login" | "logout" | "loading";
 const keyuserSettingDarkMode = "user-setting-dark-mode";
@@ -52,7 +57,6 @@ export default function App() {
 
   // If it's logged in, keep checking for logged in
   useEffect(() => {
-    if (loginStatus === "logout") return;
     const interval = setInterval(checkLogin, 5000);
     return () => clearInterval(interval);
   }, [loginStatus, checkLogin]);
@@ -97,6 +101,9 @@ export default function App() {
   // Fetch app data
 
   const validators = useApi.getValidators();
+  const [statusAddingValidators, setStatusAddingValidators] = useState<
+    RequestStatus<PendingValidator[]>
+  >();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -104,6 +111,18 @@ export default function App() {
     }, 2000);
     return () => clearInterval(interval);
   }, [validators]);
+
+  async function addValidators(num: number) {
+    try {
+      setStatusAddingValidators({ loading: true });
+      const result = await api.addValidators(num);
+      setStatusAddingValidators({ result });
+      console.log(`Added ${num} validators`, result);
+    } catch (e) {
+      setStatusAddingValidators({ error: e });
+      console.error(`Error adding ${num} validators`, e);
+    }
+  }
 
   const classes = useStyles();
 
@@ -113,9 +132,34 @@ export default function App() {
       {loginStatus === "login" ? (
         <Layout darkMode={darkMode} switchDark={switchDark} logout={logout}>
           {/* <Chart /> */}
-          <SummaryStats validators={validators.data || []} />
-          <Eth1Account />
-          <AccountsTable validators={validators.data || []} />
+          <LayoutItem sm={6}>
+            <TotalBalance validators={validators.data || []} />
+          </LayoutItem>
+          <LayoutItem sm={6}>
+            <NodeStats />
+          </LayoutItem>
+
+          <LayoutItem>
+            <Eth1Account
+              addValidators={addValidators}
+              addingValidators={
+                statusAddingValidators && statusAddingValidators.loading
+              }
+            />
+          </LayoutItem>
+
+          {statusAddingValidators && (
+            <LayoutItem noPaper>
+              <ValidatorsProgress
+                status={statusAddingValidators}
+                closeProgress={() => setStatusAddingValidators(undefined)}
+              />
+            </LayoutItem>
+          )}
+
+          <LayoutItem>
+            <ValidatorsTable validators={validators.data || []} />
+          </LayoutItem>
         </Layout>
       ) : loginStatus === "logout" ? (
         <SignIn onSignIn={onSignIn} isOffline={isOffline} />
