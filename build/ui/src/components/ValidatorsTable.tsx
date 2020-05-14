@@ -40,6 +40,9 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     fontSize: "1.2rem",
   },
+  noValidators: {
+    fontSize: "0.85rem",
+  },
 }));
 
 export function ValidatorsTable({
@@ -50,7 +53,7 @@ export function ValidatorsTable({
   const [showAll, setShowAll] = useState(false);
   const [sortProperty, setSortProperty] = useState<SortOption>("index");
   const [sortAsc, setSortAsc] = useState(false);
-  const direction = sortAsc ? "asc" : "desc";
+  const direction: SortOrder = sortAsc ? "asc" : "desc";
   const validatorsSorted = orderBy(
     validators,
     compareValidatorsBy(sortProperty),
@@ -140,7 +143,11 @@ export function ValidatorsTable({
       </TableContainer>
       {validatorsToShow.length === 0 && (
         <Box m={6} textAlign="center">
-          <Typography variant="caption" color="textSecondary">
+          <Typography
+            variant="caption"
+            className={classes.noValidators}
+            color="textSecondary"
+          >
             No validators
           </Typography>
         </Box>

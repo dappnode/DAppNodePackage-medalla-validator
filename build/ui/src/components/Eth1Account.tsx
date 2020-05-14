@@ -107,7 +107,7 @@ export function Eth1Account({
               color="textSecondary"
               className={classes.accountSubtitle}
             >
-              ETH1 ACCOUNT
+              Eth1 account
             </Typography>
             <Typography className={classes.accountBalance}>
               {balance} ETH
