@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import makeBlockie from "ethereum-blockies-base64";
 import { makeStyles } from "@material-ui/core/styles";
-import { Typography, Grid, Button, Box } from "@material-ui/core";
+import {
+  Typography,
+  Grid,
+  Button,
+  Box,
+  LinearProgress,
+} from "@material-ui/core";
 import { Title } from "./Title";
 import { useApi, api } from "api/rpc";
 import { ErrorView } from "./ErrorView";
@@ -26,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "flex-start",
     justifyContent: "flex-end",
-    "& > button:not(:last-child)": {
+    "& > *:not(:last-child)": {
       marginRight: "1rem",
     },
   },
@@ -58,13 +64,17 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: 1,
     fontWeight: 500,
   },
+  // ProgressBar
+  progressBar: {
+    height: "16px",
+  },
 }));
 
 export function Eth1Account() {
   const [count, setCount] = useState(3);
   const [statusAddingValidators, setStatusAddingValidators] = useState<
     RequestStatus<PendingValidator[]>
-  >();
+  >({});
   const eth1Account = useApi.eth1AccountGet();
   const classes = useStyles();
 
@@ -157,6 +167,64 @@ function AddingValidatorsFeeback({
 }) {
   const { result, loading, error } = status;
 
+  const pendings: PendingValidator[] = [
+    {
+      account: "4",
+      publicKey: "761876238712683712683618726381276387126387123",
+      status: "pending",
+      transactionHash: "761876238712683712683618726381276387126387123",
+      blockNumber: 6462343,
+      amountEth: 32,
+      error: "",
+    },
+    {
+      account: "4",
+      publicKey: "761876238712683712683618726381276387126387123",
+      status: "mined",
+      transactionHash: "761876238712683712683618726381276387126387123",
+      blockNumber: 6462343,
+      amountEth: 32,
+      error: "",
+    },
+    {
+      account: "4",
+      publicKey: "761876238712683712683618726381276387126387123",
+      status: "confirmed",
+      transactionHash: "761876238712683712683618726381276387126387123",
+      blockNumber: 6462343,
+      amountEth: 32,
+      error: "",
+    },
+    {
+      account: "4",
+      publicKey: "761876238712683712683618726381276387126387123",
+      status: "error",
+      transactionHash: "761876238712683712683618726381276387126387123",
+      blockNumber: 6462343,
+      amountEth: 32,
+      error: "",
+    },
+  ];
+
+  const totalProgress =
+    (100 *
+      pendings.reduce(
+        (total, item) => total + progressPoints(item.status),
+        0
+      )) /
+    pendings.length;
+
+  const classes = useStyles();
+
+  if (2 > 1)
+    return (
+      <LinearProgress
+        variant="determinate"
+        value={totalProgress}
+        className={classes.progressBar}
+      />
+    );
+
   if (result)
     return (
       <div>
@@ -169,4 +237,18 @@ function AddingValidatorsFeeback({
   if (loading) return <LoadingView steps={["Adding validators..."]} />;
 
   return null;
+}
+
+function progressPoints(status: PendingValidator["status"]): number {
+  switch (status) {
+    case "confirmed":
+    case "error":
+      return 1;
+    case "mined":
+      return 0.5;
+    case "pending":
+      return 0;
+    default:
+      return 0;
+  }
 }
