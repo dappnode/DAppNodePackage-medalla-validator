@@ -1,19 +1,15 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
-  Link,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import LaunchIcon from "@material-ui/icons/Launch";
 import { Title } from "./Title";
 import { ValidatorStats } from "../common/types";
-import { goerliTxViewer } from "common/params";
 import { HelpText } from "components/HelpText";
-import { newTabProps, urlJoin } from "utils";
 import { prysmStatusDescription } from "text";
 import { PublicKeyView } from "./PublicKeyView";
 import { DepositEventsView } from "./Eth1TransactionView";

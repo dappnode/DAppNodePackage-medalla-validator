@@ -1,20 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import makeBlockie from "ethereum-blockies-base64";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Typography,
-  Grid,
-  Button,
-  Box,
-  LinearProgress,
-} from "@material-ui/core";
-import { Title } from "./Title";
-import { useApi, api } from "api/rpc";
+import { Typography, Grid, Button, Box } from "@material-ui/core";
+import { useApi } from "api/rpc";
 import { ErrorView } from "./ErrorView";
 import { LoadingView } from "./LoadingView";
-import { RequestStatus } from "types";
-import { PendingValidator } from "common";
 import { newTabProps } from "utils";
+import { ValidatorCountDialog } from "./ValidatorCountDialog";
 
 const useStyles = makeStyles((theme) => ({
   depositContext: {
@@ -64,6 +56,17 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: 1,
     fontWeight: 500,
   },
+  inputContainer: {
+    display: "flex",
+  },
+  numberInput: {
+    width: "10rem",
+    marginRight: "1rem",
+    fontSize: "2rem",
+    "& > div > input": {
+      fontSize: "1.8rem",
+    },
+  },
 }));
 
 export function Eth1Account({
@@ -73,9 +76,8 @@ export function Eth1Account({
   addValidators: (num: number) => Promise<void>;
   addingValidators?: boolean;
 }) {
-  const [count, setCount] = useState(3);
+  const [open, setOpen] = React.useState(false);
   const eth1Account = useApi.eth1AccountGet();
-  const classes = useStyles();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -84,8 +86,10 @@ export function Eth1Account({
     return () => clearInterval(interval);
   }, [eth1Account]);
 
+  const classes = useStyles();
+
   if (eth1Account.data) {
-    const { address, balance } = eth1Account.data;
+    const { address, balance, insufficientFunds } = eth1Account.data;
     const accountShort = address.slice(0, 6) + "..." + address.slice(-4);
     return (
       <Grid container spacing={3}>
@@ -121,14 +125,22 @@ export function Eth1Account({
             Get funds
           </Button>
           <Button
-            onClick={() => addValidators(count)}
-            disabled={addingValidators}
+            onClick={() => setOpen(true)}
+            disabled={addingValidators || insufficientFunds}
             variant="contained"
             color="primary"
           >
             Add validators
           </Button>
         </Grid>
+
+        {/* Modal to confirm number of validators */}
+        <ValidatorCountDialog
+          open={open}
+          balance={balance}
+          addValidators={addValidators}
+          onClose={() => setOpen(false)}
+        />
       </Grid>
     );
   }

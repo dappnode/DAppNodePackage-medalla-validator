@@ -20,6 +20,8 @@ export async function addValidators(
   const names: string[] = [];
   for (let i = 0; i < count; i++) names.push(String(validatorCount++));
 
+  eth1Balance -= 32 * count;
+
   pendingValidators = {};
 
   const results = await Promise.all(

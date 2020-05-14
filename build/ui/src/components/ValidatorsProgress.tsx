@@ -17,7 +17,6 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Button,
   IconButton,
 } from "@material-ui/core";
 import { ErrorView } from "./ErrorView";
@@ -86,7 +85,7 @@ export function ValidatorsProgress({
     if (!loading) return;
     const interval = setInterval(progress.revalidate, 500);
     return () => clearInterval(interval);
-  }, [loading]);
+  }, [loading, progress]);
 
   const classes = useStyles();
 
