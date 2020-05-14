@@ -188,7 +188,7 @@ function DepositEventsView({
   depositEvents,
 }: {
   depositEvents: {
-    [txHashAndLogIndex: string]: DepositEvent;
+    [transactionHashAndLogIndex: string]: DepositEvent;
   };
 }) {
   const classes = useStyles();
@@ -199,7 +199,7 @@ function DepositEventsView({
           Deposited: {depositEvent.blockNumber}
           <Link
             className={classes.linkIcon}
-            href={urlJoin(goerliTxViewer, depositEvent.txHash || "")}
+            href={urlJoin(goerliTxViewer, depositEvent.transactionHash || "")}
             {...newTabProps}
           >
             <LaunchIcon fontSize="inherit" />

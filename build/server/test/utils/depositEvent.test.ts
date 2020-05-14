@@ -8,7 +8,7 @@ describe("Utils > depositEvent", () => {
   describe("computeEstimatedBalance", () => {
     const depositEvent = {
       blockNumber: 2679205,
-      txHash:
+      transactionHash:
         "0x17260fbc186e1c157447a162b44b3c0d55254f6a9fbeb2ee6dbcc9354c31c811",
       pubkey:
         "0xaf2b4016569f8e2579c66bc22e5cf9fe18e17f296fbbd1d486c5a0b51be59015f9619c6046df1c95d91d441c54beafd5",

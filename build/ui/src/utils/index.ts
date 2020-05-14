@@ -57,7 +57,7 @@ const amount32Eth = "0x0040597307000000";
  * @param depositEvents
  */
 export function getEstimatedBalanceFormDepositEvents(depositEvents: {
-  [txHashAndLogIndex: string]: DepositEvent;
+  [transactionHashAndLogIndex: string]: DepositEvent;
 }): number | undefined {
   const events = Object.values(depositEvents);
   const estimatedBalances = events.map((event) => {

@@ -58,7 +58,7 @@ export function WelcomeFlow({ onExit }: { onExit: () => void }) {
   const [activeStep, setActiveStep] = useState(0);
   const [validatorAccount, setValidatorAccount] = useState(""); // validator/1
   const [withdrawalAccount, setWithdrawalAccount] = useState(""); // withdrawal/primary
-  const [depositTxHash, setDepositTxHash] = useState("");
+  const [deposittransactionHash, setDeposittransactionHash] = useState("");
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -94,7 +94,7 @@ export function WelcomeFlow({ onExit }: { onExit: () => void }) {
           <StepDeposit
             validatorAccount={validatorAccount}
             withdrawalAccount={withdrawalAccount}
-            setDepositTxHash={setDepositTxHash}
+            setDeposittransactionHash={setDeposittransactionHash}
             onNext={handleNext}
             onBack={handleBack}
           />
@@ -110,8 +110,8 @@ export function WelcomeFlow({ onExit }: { onExit: () => void }) {
               takes about 2 hours. You can track in the main panel when you get
               assigned.
             </Typography>
-            <Link href={urlJoin(goerliTxViewer, depositTxHash)}>
-              {depositTxHash}
+            <Link href={urlJoin(goerliTxViewer, deposittransactionHash)}>
+              {deposittransactionHash}
             </Link>
             <NavButtons onNext={onExit}></NavButtons>
           </React.Fragment>

@@ -2,7 +2,7 @@ import fs from "fs";
 import * as db from "../db";
 import { ethers } from "ethers";
 import { ethdo, WalletType } from "../ethdo";
-import { addValidatorToKeymanager } from "./validator";
+import { addValidatorToKeymanager } from "./keymanager";
 import { logs } from "../logs";
 import {
   legacyValidatorPath,

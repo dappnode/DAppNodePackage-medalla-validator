@@ -1,4 +1,4 @@
-export * from "./accounts";
+export * from "./addValidators";
 export * from "./eth1Account";
-export * from "./greet";
+export * from "./getValidators";
 export * from "./node";

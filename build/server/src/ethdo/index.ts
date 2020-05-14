@@ -1,11 +1,5 @@
-import crypto from "crypto";
 import { EthdoCmds } from "./cmds";
-import {
-  EthdoWallets,
-  WalletAccount,
-  EthdoAccount,
-  EthdoAccountResult
-} from "../../common";
+import { EthdoAccount, EthdoAccountResult } from "../../common";
 import { logs } from "../logs";
 import shell from "../utils/shell";
 import { findFirstAvailableNum, findNAvailableNums } from "../utils/names";
@@ -17,25 +11,7 @@ export type WalletType = typeof validatorWallet | typeof withdrawalWallet;
 const PRIMARY = "primary";
 const withdrawalAccount = `${withdrawalWallet}/${PRIMARY}`;
 
-interface EthdoAccountNoPass {
-  account: string;
-  passphrase?: string;
-}
-
 export class Ethdo extends EthdoCmds {
-  /**
-   * List all wallets and their accounts
-   */
-  async listAll(): Promise<EthdoWallets[]> {
-    const walletNames = await this.walletList();
-    const wallets: EthdoWallets[] = [];
-    for (const name of walletNames.sort()) {
-      const accounts = await this.walletAccounts({ wallet: name });
-      wallets.push({ name, accounts: accounts.sort() });
-    }
-    return wallets;
-  }
-
   async assertWalletExists(wallet: WalletType): Promise<void> {
     try {
       await this.walletInfo({ wallet });
@@ -47,20 +23,6 @@ export class Ethdo extends EthdoCmds {
         if (!eCreate.message.includes("already exists")) throw eCreate;
       }
     }
-  }
-
-  //  Account creation
-
-  async createAccount(
-    { account, passphrase }: EthdoAccountNoPass,
-    wallet: WalletType
-  ): Promise<EthdoAccountResult> {
-    await this.assertWalletExists(wallet);
-    account = formatAccount(account, wallet);
-    passphrase = passphrase || getRandomToken();
-    await this.accountCreate({ account, passphrase });
-    const publicKey = await this.accountPublicKey(account);
-    return { account, publicKey, passphrase };
   }
 
   // Account imports
@@ -79,7 +41,16 @@ export class Ethdo extends EthdoCmds {
 
   // Account listing
 
-  async accountList(wallet: WalletType) {
+  async accountList(
+    wallet: WalletType
+  ): Promise<
+    {
+      name: string;
+      uuid: string;
+      publicKey: string;
+      account: string;
+    }[]
+  > {
     try {
       const accounts = await this.walletAccountsVerbose({ wallet });
       return accounts.map(account => ({

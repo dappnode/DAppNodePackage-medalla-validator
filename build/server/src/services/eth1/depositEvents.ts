@@ -74,17 +74,17 @@ function saveDepositEvents(
 ) {
   const depositEvents: {
     [pubkey: string]: {
-      [txHashLogIndex: string]: DepositEvent;
+      [transactionHashLogIndex: string]: DepositEvent;
     };
   } = {};
 
   for (const log of depositLogs) {
     const pubkey = log.args.pubkey;
-    const txHashLogIndex = `${log.transactionHash}/${log.transactionLogIndex}`;
+    const transactionHashLogIndex = `${log.transactionHash}/${log.transactionLogIndex}`;
     if (!depositEvents[pubkey]) depositEvents[pubkey] = {};
-    depositEvents[pubkey][txHashLogIndex] = {
+    depositEvents[pubkey][transactionHashLogIndex] = {
       blockNumber: log.blockNumber,
-      txHash: log.transactionHash,
+      transactionHash: log.transactionHash,
       // Pick values to prevent storing unnecessary data in the logs.args object
       pubkey: log.args.pubkey,
       withdrawal_credentials: log.args.withdrawal_credentials,

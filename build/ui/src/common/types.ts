@@ -4,20 +4,18 @@ export interface PendingValidator {
   account: string;
   publicKey: string;
   status: "pending" | "mined" | "confirmed" | "error";
-  txHash?: string;
+  transactionHash?: string;
   blockNumber?: number;
   amountEth?: number;
   error?: string;
-  createdTimestamp?: number;
-  errorTimestamp?: number;
 }
 
-export interface ValidatorAccountNew {
+export interface ValidatorStats {
   name: string;
   publicKey: string;
   depositInfo: {
-    [txHash: string]: {
-      txHash?: string;
+    [transactionHash: string]: {
+      transactionHash?: string;
       blockNumber?: number;
     };
   };
@@ -41,27 +39,6 @@ export interface ApiStatus {
 
 // Old types
 
-export interface EthdoWallets {
-  name: string;
-  accounts: string[];
-}
-
-export interface ValidatorAccount {
-  name: string;
-  wallet: string;
-  status: string;
-  balance: number;
-}
-
-export interface WalletAccount {
-  account: string;
-  name: string;
-  uuid: string;
-  publicKey: string;
-  createdTimestamp?: number;
-  available?: boolean;
-}
-
 export interface EthdoAccountResult {
   account: string;
   publicKey: string;
@@ -73,30 +50,13 @@ export interface EthdoAccount {
   passphrase: string;
 }
 
-export interface EthdoAccountNoPass {
-  account: string;
-  passphrase?: string;
-}
-
-export interface ValidatorStats {
-  account: string;
-  name: string;
-  uuid: string;
-  publicKey: string;
-  createdTimestamp?: number;
-  depositEvents: DepositEvents;
-  status?: string;
-  balance?: string;
-  effectiveBalance?: string;
-}
-
 export interface DepositEvents {
-  [txHashAndLogIndex: string]: DepositEvent;
+  [transactionHashAndLogIndex: string]: DepositEvent;
 }
 
 export interface DepositEvent extends DepositEventArgs {
   blockNumber: number | undefined;
-  txHash: string | undefined;
+  transactionHash: string | undefined;
 }
 
 export interface NodeStats {

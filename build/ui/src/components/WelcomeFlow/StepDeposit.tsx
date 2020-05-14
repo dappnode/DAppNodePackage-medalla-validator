@@ -43,22 +43,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type TxHash = string | undefined;
+type transactionHash = string | undefined;
 
 export function StepDeposit({
   validatorAccount,
   withdrawalAccount,
-  setDepositTxHash,
+  setDeposittransactionHash,
   onNext,
   onBack,
 }: {
   validatorAccount: string;
   withdrawalAccount: string;
-  setDepositTxHash: (txHash: string) => void;
+  setDeposittransactionHash: (transactionHash: string) => void;
   onNext: () => void;
   onBack: () => void;
 }) {
-  const [depositStatus, setDepositStatus] = useState<RequestStatus<TxHash>>({});
+  const [depositStatus, setDepositStatus] = useState<
+    RequestStatus<transactionHash>
+  >({});
   const [showGetFunds, setShowGetFunds] = useState<boolean>(); // Never go back to show get funds
   const depositData = useApi.getDepositData({
     validatorAccount,
@@ -83,10 +85,10 @@ export function StepDeposit({
     try {
       setDepositStatus({ loading: true });
       if (!depositData.data) throw Error(`No depositData`);
-      const txHash = await api.eth1MakeDeposit(depositData.data);
-      console.log("Deposit result", { txHash });
-      setDepositStatus({ result: txHash });
-      setDepositTxHash(txHash || "");
+      const transactionHash = await api.eth1MakeDeposit(depositData.data);
+      console.log("Deposit result", { transactionHash });
+      setDepositStatus({ result: transactionHash });
+      setDeposittransactionHash(transactionHash || "");
       onNext();
     } catch (e) {
       console.error(e);

@@ -1,15 +1,11 @@
 import { keyBy } from "lodash";
-import {
-  ValidatorAccountNew,
-  DepositEvent,
-  PendingValidator
-} from "../../common";
+import { ValidatorStats, DepositEvent, PendingValidator } from "../../common";
 import * as db from "../db";
 import { readKeymanagerAccounts } from "../services/keymanager";
 import { ethdo } from "../ethdo";
 import { computeEstimatedBalance } from "../utils/depositEvent";
 
-export async function getValidators(): Promise<ValidatorAccountNew[]> {
+export async function getValidators(): Promise<ValidatorStats[]> {
   const keymanagerAccounts = readKeymanagerAccounts();
   const accounts = await ethdo.accountList("validator");
   const ethdoAccountByAccount = keyBy(accounts, a => a.account);
@@ -17,7 +13,7 @@ export async function getValidators(): Promise<ValidatorAccountNew[]> {
   const metricsByPubkey = db.metrics.current.get();
 
   return keymanagerAccounts.map(
-    ({ account }): ValidatorAccountNew => {
+    ({ account }): ValidatorStats => {
       const ethdoAccount = ethdoAccountByAccount[account];
       const publicKey = ethdoAccount.publicKey;
       const depositEvents = depositEventsByPubkey[publicKey] || {};
@@ -46,14 +42,14 @@ export async function getPendingValidators(): Promise<PendingValidator[]> {
   //       filterByTtl(pendingTtl, validator.createdTimestamp)
   //   )
   //   .map(
-  //     (validator): ValidatorAccountNew => {
+  //     (validator): ValidatorStats => {
   //       return {m
   //         name: parseValidatorName(validator.account || ""),
   //         publicKey: validator.publicKey || "",
-  //         depositInfo: validator.txHash
+  //         depositInfo: validator.transactionHash
   //           ? {
-  //               [validator.txHash]: {
-  //                 txHash: validator.txHash,
+  //               [validator.transactionHash]: {
+  //                 transactionHash: validator.transactionHash,
   //                 blockNumber: validator.blockNumber
   //               }
   //             }

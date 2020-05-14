@@ -62,7 +62,7 @@ const dbAccountsState: {
 const dbDepositsState: {
   depositEvents: {
     [pubkey: string]: {
-      [txHashLogIndex: string]: DepositEvent;
+      [transactionHashLogIndex: string]: DepositEvent;
     };
   };
 } = {

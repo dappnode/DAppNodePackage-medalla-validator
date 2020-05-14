@@ -1,42 +1,24 @@
-import {
-  WalletAccount,
-  EthdoAccount,
-  EthdoAccountNoPass,
-  ValidatorStats,
-  NodeStats,
-} from "./types";
+import { ValidatorStats, PendingValidator, NodeStats } from "./types";
 
 export interface Routes {
-  accountValidatorList: () => Promise<WalletAccount[]>;
-  accountWithdrawalList: () => Promise<WalletAccount[]>;
-  accountWithdrawalCreate: (account: EthdoAccount) => Promise<void>;
-  accountValidatorCreate: (account: EthdoAccountNoPass) => Promise<void>;
-  getDepositData: (args: {
-    validatorAccount: string;
-    withdrawalAccount: string;
-  }) => Promise<string>;
+  addValidators: (count: number) => Promise<PendingValidator[]>;
+  getPendingValidators: () => Promise<PendingValidator[]>;
+  getValidators: () => Promise<ValidatorStats[]>;
   // Internal Eth1 account
   eth1AccountGet: () => Promise<{
     address: string;
     balance: number;
     insufficientFunds: boolean;
   }>;
-  eth1MakeDeposit: (depositData: string) => Promise<string | undefined>;
-  // Validator stats
-  validatorsStats: () => Promise<ValidatorStats[]>;
   // Node stats
   nodeStats: () => Promise<NodeStats>;
 }
 
 export const routesData: { [P in keyof Routes]: {} } = {
-  accountValidatorList: {},
-  accountWithdrawalList: {},
-  accountValidatorCreate: {},
-  accountWithdrawalCreate: {},
-  getDepositData: {},
+  addValidators: {},
+  getPendingValidators: {},
+  getValidators: {},
   eth1AccountGet: {},
-  eth1MakeDeposit: {},
-  validatorsStats: {},
   nodeStats: {},
 };
 

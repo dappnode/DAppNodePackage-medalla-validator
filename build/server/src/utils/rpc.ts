@@ -8,7 +8,7 @@ const validateParams = ajv.compile(routesArgumentsSchema);
 
 export const getRpcHandler = (
   methods: Routes
-): express.RequestHandler => async (req, res) => {
+): express.RequestHandler => async (req, res): Promise<void> => {
   try {
     if (typeof req.body !== "object") throw new JsonRpcError("Invalid body");
 
