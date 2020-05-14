@@ -8,6 +8,8 @@ import * as db from "../db";
 import * as eth1 from "../services/eth1";
 import { logs } from "../logs";
 import { ethers } from "ethers";
+import { getAddressAndBalance } from "../services/eth1";
+import { depositAmountEth } from "../params";
 
 /**
  * Resolves when all validators have resolved, either with success or errors
@@ -16,6 +18,11 @@ import { ethers } from "ethers";
 export async function addValidators(
   count: number
 ): Promise<PendingValidator[]> {
+  // Safety check to make sure ETH1 balance is ok
+  const { balance } = await getAddressAndBalance();
+  if (balance < count * parseInt(depositAmountEth))
+    throw Error(`Insufficient balance to add ${count} validators: ${balance}`);
+
   // Compute validator accounts sequentially to prevent race conditions
   const validators = await getAvailableAndCreateValidatorAccounts(count);
   const withdrawalAccount = await ethdo.getWithdrawalAccount();
