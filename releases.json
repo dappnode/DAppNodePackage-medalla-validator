@@ -284,5 +284,13 @@
       "remote": "Mon, 11 May 2020 17:22:28 GMT"
     },
     "link": "http://my.dappnode/#/sdk/publish/r=prysm-validator.public.dappnode.eth&v=1.0.8&h=%2Fipfs%2FQmQovGr61A2XqkT6pP81XsyLwK4Wquq2oVhLmQwknz3YQV"
+  },
+  "1.0.9": {
+    "hash": "/ipfs/QmVLZDhFLEmvarVx2i56GAuqNwe9maYQSG1LRFhZbxesnz",
+    "type": "directory",
+    "uploadedTo": {
+      "remote": "Thu, 14 May 2020 04:51:52 GMT"
+    },
+    "link": "http://my.dappnode/#/sdk/publish/r=prysm-validator.public.dappnode.eth&v=1.0.9&h=%2Fipfs%2FQmVLZDhFLEmvarVx2i56GAuqNwe9maYQSG1LRFhZbxesnz"
   }
 }
