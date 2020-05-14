@@ -14,6 +14,7 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/recharts": "^1.8.10",
+    "ethereum-blockies-base64": "^1.0.2",
     "lodash": "^4.17.15",
     "moment": "^2.25.3",
     "react": "^16.13.1",

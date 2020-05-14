@@ -4,6 +4,7 @@ import { Typography, Grid } from "@material-ui/core";
 import { Title } from "./Title";
 import { useApi } from "api/rpc";
 import { getEstimatedBalanceFormDepositEvents, formatEth } from "utils";
+import { ValidatorStats } from "common";
 
 const useStyles = makeStyles((theme) => ({
   depositContext: {
@@ -19,68 +20,50 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function SummaryStats() {
+export function SummaryStats({ validators }: { validators: ValidatorStats[] }) {
+  const totalBalance = validators.reduce(
+    (total, validator) => total + (validator.balance.eth || 0),
+    0
+  );
+  const isEstimated = validators.some(
+    (validator) => validator.balance.isEstimated
+  );
+
   return (
     <Grid container spacing={3}>
-      <TotalBalance />
+      <TotalBalance validators={validators} />
       <NodeStats />
     </Grid>
   );
 }
 
-export function TotalBalance() {
-  const validatorsStats = useApi.validatorsStats();
+export function TotalBalance({ validators }: { validators: ValidatorStats[] }) {
   const classes = useStyles();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (validatorsStats.data) validatorsStats.revalidate();
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [validatorsStats]);
-
-  function computeBalance(): {
-    sum: string | number | null;
-    isEstimated?: boolean;
-    isPartial?: boolean;
-  } {
-    if (!validatorsStats.data) return { sum: null };
-    let isEstimated = false;
-    let isPartial = false;
-    const sum = validatorsStats.data.reduce((total, validator) => {
-      if (validator.balance) return total + parseFloat(validator.balance);
-      const estimedBalance = getEstimatedBalanceFormDepositEvents(
-        validator.depositEvents
-      );
-      if (estimedBalance) {
-        isEstimated = true;
-        return total + estimedBalance;
-      }
-      isPartial = true;
-      return total;
-    }, 0);
-    if (!sum) return { sum: null };
-    else return { sum, isEstimated, isPartial };
-  }
-
-  const totalBalance = computeBalance();
-
-  if (totalBalance.sum === null) return null;
+  const totalBalance = validators.reduce(
+    (total, validator) => total + (validator.balance.eth || 0),
+    0
+  );
+  const isEstimated = validators.some(
+    (validator) => validator.balance.isEstimated
+  );
+  const isPartial = validators.some(
+    (validator) => validator.balance.eth === null
+  );
 
   return (
     <Grid item xs={12} sm={6}>
       <Title>Total balance</Title>
       <Typography component="p" variant="h4">
-        {formatEth(totalBalance.sum)}
-        {totalBalance.isEstimated ? "*" : ""}{" "}
-        {totalBalance.isPartial ? "**" : ""} ETH
+        {totalBalance}
+        {isEstimated ? "*" : ""} {isPartial ? "**" : ""} ETH
       </Typography>
-      {totalBalance.isEstimated && (
+      {isEstimated && (
         <Typography className={classes.noteText}>
           * Some validator balances are estimated from their eth1 deposit
         </Typography>
       )}
-      {totalBalance.isPartial && (
+      {isPartial && (
         <Typography className={classes.noteText}>
           ** Some validator balances are unknown
         </Typography>

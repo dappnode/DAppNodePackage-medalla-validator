@@ -1,97 +1,103 @@
-import { EthdoWallets, ValidatorAccount, WalletAccount } from "../../common";
+import {
+  PendingValidator,
+  ValidatorStats,
+  Eth1AccountStats,
+  NodeStats
+} from "../../common";
+import { ethers } from "ethers";
 
-const walletValidator = "Validator";
+// New state
 
-const withdrawalAccounts: WalletAccount[] = [];
-
-const accounts: ValidatorAccount[] = [
-  { name: "1", wallet: walletValidator, status: "pending", balance: 32.34521 },
-  { name: "2", wallet: walletValidator, status: "pending", balance: 32.044 },
-  { name: "3", wallet: walletValidator, status: "pending", balance: 32.172 }
-];
-
-const wallets: EthdoWallets[] = [
-  { name: "Validator", accounts: ["1", "2"] },
-  { name: "Withdrawal", accounts: ["1", "2"] }
-];
-
+let validatorCount = 0;
+const pendingValidator: PendingValidator[] = [];
+const validator: { [name: string]: ValidatorStats } = {};
 let eth1Balance = 32.462112364172;
 
-const waitMs = (ms: number): Promise<void> =>
-  new Promise(r => setTimeout(r, ms));
+// New routes
 
-export async function accountsGet(): Promise<ValidatorAccount[]> {
-  return accounts;
+export async function addValidators(
+  count: number
+): Promise<PendingValidator[]> {
+  const names: string[] = [];
+  for (let i = 0; i < count; i++) names.push(String(validatorCount++));
+
+  return await Promise.all(
+    names.map(
+      async (name): Promise<PendingValidator> => {
+        await waitMs(1000 + 1000 * Math.random());
+        const publicKey = String(Math.random());
+        const transactionHash = String(Math.random());
+        const blockNumber = Math.ceil(100000 * Math.random());
+        validator[name] = {
+          name,
+          publicKey,
+          depositEvents: {
+            [transactionHash]: { transactionHash, blockNumber }
+          },
+          status: "DEPOSITED",
+          balance: {
+            eth: 32,
+            isEstimated: true
+          }
+        };
+        return {
+          account: name,
+          publicKey: String(Math.random()),
+          status: "confirmed",
+          transactionHash: String(Math.random()),
+          blockNumber: Math.ceil(100000 * Math.random())
+        };
+      }
+    )
+  );
 }
 
-/**
- * Greets user
- * @param name
- */
-export async function walletsGet(): Promise<EthdoWallets[]> {
-  return wallets;
+export async function getPendingValidators(): Promise<PendingValidator[]> {
+  return [];
 }
 
-export async function walletCreate(walletName: string): Promise<void> {
-  wallets.push({ name: walletName, accounts: [] });
+export async function getValidators(): Promise<ValidatorStats[]> {
+  return Object.values(validator);
 }
 
-export async function accountCreate(name: string): Promise<void> {
-  if (accounts.some(a => a.name === name))
-    throw Error(`Account with name ${name} already exists`);
-  const newAccount: ValidatorAccount = {
-    name,
-    wallet: walletValidator,
-    status: "pending",
-    balance: 32
-  };
-  accounts.push(newAccount);
-}
-
-//  Useful now
-
-export async function accountWithdrawalCreate({
-  name,
-  passphrase
-}: {
-  name: string;
-  passphrase: string;
-}): Promise<void> {
-  passphrase;
-  withdrawalAccounts.push({
-    account: `withdrawal/${name}`,
-    name,
-    uuid: "",
-    publicKey: ""
-  });
-  await waitMs(1000);
-  if (passphrase === "error") throw Error(`Triggered error`);
-}
-
-export async function accountWithdrawalList(): Promise<WalletAccount[]> {
-  await waitMs(1000);
-  return withdrawalAccounts;
-}
-
-export async function newValidator(
-  withdrawalAccount: string
-): Promise<{ depositData: string; account: string }> {
-  withdrawalAccount;
-  await waitMs(1000);
-  return {
-    account: "validator/1",
-    depositData:
-      "0x8defbaaba5c193a7975ca61649d5802632761ec1d986f5103100cd294ec69b8a0x8defbaaba5c193a7975ca61649d5802632761ec1d986f5103100cd294ec69b8a"
-  };
-}
-
-export async function eth1AccountGet(): Promise<{
-  address: string;
-  balance: number;
-}> {
+// Internal Eth1 account
+export async function eth1AccountGet(): Promise<Eth1AccountStats> {
   eth1Balance = eth1Balance * 1.01;
   return {
     address: "0x11111111111111111111111111111111111111111",
-    balance: eth1Balance
+    balance: +eth1Balance.toFixed(3),
+    insufficientFunds: false
   };
 }
+// Node stats
+export async function nodeStats(): Promise<NodeStats> {
+  return {
+    peers: [
+      {
+        address:
+          "/ip4/104.36.201.234/tcp/13210/p2p/16Uiu2HAm5RX4gAQtwqArBmuuGugUXAViKaKBx6ugDJb1L1RFcpfK",
+        direction: "OUTBOUND"
+      }
+    ],
+    syncing: { syncing: false },
+    chainhead: {
+      headSlot: "177684",
+      headEpoch: "5552",
+      headBlockRoot: "y1GDABJ0iPgZhdcWBXTon4r2TgEnpS3XFISckLyqa+U=",
+      finalizedSlot: "177600",
+      finalizedEpoch: "5550",
+      finalizedBlockRoot: "Bb/6F2NfmtilyxQb+2tItGlD1WNwR17gMVd5kIxjgCQ=",
+      justifiedSlot: "177632",
+      justifiedEpoch: "5551",
+      justifiedBlockRoot: "e+1HeaYj+a/u9gPyUfyUhrGDyv/5BkpOXiF8KnXcItc=",
+      previousJustifiedSlot: "177600",
+      previousJustifiedEpoch: "5550",
+      previousJustifiedBlockRoot: "Bb/6F2NfmtilyxQb+2tItGlD1WNwR17gMVd5kIxjgCQ="
+    }
+  };
+}
+
+// Old routes
+
+const waitMs = (ms: number): Promise<void> =>
+  new Promise(r => setTimeout(r, ms));

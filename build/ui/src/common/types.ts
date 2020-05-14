@@ -13,7 +13,7 @@ export interface PendingValidator {
 export interface ValidatorStats {
   name: string;
   publicKey: string;
-  depositInfo: {
+  depositEvents: {
     [transactionHash: string]: {
       transactionHash?: string;
       blockNumber?: number;
@@ -57,6 +57,12 @@ export interface DepositEvents {
 export interface DepositEvent extends DepositEventArgs {
   blockNumber: number | undefined;
   transactionHash: string | undefined;
+}
+
+export interface Eth1AccountStats {
+  address: string;
+  balance: number;
+  insufficientFunds: boolean;
 }
 
 export interface NodeStats {

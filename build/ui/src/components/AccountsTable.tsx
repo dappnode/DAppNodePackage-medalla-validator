@@ -16,7 +16,7 @@ import {
 } from "@material-ui/core";
 import LaunchIcon from "@material-ui/icons/Launch";
 import { Title } from "./Title";
-import { DepositEvent, ValidatorStats } from "../common/types";
+import { DepositEvent, ValidatorStats, DepositEvents } from "../common/types";
 import { goerliTxViewer, beaconAccountViewer } from "common/params";
 import { ErrorView } from "components/ErrorView";
 import { HelpText } from "components/HelpText";
@@ -46,124 +46,57 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function AccountsTable({ addValidator }: { addValidator: () => void }) {
-  const validatorsStats = useApi.validatorsStats();
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (validatorsStats.data) validatorsStats.revalidate();
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [validatorsStats]);
-
+export function AccountsTable({
+  validators,
+}: {
+  validators: ValidatorStats[];
+}) {
   const classes = useStyles();
-  if (validatorsStats.data && validatorsStats.data.length === 0)
-    return (
-      <Button variant="contained" color="primary" onClick={addValidator}>
-        Add validator
-      </Button>
-    );
-  if (validatorsStats.data)
-    return (
-      <React.Fragment>
-        <Grid
-          container
-          direction="row"
-          justify="space-between"
-          alignItems="center"
-          className={classes.header}
-        >
-          <Grid item>
-            <Title>Validator accounts</Title>
-          </Grid>
-          <Grid item>
-            <Button color="primary" variant="contained" onClick={addValidator}>
-              Add validator
-            </Button>
-          </Grid>
-        </Grid>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>PubKey</TableCell>
-              <TableCell>Created</TableCell>
-              <TableCell>Deposit</TableCell>
-              <TableCell>
-                <span className={classes.centerLink}>
-                  Status <HelpText table={prysmStatusDescription} />
-                </span>
-              </TableCell>
-              <TableCell align="right">Balance</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {validatorsStats.data.map((account, i) => (
-              <AccountRow key={account.account || i} account={account} />
-            ))}
-          </TableBody>
-        </Table>
-
-        <div className={classes.seeMore}>
-          {/* <Link color="primary" href="#">
-            See more validators
-          </Link> */}
-        </div>
-      </React.Fragment>
-    );
-
-  if (validatorsStats.error)
-    return (
-      <Box my={2}>
-        <ErrorView error={validatorsStats.error} />
-      </Box>
-    );
-
-  if (validatorsStats.isValidating)
-    return (
-      <Box my={2}>
-        <LinearProgress />
-      </Box>
-    );
-  return null;
-}
-
-function AccountRow({ account }: { account: ValidatorStats }) {
-  const balance = account.balance;
-  const estimatedBalance =
-    typeof balance === "number" || typeof balance === "string"
-      ? null
-      : getEstimatedBalanceFormDepositEvents(account.depositEvents);
-
-  const hasDeposited = Object.values(account.depositEvents).length > 0;
-  const status =
-    (!account.status || account.status.includes("UNKNOWN")) && !hasDeposited
-      ? "PENDING DEPOSIT"
-      : account.status;
 
   return (
-    <TableRow key={account.name}>
-      <TableCell>{account.name}</TableCell>
-      <TableCell>
-        <PublicKeyView publicKey={account.publicKey} />
-      </TableCell>
-      <TableCell>
-        {account.createdTimestamp
-          ? moment(account.createdTimestamp).fromNow()
-          : "-"}
-      </TableCell>
-      <TableCell>
-        <DepositEventsView depositEvents={account.depositEvents} />
-      </TableCell>
-      <TableCell>{status}</TableCell>
-      <TableCell align="right">
-        {typeof balance === "number" || typeof balance === "string"
-          ? formatEth(balance)
-          : estimatedBalance
-          ? `${estimatedBalance} (estimated)`
-          : "-"}
-      </TableCell>
-    </TableRow>
+    <React.Fragment>
+      <Title>Validator accounts</Title>
+
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell>PubKey</TableCell>
+            <TableCell>Deposit</TableCell>
+            <TableCell>
+              <span className={classes.centerLink}>
+                Status <HelpText table={prysmStatusDescription} />
+              </span>
+            </TableCell>
+            <TableCell align="right">Balance</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {validators.map((validator, i) => (
+            <TableRow key={validator.name || i}>
+              <TableCell>{validator.name}</TableCell>
+              <TableCell>
+                <PublicKeyView publicKey={validator.publicKey} />
+              </TableCell>
+              <TableCell>
+                <DepositEventsView depositEvents={validator.depositEvents} />
+              </TableCell>
+              <TableCell>{validator.status}</TableCell>
+              <TableCell align="right">
+                {validator.balance.eth}
+                {validator.balance.isEstimated && "(estimated)"}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      <div className={classes.seeMore}>
+        {/* <Link color="primary" href="#">
+            See more validators
+          </Link> */}
+      </div>
+    </React.Fragment>
   );
 }
 
@@ -188,7 +121,10 @@ function DepositEventsView({
   depositEvents,
 }: {
   depositEvents: {
-    [transactionHashAndLogIndex: string]: DepositEvent;
+    [transactionHash: string]: {
+      transactionHash?: string;
+      blockNumber?: number;
+    };
   };
 }) {
   const classes = useStyles();

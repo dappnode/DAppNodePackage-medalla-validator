@@ -1,15 +1,16 @@
-import { ValidatorStats, PendingValidator, NodeStats } from "./types";
+import {
+  ValidatorStats,
+  PendingValidator,
+  Eth1AccountStats,
+  NodeStats,
+} from "./types";
 
 export interface Routes {
   addValidators: (count: number) => Promise<PendingValidator[]>;
   getPendingValidators: () => Promise<PendingValidator[]>;
   getValidators: () => Promise<ValidatorStats[]>;
   // Internal Eth1 account
-  eth1AccountGet: () => Promise<{
-    address: string;
-    balance: number;
-    insufficientFunds: boolean;
-  }>;
+  eth1AccountGet: () => Promise<Eth1AccountStats>;
   // Node stats
   nodeStats: () => Promise<NodeStats>;
 }

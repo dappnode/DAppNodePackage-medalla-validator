@@ -6,7 +6,6 @@ import * as apiPaths from "api/paths";
 import { SummaryStats } from "./components/SummaryStats";
 import { AccountsTable } from "./components/AccountsTable";
 import { SignIn } from "./components/SignIn";
-import { WelcomeFlow } from "./components/WelcomeFlow";
 import { LoadingView } from "components/LoadingView";
 import {
   Box,
@@ -15,6 +14,8 @@ import {
   makeStyles,
   CssBaseline,
 } from "@material-ui/core";
+import { useApi } from "api/rpc";
+import { Eth1Account } from "components/Eth1Account";
 
 type LoginStatus = "login" | "logout" | "loading";
 const keyuserSettingDarkMode = "user-setting-dark-mode";
@@ -93,21 +94,29 @@ export default function App() {
     if (userDarkMode) setDarkMode(true);
   }, []);
 
+  // Fetch app data
+
+  const validators = useApi.getValidators();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (validators.data) validators.revalidate();
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [validators]);
+
   const classes = useStyles();
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       {loginStatus === "login" ? (
-        showValidatorFlow ? (
-          <WelcomeFlow onExit={() => setShowValidatorFlow(false)} />
-        ) : (
-          <Layout darkMode={darkMode} switchDark={switchDark} logout={logout}>
-            {/* <Chart /> */}
-            <SummaryStats />
-            <AccountsTable addValidator={addValidator} />
-          </Layout>
-        )
+        <Layout darkMode={darkMode} switchDark={switchDark} logout={logout}>
+          {/* <Chart /> */}
+          <SummaryStats validators={validators.data || []} />
+          <Eth1Account />
+          <AccountsTable validators={validators.data || []} />
+        </Layout>
       ) : loginStatus === "logout" ? (
         <SignIn onSignIn={onSignIn} isOffline={isOffline} />
       ) : (

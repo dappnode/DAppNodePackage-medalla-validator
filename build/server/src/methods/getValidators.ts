@@ -22,7 +22,7 @@ export async function getValidators(): Promise<ValidatorStats[]> {
       return {
         name: ethdoAccount.name,
         publicKey,
-        depositInfo: depositEvents,
+        depositEvents: depositEvents,
         status: metrics.status,
         balance: computeBalance(metrics, Object.values(depositEvents))
       };
@@ -46,7 +46,7 @@ export async function getPendingValidators(): Promise<PendingValidator[]> {
   //       return {m
   //         name: parseValidatorName(validator.account || ""),
   //         publicKey: validator.publicKey || "",
-  //         depositInfo: validator.transactionHash
+  //         depositEvents: validator.transactionHash
   //           ? {
   //               [validator.transactionHash]: {
   //                 transactionHash: validator.transactionHash,
