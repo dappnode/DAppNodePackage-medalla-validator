@@ -1,6 +1,7 @@
 import path from "path";
 import { lowDbStaticFactory } from "./dbFactory";
 import {
+  PendingValidator,
   DepositEvent,
   ValidatorMetrics,
   BeaconNodePeer,
@@ -36,6 +37,9 @@ const dbServerState: {
 };
 
 const dbAccountsState: {
+  pendingValidators: {
+    [account: string]: PendingValidator;
+  };
   validatorAccounts: {
     [account: string]: DbValidator;
   };
@@ -49,6 +53,7 @@ const dbAccountsState: {
       }
     | undefined;
 } = {
+  pendingValidators: {},
   validatorAccounts: {},
   withdrawalAccounts: {},
   eth1Account: undefined
@@ -84,6 +89,10 @@ export const server = lowDbStaticFactory(serverDbPath, dbServerState);
 export const accounts = lowDbStaticFactory(accountsDbPath, dbAccountsState);
 export const deposits = lowDbStaticFactory(depositsDbPath, dbDepositsState);
 export const metrics = lowDbStaticFactory(metricsDbPath, dbMetricsState);
+
+export function updatePendingValidator(validator: PendingValidator) {
+  accounts.pendingValidators.merge({ [validator.account]: validator });
+}
 
 export function updateValidator(validator: DbValidator) {
   accounts.validatorAccounts.merge({ [validator.account]: validator });

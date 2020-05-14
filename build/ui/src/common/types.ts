@@ -1,3 +1,46 @@
+// Table type
+
+export interface PendingValidator {
+  account: string;
+  publicKey: string;
+  status: "pending" | "mined" | "confirmed" | "error";
+  txHash?: string;
+  blockNumber?: number;
+  amountEth?: number;
+  error?: string;
+  createdTimestamp?: number;
+  errorTimestamp?: number;
+}
+
+export interface ValidatorAccountNew {
+  name: string;
+  publicKey: string;
+  depositInfo: {
+    [txHash: string]: {
+      txHash?: string;
+      blockNumber?: number;
+    };
+  };
+  status?: string;
+  balance: {
+    eth: number | null; // 32.4523
+    isEstimated: boolean;
+  };
+}
+
+export interface ApiStatus {
+  eth1Account: {
+    address: string;
+    balanceEth: string;
+  };
+  totalBalance: {
+    eth: string | null; // "32.543"
+    isEstimated: boolean;
+  };
+}
+
+// Old types
+
 export interface EthdoWallets {
   name: string;
   accounts: string[];
@@ -41,12 +84,14 @@ export interface ValidatorStats {
   uuid: string;
   publicKey: string;
   createdTimestamp?: number;
-  depositEvents: {
-    [txHashAndLogIndex: string]: DepositEvent;
-  };
+  depositEvents: DepositEvents;
   status?: string;
   balance?: string;
   effectiveBalance?: string;
+}
+
+export interface DepositEvents {
+  [txHashAndLogIndex: string]: DepositEvent;
 }
 
 export interface DepositEvent extends DepositEventArgs {

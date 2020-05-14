@@ -2,23 +2,8 @@ import { ethers } from "ethers";
 import * as db from "../db";
 import { logs } from "../logs";
 import { depositAmountEth, depositContractAddress } from "../params";
-
-function getAccount(): {
-  address: string;
-  privateKey: string;
-} {
-  let account = db.accounts.eth1Account.get();
-  if (!account) {
-    const wallet = ethers.Wallet.createRandom();
-    account = { address: wallet.address, privateKey: wallet.privateKey };
-    db.accounts.eth1Account.set(account);
-  }
-  return account;
-}
-
-function getGoerliProvider(): ethers.providers.Provider {
-  return new ethers.providers.InfuraProvider("goerli");
-}
+import { getAccount } from "./eth1/getAccount";
+import { getGoerliProvider } from "./eth1/provider";
 
 /**
  * Returns eth1 local account address and balance in ETH

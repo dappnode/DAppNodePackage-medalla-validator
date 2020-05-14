@@ -1,7 +1,7 @@
 import {
   readAccountFromKeymanager,
   addValidatorToKeymanager
-} from "./validator";
+} from "./keymanager";
 import { ethdo } from "../ethdo";
 import * as db from "../db";
 import { logs } from "../logs";

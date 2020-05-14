@@ -8,13 +8,14 @@ import {
 } from "../../common";
 import { logs } from "../logs";
 import shell from "../utils/shell";
-import { findFirstAvailableNum } from "../utils/names";
+import { findFirstAvailableNum, findNAvailableNums } from "../utils/names";
 import { getRandomToken } from "../utils/token";
 
 const withdrawalWallet = "withdrawal";
 const validatorWallet = "validator";
 export type WalletType = typeof validatorWallet | typeof withdrawalWallet;
 const PRIMARY = "primary";
+const withdrawalAccount = `${withdrawalWallet}/${PRIMARY}`;
 
 interface EthdoAccountNoPass {
   account: string;
@@ -78,7 +79,7 @@ export class Ethdo extends EthdoCmds {
 
   // Account listing
 
-  async accountList(wallet: WalletType): Promise<WalletAccount[]> {
+  async accountList(wallet: WalletType) {
     try {
       const accounts = await this.walletAccountsVerbose({ wallet });
       return accounts.map(account => ({
@@ -134,7 +135,42 @@ export class Ethdo extends EthdoCmds {
     });
   }
 
+  async getWithdrawalAccount(): Promise<string> {
+    try {
+      await this.accountInfo({ account: withdrawalAccount });
+    } catch (e) {
+      if (
+        e.message.includes("wallet not found") ||
+        e.message.includes("no account")
+      )
+        throw Error(`Withdrawal account must be created first`);
+      throw e;
+    }
+    return withdrawalAccount;
+  }
+
   // Utils
+
+  async createValidatorAccounts(count: number): Promise<EthdoAccountResult[]> {
+    const wallet: WalletType = validatorWallet;
+    await this.assertWalletExists(wallet);
+
+    // Generate sequential validator names
+    const accounts = await this.accountList(wallet);
+    const names = accounts.map(({ name }) => name);
+    const validatorNames = findNAvailableNums(names, count);
+
+    // Create accounts and get their private keys
+    return await Promise.all(
+      validatorNames.map(async name => {
+        const account = formatAccount(name, wallet);
+        const passphrase = getRandomToken();
+        await this.accountCreate({ account, passphrase });
+        const publicKey = await this.accountPublicKey(account);
+        return { account, publicKey, passphrase };
+      })
+    );
+  }
 
   async randomAccountName(wallet: WalletType): Promise<string> {
     const accounts = await this.accountList(wallet);
@@ -151,6 +187,15 @@ export class Ethdo extends EthdoCmds {
  * Initialized ethdo instance with local shell
  */
 export const ethdo = new Ethdo(shell);
+
+/**
+ * Parse name from validator account
+ * @param account "validator/1"
+ * @return "1"
+ */
+export function parseValidatorName(account: string): string {
+  return account.split(validatorWallet)[1] || account;
+}
 
 /**
  * Makes sure account includes the wallet prefix
