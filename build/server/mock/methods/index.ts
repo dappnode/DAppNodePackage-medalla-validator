@@ -8,31 +8,32 @@ import {
 // New state
 
 let validatorCount = 0;
-let pendingValidators: { [name: string]: PendingValidator } = {};
-const validator: { [name: string]: ValidatorStats } = {};
-let eth1Balance = 32.462112364172;
+let pendingValidators: { [index: number]: PendingValidator } = {};
+const validator: { [index: number]: ValidatorStats } = {};
+let eth1Balance = 3200.462112364172;
 
 // New routes
 
 export async function addValidators(
   count: number
 ): Promise<PendingValidator[]> {
-  const names: string[] = [];
-  for (let i = 0; i < count; i++) names.push(String(validatorCount++));
+  const indexes: number[] = [];
+  for (let i = 0; i < count; i++) indexes.push(validatorCount++);
 
   eth1Balance -= 32 * count;
 
   pendingValidators = {};
 
   const results = await Promise.all(
-    names.map(
-      async (name): Promise<PendingValidator> => {
+    indexes.map(
+      async (index): Promise<PendingValidator> => {
+        const account = `validator/${index}`;
         const publicKey = String(Math.random());
         const transactionHash = String(Math.random());
         const blockNumber = Math.ceil(100000 * Math.random());
 
-        pendingValidators[name] = {
-          account: name,
+        pendingValidators[index] = {
+          account,
           publicKey,
           status: "pending"
         };
@@ -40,8 +41,8 @@ export async function addValidators(
         // Simulate mined
         await waitMs(2000 + 2000 * Math.random());
 
-        pendingValidators[name] = {
-          account: name,
+        pendingValidators[index] = {
+          account,
           publicKey,
           status: "mined",
           transactionHash
@@ -50,8 +51,8 @@ export async function addValidators(
         // Simulate waiting for confirmation
         await waitMs(2000 + 2000 * Math.random());
 
-        validator[name] = {
-          name,
+        validator[index] = {
+          index,
           publicKey,
           depositEvents: {
             [transactionHash]: { transactionHash, blockNumber }
@@ -65,7 +66,7 @@ export async function addValidators(
 
         if (Math.random() > 0.66)
           return {
-            account: name,
+            account,
             publicKey,
             status: "confirmed",
             transactionHash,
@@ -73,7 +74,7 @@ export async function addValidators(
           };
         else
           return {
-            account: name,
+            account,
             publicKey,
             status: "error",
             transactionHash,

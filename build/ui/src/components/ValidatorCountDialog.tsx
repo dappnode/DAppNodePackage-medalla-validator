@@ -51,22 +51,15 @@ export function ValidatorCountDialog({
   const minNumber = 1;
   const [num, setNum] = useState(maxNumber);
 
-  function onAdd() {
-    setNum((n) => n + 1);
-  }
-
-  function onMinus() {
-    setNum((n) => n - 1);
-  }
-
-  function onSet(newNum: number) {
-    setNum(newNum);
-  }
+  const onMinus = () => setNum((n) => n - 1);
+  const onAdd = () => setNum((n) => n + 1);
+  const onMax = () => setNum(maxNumber);
+  const onSet = (newNum: number) => setNum(newNum);
 
   function onConfirm() {
     addValidators(Math.floor(num));
     onClose();
-    setNum(0);
+    setNum(1);
   }
 
   const errors: string[] = [];
@@ -113,6 +106,9 @@ export function ValidatorCountDialog({
           </IconButton>
           <IconButton aria-label="substract" onClick={onAdd}>
             <AddIcon />
+          </IconButton>
+          <IconButton aria-label="max" onClick={onMax}>
+            MAX
           </IconButton>
         </Box>
 

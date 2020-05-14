@@ -5,9 +5,6 @@ import { Title } from "./Title";
 import { useApi } from "api/rpc";
 
 const useStyles = makeStyles((theme) => ({
-  depositContext: {
-    flex: 1,
-  },
   noteText: {
     color: theme.palette.text.secondary,
     fontStyle: "italic",
@@ -31,7 +28,7 @@ export function NodeStats() {
   return (
     <>
       <Title>Node Stats</Title>
-      <Typography className={classes.depositContext}>
+      <Typography>
         Current epoch:{" "}
         <strong>
           {nodeStats.data.chainhead ? nodeStats.data.chainhead.headEpoch : "?"}
@@ -42,7 +39,7 @@ export function NodeStats() {
             : "(synced)"
           : ""}
       </Typography>
-      <Typography className={classes.depositContext}>
+      <Typography>
         Peers:{" "}
         <strong>
           {nodeStats.data.peers ? nodeStats.data.peers.length : "?"}

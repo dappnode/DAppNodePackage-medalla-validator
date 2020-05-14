@@ -11,7 +11,7 @@ export interface PendingValidator {
 }
 
 export interface ValidatorStats {
-  name: string;
+  index: number;
   publicKey: string;
   depositEvents: {
     [transactionHash: string]: {
