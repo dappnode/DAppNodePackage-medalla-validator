@@ -56,6 +56,8 @@ export function ValidatorsTable({
     compareValidatorsBy(sortProperty),
     direction
   );
+
+  // Limit the amount of items to show at once >1000 can crash the page
   const validatorsToShow = showAll
     ? validatorsSorted
     : validatorsSorted.slice(0, 10);
@@ -91,7 +93,6 @@ export function ValidatorsTable({
           Validator accounts <HelpText table={prysmStatusDescription} />
         </span>
       </Title>
-
       <TableContainer>
         <Table size="small">
           <TableHead>
@@ -137,7 +138,6 @@ export function ValidatorsTable({
           </TableBody>
         </Table>
       </TableContainer>
-
       {validatorsToShow.length === 0 && (
         <Box m={6} textAlign="center">
           <Typography variant="caption" color="textSecondary">
@@ -145,13 +145,15 @@ export function ValidatorsTable({
           </Typography>
         </Box>
       )}
-
+      {/* Limit the amount of items to show at once >1000 can crash the page */}
       {validators.length > maxItems && (
-        <div className={classes.seeMore}>
-          <Button color="primary" onClick={() => setShowAll(true)}>
-            See all {validators.length} validators
-          </Button>
-        </div>
+        <Button
+          className={classes.seeMore}
+          color="primary"
+          onClick={() => setShowAll(true)}
+        >
+          See all {validators.length} validators
+        </Button>
       )}
     </React.Fragment>
   );

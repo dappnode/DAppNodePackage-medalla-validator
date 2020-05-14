@@ -18,6 +18,7 @@ import {
   TableCell,
   TableBody,
   IconButton,
+  Button,
 } from "@material-ui/core";
 import { ErrorView } from "./ErrorView";
 import { LoadingView } from "./LoadingView";
@@ -26,6 +27,7 @@ import { Eth1TransactionView } from "./Eth1TransactionView";
 import { useApi } from "api/rpc";
 
 const redColor = "#e6756d";
+const maxItems = 10;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -59,6 +61,9 @@ const useStyles = makeStyles((theme) => ({
     alignSelf: "center",
     marginLeft: "0.5rem",
   },
+  seeMore: {
+    marginTop: theme.spacing(3),
+  },
 }));
 
 export function ValidatorsProgress({
@@ -68,6 +73,7 @@ export function ValidatorsProgress({
   status: RequestStatus<PendingValidator[]>;
   closeProgress: () => void;
 }) {
+  const [showAll, setShowAll] = useState(false);
   const { result, loading, error } = status;
   const progress = useApi.getPendingValidators();
   const [pendingValidators, setPendingValidators] = useState<
@@ -101,6 +107,11 @@ export function ValidatorsProgress({
       (validator) => validator.status === "error"
     );
     const hasFinished = Boolean(result);
+
+    // Limit the amount of items to show at once >1000 can crash the page
+    const pendingValidatorsToShow = showAll
+      ? pendingValidators
+      : pendingValidators.slice(0, 10);
 
     return (
       <div className={classes.root}>
@@ -164,7 +175,7 @@ export function ValidatorsProgress({
             <TableContainer>
               <Table size="small" className={classes.table}>
                 <TableBody>
-                  {pendingValidators.map((validator) => (
+                  {pendingValidatorsToShow.map((validator) => (
                     <PendingValidatorRow
                       key={validator.account}
                       validator={validator}
@@ -173,6 +184,17 @@ export function ValidatorsProgress({
                 </TableBody>
               </Table>
             </TableContainer>
+
+            {/* Limit the amount of items to show at once >1000 can crash the page */}
+            {pendingValidators.length > maxItems && (
+              <Button
+                className={classes.seeMore}
+                color="primary"
+                onClick={() => setShowAll(true)}
+              >
+                See all {pendingValidators.length} validators
+              </Button>
+            )}
           </ExpansionPanelDetails>
         </ExpansionPanel>
       </div>
