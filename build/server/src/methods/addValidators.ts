@@ -27,9 +27,17 @@ export async function addValidators(
   const validators = await getAvailableAndCreateValidatorAccounts(count);
   const withdrawalAccount = await ethdo.getWithdrawalAccount();
 
-  const results = await Promise.allSettled(
-    validators.map(
-      async validator => await addValidator(validator, withdrawalAccount)
+  const results = await Promise.all(
+    validators.map(async validator =>
+      addValidator(validator, withdrawalAccount)
+        .then(value => ({
+          status: "fulfilled" as "fulfilled",
+          value
+        }))
+        .catch(reason => ({
+          status: "rejected" as "rejected",
+          reason
+        }))
     )
   );
 
