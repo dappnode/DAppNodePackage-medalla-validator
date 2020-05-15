@@ -7,6 +7,7 @@ import { ErrorView } from "./ErrorView";
 import { LoadingView } from "./LoadingView";
 import { newTabProps, formatEth } from "utils";
 import { ValidatorCountDialog } from "./ValidatorCountDialog";
+import { AccountView } from "./AccountView";
 
 const useStyles = makeStyles((theme) => ({
   depositContext: {
@@ -90,7 +91,6 @@ export function Eth1Account({
 
   if (eth1Account.data) {
     const { address, balance, insufficientFunds } = eth1Account.data;
-    const accountShort = address.slice(0, 6) + "..." + address.slice(-4);
     return (
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6} className={classes.accountContainer}>
@@ -100,9 +100,7 @@ export function Eth1Account({
             alt="icon"
           />
           <Box className={classes.accountTextContainer}>
-            <Typography className={classes.accountAddress}>
-              {accountShort}
-            </Typography>
+            <AccountView address={address} />
             <Typography
               color="textSecondary"
               className={classes.accountSubtitle}
