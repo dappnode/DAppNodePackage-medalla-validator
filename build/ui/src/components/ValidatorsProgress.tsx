@@ -243,9 +243,11 @@ function PendingValidatorStatus({
     case "error":
       return <Typography color="error">Error</Typography>;
     case "mined":
-      return <Typography>Mined</Typography>;
+      return (
+        <Typography color="textSecondary">Waiting confirmation...</Typography>
+      );
     case "pending":
-      return <Typography color="textSecondary">Pending</Typography>;
+      return <Typography color="textSecondary">Pending...</Typography>;
     default:
       return null;
   }
