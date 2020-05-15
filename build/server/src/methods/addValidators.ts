@@ -34,92 +34,84 @@ export async function addValidators(
   );
   let nonceOffset = 0;
 
-  const results: (
-    | { status: "fulfilled"; value: ethers.providers.TransactionReceipt }
-    | { status: "rejected"; reason: Error }
-  )[] = await Promise.all(
-    validators.map(async validator => {
-      const updateStatus = getUpdateStatus(validator);
-      try {
-        const depositData = await ethdo.getDepositData(
-          validator,
-          withdrawalAccount
-        );
+  const results: PendingValidator[] = await Promise.all(
+    validators.map(
+      async (validator): Promise<PendingValidator> => {
+        const updateStatus = getUpdateStatus(validator);
+        let txData: { transactionHash?: string; blockNumber?: number } = {};
+        try {
+          const depositData = await ethdo.getDepositData(
+            validator,
+            withdrawalAccount
+          );
 
-        updateStatus({
-          status: "pending"
-        });
+          updateStatus({
+            status: "pending"
+          });
 
-        // Make sure the nonce is increment when sending all transactions at once
-        const nonce = baseNonce + nonceOffset++;
-        const txResponse = await wallet.sendTransaction({
-          to: depositContractAddress,
-          data: depositData,
-          value: ethers.utils.parseEther(depositAmountEth),
-          nonce
-        });
+          // Make sure the nonce is increment when sending all transactions at once
+          const nonce = baseNonce + nonceOffset++;
+          const txResponse = await wallet.sendTransaction({
+            to: depositContractAddress,
+            data: depositData,
+            value: ethers.utils.parseEther(depositAmountEth),
+            nonce
+          });
 
-        updateStatus({
-          status: "mined",
-          transactionHash: txResponse.hash,
-          blockNumber: txResponse.blockNumber,
-          amountEth: parseFloat(ethers.utils.formatEther(txResponse.value))
-        });
+          updateStatus({
+            status: "mined",
+            transactionHash: txResponse.hash,
+            blockNumber: txResponse.blockNumber,
+            amountEth: parseFloat(ethers.utils.formatEther(txResponse.value))
+          });
+          txData = {
+            transactionHash: txResponse.hash,
+            blockNumber: txResponse.blockNumber
+          };
 
-        // ### Todo: Make sure transaction is successful
-        const receipt = await txResponse.wait(1);
-        updateStatus({
-          status: "confirmed",
-          transactionHash: receipt.transactionHash,
-          blockNumber: receipt.blockNumber
-        });
+          // ### Todo: Make sure transaction is successful
+          const receipt = await txResponse.wait(1);
+          updateStatus({
+            status: "confirmed",
+            transactionHash: receipt.transactionHash,
+            blockNumber: receipt.blockNumber
+          });
+          txData = {
+            transactionHash: receipt.transactionHash,
+            blockNumber: receipt.blockNumber
+          };
 
-        // Confirmed successful deposit
-        addValidatorToKeymanager(validator);
+          // Confirmed successful deposit
+          addValidatorToKeymanager(validator);
 
-        return {
-          status: "fulfilled" as "fulfilled",
-          value: receipt
-        };
-      } catch (e) {
-        logs.error(`Error adding validator ${validator.account}`, e);
-        updateStatus({
-          status: "error",
-          error: e.message
-        });
-        return {
-          status: "rejected" as "rejected",
-          reason: e
-        };
+          return {
+            account: validator.account,
+            publicKey: validator.publicKey,
+            status: "confirmed",
+            ...txData
+          };
+        } catch (e) {
+          logs.error(`Error adding validator ${validator.account}`, e);
+          updateStatus({
+            status: "error",
+            error: e.message
+          });
+          return {
+            account: validator.account,
+            publicKey: validator.publicKey,
+            status: "error",
+            error: e.message,
+            ...txData // Add txData to errors so user can go see the txHash in etherscan
+          };
+        }
       }
-    })
+    )
   );
 
   // Clean progress data
   db.accounts.pendingValidators.set({});
 
-  return results.map(
-    (res, i): PendingValidator => {
-      const validator = validators[i];
-      if (res.status === "rejected") {
-        return {
-          account: validator.account,
-          publicKey: validator.publicKey,
-          status: "error",
-          error: res.reason instanceof Error ? res.reason.message : res.reason
-        };
-      } else {
-        const { transactionHash, blockNumber } = res.value || {};
-        return {
-          account: validator.account,
-          publicKey: validator.publicKey,
-          status: "confirmed",
-          transactionHash,
-          blockNumber
-        };
-      }
-    }
-  );
+  return results;
 }
 
 /**
