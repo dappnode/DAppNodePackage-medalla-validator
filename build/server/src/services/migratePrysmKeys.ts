@@ -1,7 +1,7 @@
 import fs from "fs";
 import * as db from "../db";
 import { ethers } from "ethers";
-import { ethdo, withdrawalAccount } from "../ethdo";
+import { ethdo, withdrawalAccount, withdrawalWallet } from "../ethdo";
 import { addValidatorToKeymanager } from "./keymanager";
 import { logs } from "../logs";
 import {
@@ -43,6 +43,7 @@ export async function migrateLegacyWithdrawal(
   const password = getPassword();
 
   const { privateKey, lastMod } = await readKeystore(keystorePath, password);
+  await ethdo.assertWalletExists(withdrawalWallet);
   await ethdo.accountImport({ account, passphrase, key: privateKey });
   db.updateWithdrawal({ account, passphrase, createdTimestamp: lastMod });
 

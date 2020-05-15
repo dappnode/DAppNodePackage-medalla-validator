@@ -5,7 +5,7 @@ import shell from "../utils/shell";
 import { findFirstAvailableNum, findNAvailableNums } from "../utils/names";
 import { getRandomToken } from "../utils/token";
 
-const withdrawalWallet = "withdrawal";
+export const withdrawalWallet = "withdrawal";
 const validatorWallet = "validator";
 export type WalletType = typeof validatorWallet | typeof withdrawalWallet;
 const PRIMARY = "primary";

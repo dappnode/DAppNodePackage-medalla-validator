@@ -15,7 +15,7 @@ export async function getValidators(): Promise<ValidatorStats[]> {
 
   return keymanagerAccounts.map(
     ({ account }): ValidatorStats => {
-      const ethdoAccount = ethdoAccountByAccount[account];
+      const ethdoAccount = ethdoAccountByAccount[account] || {};
       const publicKey = ethdoAccount.publicKey;
       const depositEvents = depositEventsByPubkey[publicKey] || {};
       const metrics = metricsByPubkey[publicKey] || {};
