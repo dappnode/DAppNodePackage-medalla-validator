@@ -102,6 +102,15 @@ export default function App() {
     RequestStatus<PendingValidator[]>
   >();
 
+  function checkWithdrawalAccount() {
+    api
+      .withdrawalAccountGet()
+      .then((withdrawalAccount) => {
+        if (!withdrawalAccount.exists) setOpenWithdrawal(true);
+      })
+      .catch(console.error);
+  }
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (validators.data) validators.revalidate();
@@ -110,12 +119,7 @@ export default function App() {
   }, [validators]);
 
   useEffect(() => {
-    api
-      .withdrawalAccountGet()
-      .then((withdrawalAccount) => {
-        if (!withdrawalAccount.exists) setOpenWithdrawal(true);
-      })
-      .catch(console.error);
+    checkWithdrawalAccount();
   }, []);
 
   async function addValidators(num: number) {
@@ -127,6 +131,7 @@ export default function App() {
     } catch (e) {
       setStatusAddingValidators({ error: e });
       console.error(`Error adding ${num} validators`, e);
+      if (e.message.includes("no withdrawal")) checkWithdrawalAccount();
     }
   }
 

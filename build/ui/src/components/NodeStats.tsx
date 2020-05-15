@@ -1,20 +1,10 @@
 import React, { useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
 import { Title } from "./Title";
 import { useApi } from "api/rpc";
 
-const useStyles = makeStyles((theme) => ({
-  noteText: {
-    color: theme.palette.text.secondary,
-    fontStyle: "italic",
-    fontSize: "100%",
-  },
-}));
-
 export function NodeStats() {
   const nodeStats = useApi.nodeStats();
-  const classes = useStyles();
 
   useEffect(() => {
     const interval = setInterval(() => {

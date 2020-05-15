@@ -15,6 +15,7 @@ import {
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import { validatorCost } from "common/params";
+import { formatEth } from "utils";
 
 const useStyles = makeStyles((theme) => ({
   inputContainer: {
@@ -117,7 +118,7 @@ export function ValidatorCountDialog({
             variant="h5"
             color={num > maxNumber ? "error" : "textSecondary"}
           >
-            {num * 32} / {balance} ETH
+            {num * 32} / {formatEth(balance)} ETH
           </Typography>
           <Typography variant="caption" color="textSecondary">
             ETH to be transfered from the internal account

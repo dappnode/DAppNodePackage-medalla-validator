@@ -2,7 +2,7 @@ import { logs } from "./logs";
 import app from "./app";
 import { listenToDepositEvents } from "./services/eth1";
 import { readKeymanagerAccounts } from "./services/keymanager";
-import { migrateLegacyKeys } from "./services/migratePrysmKeys";
+import { migrateLegacyValidator } from "./services/migratePrysmKeys";
 import { collectValidatorMetrics } from "./services/metrics";
 import { printGitData } from "./services/printGitData";
 import { validatorBinary } from "./services/validatorBinary";
@@ -12,7 +12,7 @@ listenToDepositEvents();
 // Collect latest metrics for available validators
 collectValidatorMetrics();
 // Migrate keys previously controlled by the validator binary to ethdo
-migrateLegacyKeys();
+migrateLegacyValidator();
 // For debugging only: print DNP version, git branch and commit
 printGitData();
 

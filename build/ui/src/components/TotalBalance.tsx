@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
 import { Title } from "./Title";
 import { ValidatorStats } from "common";
+import { formatEth } from "utils";
 
 const useStyles = makeStyles((theme) => ({
   depositContext: {
@@ -36,7 +37,7 @@ export function TotalBalance({ validators }: { validators: ValidatorStats[] }) {
     <>
       <Title>Total balance</Title>
       <Typography component="p" variant="h4">
-        {totalBalance}
+        {formatEth(totalBalance)}
         {isEstimated ? "*" : ""} {isPartial ? "**" : ""} ETH
       </Typography>
       {isEstimated && (

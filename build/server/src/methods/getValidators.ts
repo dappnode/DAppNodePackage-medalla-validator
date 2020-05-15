@@ -4,6 +4,7 @@ import * as db from "../db";
 import { readKeymanagerAccounts } from "../services/keymanager";
 import { ethdo, parseValidatorName } from "../ethdo";
 import { computeEstimatedBalance } from "../utils/depositEvent";
+import { ethers } from "ethers";
 
 export async function getValidators(): Promise<ValidatorStats[]> {
   const keymanagerAccounts = readKeymanagerAccounts();
@@ -90,7 +91,8 @@ function computeBalance(
   return {
     eth:
       typeof balance === "string" || typeof balance === "number"
-        ? parseFloat(balance) || null
+        ? // API returns the balance in 9 decimals
+          parseFloat(ethers.utils.formatUnits(balance, 9)) || null
         : null,
     isEstimated: false
   };

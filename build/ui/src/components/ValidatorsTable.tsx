@@ -19,6 +19,7 @@ import { HelpText } from "components/HelpText";
 import { prysmStatusDescription } from "text";
 import { PublicKeyView } from "./PublicKeyView";
 import { DepositEventsView } from "./Eth1TransactionView";
+import { formatEth } from "utils";
 
 const maxItems = 10;
 type SortOption = "index" | "blockNumber" | "status" | "balance";
@@ -131,9 +132,9 @@ export function ValidatorsTable({
                 <TableCell>{validator.status}</TableCell>
                 <TableCell align="right">
                   {validator.balance.isEstimated ? (
-                    <i>{validator.balance.eth} (estimated)</i>
+                    <i>{formatEth(validator.balance.eth)} (estimated)</i>
                   ) : (
-                    validator.balance.eth
+                    formatEth(validator.balance.eth)
                   )}
                 </TableCell>
               </TableRow>

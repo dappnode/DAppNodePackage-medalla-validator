@@ -114,7 +114,7 @@ export class Ethdo extends EthdoCmds {
         e.message.includes("wallet not found") ||
         e.message.includes("no account")
       )
-        throw Error(`A withdrawal account must be created first`);
+        throw Error(`no withdrawal account, must be created first`);
       throw e;
     }
     return withdrawalAccount;

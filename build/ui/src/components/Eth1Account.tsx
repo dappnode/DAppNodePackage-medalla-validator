@@ -5,7 +5,7 @@ import { Typography, Grid, Button, Box } from "@material-ui/core";
 import { useApi } from "api/rpc";
 import { ErrorView } from "./ErrorView";
 import { LoadingView } from "./LoadingView";
-import { newTabProps } from "utils";
+import { newTabProps, formatEth } from "utils";
 import { ValidatorCountDialog } from "./ValidatorCountDialog";
 
 const useStyles = makeStyles((theme) => ({
@@ -110,7 +110,7 @@ export function Eth1Account({
               Eth1 account
             </Typography>
             <Typography className={classes.accountBalance}>
-              {balance} ETH
+              {formatEth(balance)} ETH
             </Typography>
           </Box>
         </Grid>
