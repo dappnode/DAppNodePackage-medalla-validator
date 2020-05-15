@@ -21,6 +21,7 @@ import { NodeStats } from "components/NodeStats";
 import { TotalBalance } from "components/TotalBalance";
 import { RequestStatus } from "types";
 import { PendingValidator } from "common";
+import { BackupWithdrawalDialog } from "components/BackupWithdrawalDialog";
 
 type LoginStatus = "login" | "logout" | "loading";
 const keyuserSettingDarkMode = "user-setting-dark-mode";
@@ -138,6 +139,9 @@ export default function App() {
           <LayoutItem sm={6}>
             <NodeStats />
           </LayoutItem>
+
+          {/* TEMP */}
+          <BackupWithdrawalDialog open={true} onClose={() => {}} />
 
           <LayoutItem>
             <Eth1Account

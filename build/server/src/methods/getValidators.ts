@@ -2,7 +2,7 @@ import { keyBy } from "lodash";
 import { ValidatorStats, DepositEvent, PendingValidator } from "../../common";
 import * as db from "../db";
 import { readKeymanagerAccounts } from "../services/keymanager";
-import { ethdo } from "../ethdo";
+import { ethdo, parseValidatorName } from "../ethdo";
 import { computeEstimatedBalance } from "../utils/depositEvent";
 
 export async function getValidators(): Promise<ValidatorStats[]> {
@@ -20,7 +20,7 @@ export async function getValidators(): Promise<ValidatorStats[]> {
       const metrics = metricsByPubkey[publicKey] || {};
 
       return {
-        name: ethdoAccount.name,
+        index: parseInt(parseValidatorName(ethdoAccount.name)) || 0,
         publicKey,
         depositEvents: depositEvents,
         status: metrics.status,
