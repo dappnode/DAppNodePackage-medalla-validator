@@ -37,6 +37,11 @@ export interface ApiStatus {
   };
 }
 
+export interface WithdrawalAccountInfo {
+  account: string | null; // "withdrawal/primary",
+  exists: boolean;
+}
+
 // Old types
 
 export interface EthdoAccountResult {

@@ -201,6 +201,21 @@ export class EthdoCmds {
     return await this.run("account info", options);
   }
 
+  /**
+   * ethdo account info provides information about the given account. Options include:
+   * $ ethdo account info --account="Personal wallet/Operations"
+   * Public key: 0x8e2f9e8cc29658ff37ecc30e95a0807579b224586c185d128cb7a7490784c1ad9b0ab93dbe604ab075b40079931e6670
+   */
+  async accountInfoVerbose(options: {
+    /**
+     *  the name of the account to create
+     */
+    account: string;
+  }): Promise<WalletAccountData> {
+    const res = await this.run("account info", { ...options, verbose: true });
+    return parseWalletAccountVerbose(res);
+  }
+
   async validatorDepositdata(options: {
     /**
      * Account of the account carrying out the validation
@@ -261,6 +276,23 @@ export function parseWalletAccountsVerbose(res: string): WalletAccountData[] {
     });
   }
   return accounts;
+}
+
+/**
+ * ethdo wallet account
+ * With the --verbose flag this will provide the public key of the accounts.
+ *	UUID:		32ec701a-880b-4cfa-a409-74d88854ec64
+ *	Public key:	0x98552a5cfa4022f529eadafeb0d17c2ed748a42ecd799472dad244ffd21342a7b3e436a38abad1ece8afabfd13b42e60
+ */
+export function parseWalletAccountVerbose(res: string): WalletAccountData {
+  const [uuid, publicKey] = res.split("\n");
+  if (!uuid) throw Error(`Unknown row format, no uuid: ${res}`);
+  if (!publicKey) throw Error(`Unknown row format, no publicKey: ${res}`);
+  return {
+    name: "",
+    uuid: dataAfterColon(uuid, /uuid/i),
+    publicKey: dataAfterColon(publicKey, /public.key/i)
+  };
 }
 
 /**

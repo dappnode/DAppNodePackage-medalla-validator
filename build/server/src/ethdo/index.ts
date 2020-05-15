@@ -9,7 +9,7 @@ const withdrawalWallet = "withdrawal";
 const validatorWallet = "validator";
 export type WalletType = typeof validatorWallet | typeof withdrawalWallet;
 const PRIMARY = "primary";
-const withdrawalAccount = `${withdrawalWallet}/${PRIMARY}`;
+export const withdrawalAccount = `${withdrawalWallet}/${PRIMARY}`;
 
 export class Ethdo extends EthdoCmds {
   async assertWalletExists(wallet: WalletType): Promise<void> {
@@ -114,13 +114,18 @@ export class Ethdo extends EthdoCmds {
         e.message.includes("wallet not found") ||
         e.message.includes("no account")
       )
-        throw Error(`Withdrawal account must be created first`);
+        throw Error(`A withdrawal account must be created first`);
       throw e;
     }
     return withdrawalAccount;
   }
 
   // Utils
+
+  async createWithdrawalAccount(passphrase: string): Promise<void> {
+    await this.assertWalletExists(withdrawalWallet);
+    await this.accountCreate({ account: withdrawalAccount, passphrase });
+  }
 
   async createValidatorAccounts(count: number): Promise<EthdoAccountResult[]> {
     const wallet: WalletType = validatorWallet;

@@ -2,7 +2,8 @@ import {
   PendingValidator,
   ValidatorStats,
   Eth1AccountStats,
-  NodeStats
+  NodeStats,
+  WithdrawalAccountInfo
 } from "../../common";
 
 // New state
@@ -10,7 +11,8 @@ import {
 let validatorCount = 0;
 let pendingValidators: { [index: number]: PendingValidator } = {};
 const validator: { [index: number]: ValidatorStats } = {};
-let eth1Balance = 3200.462112364172;
+let eth1Balance = 320.462112364172;
+let withdrawalAccountExists = false;
 
 // New routes
 
@@ -134,6 +136,21 @@ export async function nodeStats(): Promise<NodeStats> {
       previousJustifiedBlockRoot: "Bb/6F2NfmtilyxQb+2tItGlD1WNwR17gMVd5kIxjgCQ="
     }
   };
+}
+
+export async function withdrawalAccountGet(): Promise<WithdrawalAccountInfo> {
+  return {
+    account: "withdrawal/primary",
+    exists: withdrawalAccountExists
+  };
+}
+
+export async function withdrawalAccountCreate(
+  password: string
+): Promise<string> {
+  password;
+  withdrawalAccountExists = true;
+  return `{"crypto":{"checksum":{"function":"sha256","message":"8934f3db210e218e1c5b4513bed4a03d42e78c43447109402ac211fd5d8920ef","params":{}},"cipher":{"function":"aes-128-ctr","message":"a5cd4f9eabbe476b75aaa90a5a06df1f265c3489149fe95306a3940ebb5abb57","params":{"iv":"72d3615a55f6c963dbd1833980658624"}},"kdf":{"function":"pbkdf2","message":"","params":{"c":16,"dklen":32,"prf":"hmac-sha256","salt":"f8ff356724d9a297e62ccfb3640c39af6767b86abc1b79e17b96545d3ac32288"}}},"encryptor":"keystore","name":"2","pubkey":"93905cd39c8f0b0226bd7ade6686e103800d152f421f52fc7e0f03e8487ca28613a1548445d32286167888407f7a8642","uuid":"304e671d-f24f-4a20-aa02-9243c0b3fc01","version":4}`;
 }
 
 // Old routes

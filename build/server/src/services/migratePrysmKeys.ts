@@ -1,7 +1,7 @@
 import fs from "fs";
 import * as db from "../db";
 import { ethers } from "ethers";
-import { ethdo, WalletType } from "../ethdo";
+import { ethdo, withdrawalAccount } from "../ethdo";
 import { addValidatorToKeymanager } from "./keymanager";
 import { logs } from "../logs";
 import {
@@ -11,38 +11,43 @@ import {
   adminPassword
 } from "../params";
 
-export function migrateLegacyKeys(): void {
-  migrateKeyIfExists(legacyValidatorPath, "validator");
-  migrateKeyIfExists(legacyWithdrawalPath, "withdrawal");
-}
-
-async function migrateKeyIfExists(
-  keystorePath: string,
-  wallet: WalletType
-): Promise<void> {
+export async function migrateLegacyValidator(): Promise<void> {
+  const keystorePath = legacyValidatorPath;
   try {
     if (!fs.existsSync(keystorePath)) return;
     const password = getPassword();
+    const wallet = "validator";
 
     const { privateKey, lastMod } = await readKeystore(keystorePath, password);
     const account = await ethdo.importAccount(privateKey, wallet);
-    switch (wallet) {
-      case "validator":
-        db.updateValidator({ ...account, createdTimestamp: lastMod });
-        // Writes to keymanager and restart validator
-        addValidatorToKeymanager(account);
-
-      case "withdrawal":
-        db.updateWithdrawal({ ...account, createdTimestamp: lastMod });
-    }
+    db.updateValidator({ ...account, createdTimestamp: lastMod });
+    // Writes to keymanager and restart validator
+    addValidatorToKeymanager(account);
 
     fs.unlinkSync(keystorePath);
-    logs.info(
-      `Migrated ${wallet} keystore ${keystorePath} > ${account.account}`
-    );
+    logs.info(`Migrated legacy keystore ${keystorePath} > ${account.account}`);
   } catch (e) {
-    logs.error(`Error migrating ${wallet} keystore ${keystorePath}`, e);
+    logs.error(`Error migrating legacy validator ${keystorePath}`, e);
   }
+}
+
+export function legacyWithdrawalExists(): boolean {
+  return fs.existsSync(legacyWithdrawalPath);
+}
+
+export async function migrateLegacyWithdrawal(
+  passphrase: string
+): Promise<void> {
+  const account = withdrawalAccount;
+  const keystorePath = legacyWithdrawalPath;
+  const password = getPassword();
+
+  const { privateKey, lastMod } = await readKeystore(keystorePath, password);
+  await ethdo.accountImport({ account, passphrase, key: privateKey });
+  db.updateWithdrawal({ account, passphrase, createdTimestamp: lastMod });
+
+  fs.unlinkSync(keystorePath);
+  logs.info(`Migrated legacy withdrawal keystore ${keystorePath}`);
 }
 
 /**
@@ -90,7 +95,7 @@ export async function decryptPrysmKeystore(
  * @param keystorePath
  * @param password
  */
-async function readKeystore(keystorePath: string, password: string) {
+export async function readKeystore(keystorePath: string, password: string) {
   if (!password) throw Error(`No ENV PASSWORD provided`);
   const json = fs.readFileSync(keystorePath, "utf8");
   return {

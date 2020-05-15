@@ -3,6 +3,7 @@ import {
   PendingValidator,
   Eth1AccountStats,
   NodeStats,
+  WithdrawalAccountInfo,
 } from "./types";
 
 export interface Routes {
@@ -13,6 +14,12 @@ export interface Routes {
   eth1AccountGet: () => Promise<Eth1AccountStats>;
   // Node stats
   nodeStats: () => Promise<NodeStats>;
+  // Backup withdrawal
+  withdrawalAccountGet: () => Promise<WithdrawalAccountInfo>;
+  /**
+   * Returns stringified encrypted keystore JSON
+   */
+  withdrawalAccountCreate: (passphrase: string) => Promise<string>;
 }
 
 export const routesData: { [P in keyof Routes]: {} } = {
@@ -21,6 +28,8 @@ export const routesData: { [P in keyof Routes]: {} } = {
   getValidators: {},
   eth1AccountGet: {},
   nodeStats: {},
+  withdrawalAccountGet: {},
+  withdrawalAccountCreate: {},
 };
 
 // DO NOT REMOVE

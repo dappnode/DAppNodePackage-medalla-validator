@@ -34,7 +34,6 @@ const useStyles = makeStyles({
 });
 
 export default function App() {
-  const [showValidatorFlow, setShowValidatorFlow] = useState(true);
   const [loginStatus, setLoginStatus] = useState<LoginStatus>();
   const [isOffline, setIsOffline] = useState<boolean>();
   const [darkMode, setDarkMode] = useState<boolean>();
@@ -70,10 +69,6 @@ export default function App() {
     auth.logout().then(checkLogin).catch(console.error);
   }
 
-  function addValidator() {
-    setShowValidatorFlow(true);
-  }
-
   function switchDark() {
     setDarkMode((x) => !x);
   }
@@ -101,6 +96,7 @@ export default function App() {
 
   // Fetch app data
 
+  const [openWithdrawal, setOpenWithdrawal] = useState(false);
   const validators = useApi.getValidators();
   const [statusAddingValidators, setStatusAddingValidators] = useState<
     RequestStatus<PendingValidator[]>
@@ -112,6 +108,15 @@ export default function App() {
     }, 2000);
     return () => clearInterval(interval);
   }, [validators]);
+
+  useEffect(() => {
+    api
+      .withdrawalAccountGet()
+      .then((withdrawalAccount) => {
+        if (!withdrawalAccount.exists) setOpenWithdrawal(true);
+      })
+      .catch(console.error);
+  }, []);
 
   async function addValidators(num: number) {
     try {
@@ -141,7 +146,10 @@ export default function App() {
           </LayoutItem>
 
           {/* TEMP */}
-          <BackupWithdrawalDialog open={true} onClose={() => {}} />
+          <BackupWithdrawalDialog
+            open={openWithdrawal}
+            onClose={() => setOpenWithdrawal(false)}
+          />
 
           <LayoutItem>
             <Eth1Account
