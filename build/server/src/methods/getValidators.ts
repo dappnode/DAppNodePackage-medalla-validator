@@ -35,34 +35,6 @@ export async function getPendingValidators(): Promise<PendingValidator[]> {
   // Pending accounts
   const pendingValidators = db.accounts.pendingValidators.get();
   return Object.values(pendingValidators);
-
-  // return pendingValidators
-  //   .filter(
-  //     validator =>
-  //       filterByTtl(errorTtl, validator.errorTimestamp) &&
-  //       filterByTtl(pendingTtl, validator.createdTimestamp)
-  //   )
-  //   .map(
-  //     (validator): ValidatorStats => {
-  //       return {m
-  //         name: parseValidatorName(validator.account || ""),
-  //         publicKey: validator.publicKey || "",
-  //         depositEvents: validator.transactionHash
-  //           ? {
-  //               [validator.transactionHash]: {
-  //                 transactionHash: validator.transactionHash,
-  //                 blockNumber: validator.blockNumber
-  //               }
-  //             }
-  //           : {},
-  //         status: "DEPOSITING",
-  //         balance: {
-  //           eth: validator.amountEth || null,
-  //           isEstimated: false
-  //         }
-  //       };
-  //     }
-  //   );
 }
 
 function computeBalance(

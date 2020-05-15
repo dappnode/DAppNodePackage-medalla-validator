@@ -20,6 +20,7 @@ import { prysmStatusDescription } from "text";
 import { PublicKeyView } from "./PublicKeyView";
 import { DepositEventsView } from "./Eth1TransactionView";
 import { formatEth } from "utils";
+import { LoadingView } from "./LoadingView";
 
 const maxItems = 10;
 type SortOption = "index" | "blockNumber" | "status" | "balance";
@@ -48,8 +49,10 @@ const useStyles = makeStyles((theme) => ({
 
 export function ValidatorsTable({
   validators,
+  loading,
 }: {
   validators: ValidatorStats[];
+  loading: boolean;
 }) {
   const [showAll, setShowAll] = useState(false);
   const [sortProperty, setSortProperty] = useState<SortOption>("index");
@@ -142,7 +145,14 @@ export function ValidatorsTable({
           </TableBody>
         </Table>
       </TableContainer>
-      {validatorsToShow.length === 0 && (
+
+      {validatorsToShow.length === 0 && loading ? (
+        <Box my={3}>
+          <LoadingView
+            steps={["Fetching validator accounts", "Quering validator metrics"]}
+          />
+        </Box>
+      ) : (
         <Box m={6} textAlign="center">
           <Typography
             variant="caption"
@@ -153,6 +163,7 @@ export function ValidatorsTable({
           </Typography>
         </Box>
       )}
+
       {/* Limit the amount of items to show at once >1000 can crash the page */}
       {validators.length > maxItems && (
         <Button

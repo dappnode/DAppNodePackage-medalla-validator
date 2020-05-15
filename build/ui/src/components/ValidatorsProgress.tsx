@@ -129,7 +129,9 @@ export function ValidatorsProgress({
               <Box className={classes.headerText}>
                 <Typography className={classes.heading}>
                   {hasFinished
-                    ? `Added validators ${someErrors ? "- with errors" : ""}`
+                    ? someErrors
+                      ? "Added validators, with errors"
+                      : "Successfully added validators"
                     : loading
                     ? "Adding validators..."
                     : error

@@ -131,7 +131,7 @@ export default function App() {
     } catch (e) {
       setStatusAddingValidators({ error: e });
       console.error(`Error adding ${num} validators`, e);
-      if (e.message.includes("no withdrawal")) checkWithdrawalAccount();
+      checkWithdrawalAccount();
     }
   }
 
@@ -175,7 +175,10 @@ export default function App() {
           )}
 
           <LayoutItem>
-            <ValidatorsTable validators={validators.data || []} />
+            <ValidatorsTable
+              validators={validators.data || []}
+              loading={!validators.data && validators.isValidating}
+            />
           </LayoutItem>
         </Layout>
       ) : loginStatus === "logout" ? (
