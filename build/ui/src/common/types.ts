@@ -13,12 +13,7 @@ export interface PendingValidator {
 export interface ValidatorStats {
   index: number;
   publicKey: string;
-  depositEvents: {
-    [transactionHash: string]: {
-      transactionHash?: string;
-      blockNumber?: number;
-    };
-  };
+  depositEvents: DepositEvent[];
   status?: string;
   balance: {
     eth: number | null; // 32.4523
@@ -56,7 +51,10 @@ export interface EthdoAccount {
 }
 
 export interface DepositEvents {
-  [transactionHashAndLogIndex: string]: DepositEvent;
+  publicKey: string;
+  events: {
+    [transactionHashAndLogIndex: string]: DepositEvent;
+  };
 }
 
 export interface DepositEvent extends DepositEventArgs {
@@ -101,9 +99,9 @@ export const depositEventAbi = {
 
 // Metrics from Node's gRPC gateway
 
-export type ValidatorMetrics = ValidatorStatus &
-  ValidatorData &
-  ValidatorBalance;
+export type ValidatorMetrics = Partial<ValidatorStatus> &
+  Partial<ValidatorData> &
+  Partial<ValidatorBalance> & { publicKey: string };
 
 export interface ValidatorStatus {
   /**

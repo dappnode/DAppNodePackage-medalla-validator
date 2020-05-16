@@ -109,7 +109,7 @@ export async function addValidators(
   );
 
   // Clean progress data
-  db.accounts.pendingValidators.set({});
+  db.accounts.pendingValidators.clearAll();
 
   return results;
 }
@@ -122,7 +122,7 @@ function getUpdateStatus(validator: EthdoAccountResult) {
   return function updateStatus(
     data: Pick<PendingValidator, "status"> & Partial<PendingValidator>
   ) {
-    db.updatePendingValidator({
+    db.accounts.pendingValidators.merge({
       account: validator.account,
       publicKey: validator.publicKey,
       ...data
@@ -142,8 +142,7 @@ async function getAvailableAndCreateValidatorAccounts(
       if (!keymanagerAccounts.some(a => a.account === validator.account)) {
         // The password must be fetched from the API's storage since the accounts are
         // not added to the keymanager until the deposit tx is confirmed
-        const localAccounts = db.accounts.validatorAccounts.get();
-        const localAccount = localAccounts[validator.account];
+        const localAccount = db.accounts.validator.get(validator.account);
         if (localAccount)
           unusedExistingValidators.push({
             account: validator.account,
@@ -179,6 +178,6 @@ async function createValidatorAccounts(
 ): Promise<EthdoAccountResult[]> {
   const validators = await ethdo.createValidatorAccounts(count);
   for (const validator of validators)
-    db.updateValidator({ ...validator, createdTimestamp: Date.now() });
+    db.accounts.validator.set({ ...validator, createdTimestamp: Date.now() });
   return validators;
 }

@@ -4,6 +4,7 @@ import { Link } from "@material-ui/core";
 import LaunchIcon from "@material-ui/icons/Launch";
 import { goerliTxViewer } from "common/params";
 import { newTabProps, urlJoin } from "utils";
+import { DepositEvent } from "common";
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
@@ -47,18 +48,13 @@ export const Eth1TransactionView: React.FC<{
 export function DepositEventsView({
   depositEvents,
 }: {
-  depositEvents: {
-    [transactionHash: string]: {
-      transactionHash?: string;
-      blockNumber?: number;
-    };
-  };
+  depositEvents: DepositEvent[];
 }) {
   return (
     <div>
-      {Object.entries(depositEvents).map(([key, depositEvent]) => (
+      {depositEvents.map((depositEvent, i) => (
         <Eth1TransactionView
-          key={key}
+          key={i}
           transactionHash={depositEvent.transactionHash}
         >
           Deposited: {depositEvent.blockNumber}

@@ -20,7 +20,7 @@ export async function migrateLegacyValidator(): Promise<void> {
 
     const { privateKey, lastMod } = await readKeystore(keystorePath, password);
     const account = await ethdo.importAccount(privateKey, wallet);
-    db.updateValidator({ ...account, createdTimestamp: lastMod });
+    db.accounts.validator.merge({ ...account, createdTimestamp: lastMod });
     // Writes to keymanager and restart validator
     addValidatorToKeymanager(account);
 
@@ -42,10 +42,15 @@ export async function migrateLegacyWithdrawal(
   const keystorePath = legacyWithdrawalPath;
   const password = getPassword();
 
-  const { privateKey, lastMod } = await readKeystore(keystorePath, password);
+  const keystore = await readKeystore(keystorePath, password);
   await ethdo.assertWalletExists(withdrawalWallet);
-  await ethdo.accountImport({ account, passphrase, key: privateKey });
-  db.updateWithdrawal({ account, passphrase, createdTimestamp: lastMod });
+  await ethdo.accountImport({ account, passphrase, key: keystore.privateKey });
+  db.accounts.validator.merge({
+    account,
+    passphrase,
+    publicKey: keystore.publicKey,
+    createdTimestamp: keystore.lastMod
+  });
 
   fs.unlinkSync(keystorePath);
   logs.info(`Migrated legacy withdrawal keystore ${keystorePath}`);
@@ -99,7 +104,9 @@ export async function decryptPrysmKeystore(
 export async function readKeystore(keystorePath: string, password: string) {
   if (!password) throw Error(`No ENV PASSWORD provided`);
   const json = fs.readFileSync(keystorePath, "utf8");
+  const keystore = JSON.parse(json);
   return {
+    publicKey: keystore.publickey,
     privateKey: await decryptPrysmKeystore(json, password),
     lastMod: fs.statSync(keystorePath).mtimeMs
   };

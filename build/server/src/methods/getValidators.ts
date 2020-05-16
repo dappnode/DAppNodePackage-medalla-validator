@@ -10,22 +10,22 @@ export async function getValidators(): Promise<ValidatorStats[]> {
   const keymanagerAccounts = readKeymanagerAccounts();
   const accounts = await ethdo.accountList("validator");
   const ethdoAccountByAccount = keyBy(accounts, a => a.account);
-  const depositEventsByPubkey = db.deposits.depositEvents.get();
-  const metricsByPubkey = db.metrics.current.get();
 
   return keymanagerAccounts.map(
     ({ account }): ValidatorStats => {
-      const ethdoAccount = ethdoAccountByAccount[account] || {};
+      const ethdoAccount = ethdoAccountByAccount[account];
       const publicKey = ethdoAccount.publicKey;
-      const depositEvents = depositEventsByPubkey[publicKey] || {};
-      const metrics = metricsByPubkey[publicKey] || {};
+      const depositEventsObj = db.deposits.depositEvents.get(publicKey);
+      const depositEvents = Object.values(depositEventsObj?.events || {});
+      const metrics = db.metrics.current.get(publicKey);
+      const { balance, status } = metrics || {};
 
       return {
         index: parseInt(parseValidatorName(ethdoAccount.name)) || 0,
         publicKey,
-        depositEvents: depositEvents,
-        status: metrics.status,
-        balance: computeBalance(metrics, Object.values(depositEvents))
+        depositEvents,
+        status,
+        balance: computeBalance({ balance, status }, depositEvents)
       };
     }
   );
@@ -33,8 +33,7 @@ export async function getValidators(): Promise<ValidatorStats[]> {
 
 export async function getPendingValidators(): Promise<PendingValidator[]> {
   // Pending accounts
-  const pendingValidators = db.accounts.pendingValidators.get();
-  return Object.values(pendingValidators);
+  return db.accounts.pendingValidators.getAll();
 }
 
 function computeBalance(

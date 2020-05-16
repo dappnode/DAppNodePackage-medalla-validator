@@ -22,10 +22,8 @@ const apiUrl = beaconGrpcGatewayUrl;
 export function collectValidatorMetrics() {
   setInterval(async () => {
     try {
-      const validators = db.accounts.validatorAccounts.get() || {};
-      const pubKeys = Object.values(validators)
-        .map(v => v.publicKey)
-        .filter(pubKey => pubKey);
+      const validators = db.accounts.validator.getAll();
+      const pubKeys = validators.map(v => v.publicKey).filter(pubKey => pubKey);
       for (const pubKey of pubKeys)
         collectMetricsByPubkey(pubKey).catch(e => {
           logs.debug(`Error collecting ${pubKey} metrics`, e);
@@ -57,9 +55,9 @@ export function collectValidatorMetrics() {
   }, 5000);
 }
 
-async function collectMetricsByPubkey(pubKey: string) {
-  const status = await ethValidatorStatus(pubKey);
-  db.updateMetrics(pubKey, status);
+async function collectMetricsByPubkey(publicKey: string) {
+  const status = await ethValidatorStatus(publicKey);
+  db.metrics.current.merge({ publicKey, ...status });
   // If the validator deposit in not recognized by layer2, skip other calls
   if (
     status.status === "UNKNOWN" ||
@@ -69,17 +67,18 @@ async function collectMetricsByPubkey(pubKey: string) {
     return;
 
   try {
-    const balances = await ethValidatorsBalances([pubKey]);
-    db.updateMetrics(pubKey, balances[pubKey]);
+    const balances = await ethValidatorsBalances([publicKey]);
+    const balanceData = balances[publicKey];
+    if (balanceData) db.metrics.current.merge({ publicKey, ...balanceData });
   } catch (e) {
-    logs.debug(`Error collecting ${pubKey} balance`, e);
+    logs.debug(`Error collecting ${publicKey} balance`, e);
   }
 
   try {
-    const data = await ethValidator(pubKey);
-    db.updateMetrics(pubKey, data);
+    const data = await ethValidator(publicKey);
+    if (data) db.metrics.current.merge({ publicKey, ...data });
   } catch (e) {
-    logs.debug(`Error collecting ${pubKey} data`, e);
+    logs.debug(`Error collecting ${publicKey} data`, e);
   }
 }
 

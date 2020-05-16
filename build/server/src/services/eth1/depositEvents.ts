@@ -8,7 +8,7 @@ import {
 import {
   DepositEventArgs,
   depositEventAbi,
-  DepositEvent
+  DepositEvents
 } from "../../../common";
 import { getGoerliProvider } from "./provider";
 import { logs } from "../../logs";
@@ -72,17 +72,19 @@ function subscribeToEvents() {
 function saveDepositEvents(
   depositLogs: (ethers.providers.Log & { args: DepositEventArgs })[]
 ) {
-  const depositEvents: {
-    [pubkey: string]: {
-      [transactionHashLogIndex: string]: DepositEvent;
-    };
-  } = {};
+  const depositEvents: { [pubkey: string]: DepositEvents } = {};
 
   for (const log of depositLogs) {
-    const pubkey = log.args.pubkey;
-    const transactionHashLogIndex = `${log.transactionHash}/${log.transactionLogIndex}`;
-    if (!depositEvents[pubkey]) depositEvents[pubkey] = {};
-    depositEvents[pubkey][transactionHashLogIndex] = {
+    const publicKey = log.args.pubkey;
+    const transactionHashLogIndex = `${
+      log.transactionHash
+    }/${log.transactionLogIndex || 0}`;
+    if (!depositEvents[publicKey])
+      depositEvents[publicKey] = {
+        publicKey,
+        events: {}
+      };
+    depositEvents[publicKey].events[transactionHashLogIndex] = {
       blockNumber: log.blockNumber,
       transactionHash: log.transactionHash,
       // Pick values to prevent storing unnecessary data in the logs.args object
@@ -94,7 +96,7 @@ function saveDepositEvents(
     };
   }
 
-  db.deposits.depositEvents.merge(depositEvents);
+  db.deposits.depositEvents.mergeAll(depositEvents);
 }
 
 /**
@@ -103,10 +105,10 @@ function saveDepositEvents(
  */
 function getHighestSeenBlock(): number {
   try {
-    const depositEvents = db.deposits.depositEvents.get();
+    const depositEvents = db.deposits.depositEvents.getAll();
     let blockNumber: number = 0;
-    for (const eventObj of Object.values(depositEvents || {}))
-      for (const event of Object.values(eventObj || {}))
+    for (const { events } of depositEvents)
+      for (const event of Object.values(events))
         if (event.blockNumber && event.blockNumber > blockNumber)
           blockNumber = event.blockNumber + 1; // Start fetching from the next block
 
