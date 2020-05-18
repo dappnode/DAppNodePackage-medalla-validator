@@ -6,7 +6,7 @@ import {
   ListSubheader,
   SvgIconTypeMap,
 } from "@material-ui/core";
-import DashboardIcon from "@material-ui/icons/Dashboard";
+// import DashboardIcon from "@material-ui/icons/Dashboard";
 import PeopleIcon from "@material-ui/icons/People";
 import BarChartIcon from "@material-ui/icons/BarChart";
 import LayersIcon from "@material-ui/icons/Layers";
@@ -15,11 +15,11 @@ import { newTabProps } from "utils";
 import { OverridableComponent } from "@material-ui/core/OverridableComponent";
 
 const sideNavMainItems = [
-  { name: "Dashboard", Icon: DashboardIcon, href: "#" },
+  // { name: "Dashboard", Icon: DashboardIcon, href: "#" },
   {
     name: "Metrics",
     Icon: BarChartIcon,
-    href: "http://dms.public.dappnode/dashboards",
+    href: "http://dms.dappnode/d/DNPE2D/dappnode-eth-2-0-dashboard",
   },
   {
     name: "Nodes",
