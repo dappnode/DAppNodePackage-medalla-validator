@@ -8,6 +8,7 @@ import { LoadingView } from "./LoadingView";
 import { newTabProps, formatEth } from "utils";
 import { ValidatorCountDialog } from "./ValidatorCountDialog";
 import { AccountView } from "./AccountView";
+import { goerliFaucet } from "common/params";
 
 const useStyles = makeStyles((theme) => ({
   depositContext: {
@@ -115,7 +116,7 @@ export function Eth1Account({
 
         <Grid item xs={12} sm={6} className={classes.buttons}>
           <Button
-            href="https://faucet.dappnode.net"
+            href={`${goerliFaucet}?address=${address}`}
             {...newTabProps}
             variant="contained"
             color="default"
