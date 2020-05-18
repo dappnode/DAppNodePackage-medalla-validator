@@ -14,6 +14,7 @@ import { api } from "api/rpc";
 import { RequestStatus } from "types";
 import FileSaver from "file-saver";
 import { ErrorView } from "./ErrorView";
+import { Alert } from "@material-ui/lab";
 
 const keystoreName = "prysm-validator-dappnode-withdrawal.keystore";
 
@@ -46,6 +47,7 @@ export function BackupWithdrawalDialog({
         type: "text/plain;charset=utf-8",
       });
       FileSaver.saveAs(blob, keystoreName);
+      setTimeout(onClose, 500);
     } catch (e) {
       console.error(e);
       setKeystoreStatus({ error: e });
@@ -60,13 +62,16 @@ export function BackupWithdrawalDialog({
       aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title">
-        Backup withdrawal account
+        Generate and backup withdrawal account
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Encrypt and download the keystore of your withdrawal account with a
-          strong password. Keep your withdrawal key safe to be able to recover
-          the funds after a validator exits.
+          <Typography>
+            Before being able to create validators, let's generate and backup a
+            withdrawal account. Please, provide a strong password for the
+            account's keystore. For a testnet you may use a password manager to
+            store the password.
+          </Typography>
         </DialogContentText>
 
         <Box my={1}>
@@ -88,38 +93,31 @@ export function BackupWithdrawalDialog({
               {error}
             </Typography>
           ))}
+        </Box>
 
-          <Box mt={2}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={fetchKeystore}
-              disabled={
-                !password ||
-                !passwordConfirm ||
-                hasErrors ||
-                keystoreStatus.loading
-              }
-            >
-              Download
-            </Button>
-          </Box>
+        <Box my={2}>
+          <Alert severity="warning">
+            Keep your withdrawal keystore safe to be able to recover the funds
+          </Alert>
+        </Box>
+
+        <Box mt={3} mb={1}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={fetchKeystore}
+            disabled={
+              !password ||
+              !passwordConfirm ||
+              hasErrors ||
+              keystoreStatus.loading
+            }
+          >
+            Download
+          </Button>
         </Box>
 
         {keystoreStatus.error && <ErrorView error={keystoreStatus.error} />}
-
-        <DialogActions>
-          <Button onClick={onClose} color="primary">
-            Skip
-          </Button>
-          <Button
-            onClick={onClose}
-            color="primary"
-            disabled={!password || hasErrors}
-          >
-            Ok
-          </Button>
-        </DialogActions>
       </DialogContent>
     </Dialog>
   );

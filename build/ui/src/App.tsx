@@ -102,15 +102,6 @@ export default function App() {
     RequestStatus<PendingValidator[]>
   >();
 
-  function checkWithdrawalAccount() {
-    api
-      .withdrawalAccountGet()
-      .then((withdrawalAccount) => {
-        if (!withdrawalAccount.exists) setOpenWithdrawal(true);
-      })
-      .catch(console.error);
-  }
-
   useEffect(() => {
     const interval = setInterval(() => {
       if (validators.data) validators.revalidate();
@@ -118,20 +109,20 @@ export default function App() {
     return () => clearInterval(interval);
   }, [validators]);
 
-  useEffect(() => {
-    checkWithdrawalAccount();
-  }, []);
-
   async function addValidators(num: number) {
     try {
-      setStatusAddingValidators({ loading: true });
-      const result = await api.addValidators(num);
-      setStatusAddingValidators({ result });
-      console.log(`Added ${num} validators`, result);
+      const withdrawalAccount = await api.withdrawalAccountGet();
+      if (withdrawalAccount.exists) {
+        setStatusAddingValidators({ loading: true });
+        const result = await api.addValidators(num);
+        setStatusAddingValidators({ result });
+        console.log(`Added ${num} validators`, result);
+      } else {
+        setOpenWithdrawal(true);
+      }
     } catch (e) {
       setStatusAddingValidators({ error: e });
       console.error(`Error adding ${num} validators`, e);
-      checkWithdrawalAccount();
     }
   }
 
