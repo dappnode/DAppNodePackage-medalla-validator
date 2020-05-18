@@ -9,7 +9,11 @@ import * as eth1 from "../services/eth1";
 import { logs } from "../logs";
 import { ethers } from "ethers";
 import { getAddressAndBalance } from "../services/eth1";
-import { depositAmountEth, depositContractAddress } from "../params";
+import {
+  depositAmountEth,
+  depositContractAddress,
+  depositCallGasLimit
+} from "../params";
 
 /**
  * Resolves when all validators have resolved, either with success or errors
@@ -55,6 +59,7 @@ export async function addValidators(
             to: depositContractAddress,
             data: depositData,
             value: ethers.utils.parseEther(depositAmountEth),
+            gasLimit: depositCallGasLimit,
             nonce
           });
 
