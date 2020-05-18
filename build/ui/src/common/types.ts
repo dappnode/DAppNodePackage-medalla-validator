@@ -35,6 +35,10 @@ export interface ApiStatus {
 export interface WithdrawalAccountInfo {
   account: string | null; // "withdrawal/primary",
   exists: boolean;
+  /**
+   * True if withdrawal account will be migrated and not generated
+   */
+  isMigration: boolean;
 }
 
 // Old types

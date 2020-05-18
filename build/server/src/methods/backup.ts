@@ -16,9 +16,17 @@ export async function withdrawalAccountGet(): Promise<WithdrawalAccountInfo> {
     //
   }
 
+  let isMigration = false;
+  try {
+    isMigration = legacyWithdrawalExists();
+  } catch (e) {
+    //
+  }
+
   return {
     account: withdrawalAccount,
-    exists: Boolean(withdrawalAccount)
+    exists: Boolean(withdrawalAccount),
+    isMigration
   };
 }
 

@@ -21,9 +21,11 @@ const keystoreName = "prysm-validator-dappnode-withdrawal.keystore";
 export function BackupWithdrawalDialog({
   open,
   onClose,
+  withdrawalIsMigration,
 }: {
   open: boolean;
   onClose: () => void;
+  withdrawalIsMigration: boolean;
 }) {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -62,15 +64,17 @@ export function BackupWithdrawalDialog({
       aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title">
-        Generate and backup withdrawal account
+        {withdrawalIsMigration ? "Migrate" : "Generate"} and backup withdrawal
+        account
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
           <Typography>
-            Before being able to create validators, let's generate and backup a
-            withdrawal account. Please, provide a strong password for the
-            account's keystore. For a testnet you may use a password manager to
-            store the password.
+            {withdrawalIsMigration
+              ? "Before creating new validators, let's migrate the existing withdrawal account to ethdo, a multi eth2 account manager."
+              : "Before being able to create validators, let's generate and backup a withdrawal account"}
+            Please, provide a strong password for the account's keystore. For a
+            testnet you may use a password manager to store the password.
           </Typography>
         </DialogContentText>
 

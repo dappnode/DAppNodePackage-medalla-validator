@@ -97,6 +97,7 @@ export default function App() {
   // Fetch app data
 
   const [openWithdrawal, setOpenWithdrawal] = useState(false);
+  const [withdrawalIsMigration, setWithdrawalIsMigration] = useState(false);
   const validators = useApi.getValidators();
   const [statusAddingValidators, setStatusAddingValidators] = useState<
     RequestStatus<PendingValidator[]>
@@ -118,6 +119,7 @@ export default function App() {
         setStatusAddingValidators({ result });
         console.log(`Added ${num} validators`, result);
       } else {
+        setWithdrawalIsMigration(withdrawalAccount.isMigration);
         setOpenWithdrawal(true);
       }
     } catch (e) {
@@ -145,6 +147,7 @@ export default function App() {
           <BackupWithdrawalDialog
             open={openWithdrawal}
             onClose={() => setOpenWithdrawal(false)}
+            withdrawalIsMigration={withdrawalIsMigration}
           />
 
           <LayoutItem>

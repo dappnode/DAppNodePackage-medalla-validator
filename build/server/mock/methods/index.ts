@@ -151,7 +151,8 @@ export async function nodeStats(): Promise<NodeStats> {
 export async function withdrawalAccountGet(): Promise<WithdrawalAccountInfo> {
   return {
     account: "withdrawal/primary",
-    exists: withdrawalAccountExists
+    exists: withdrawalAccountExists,
+    isMigration: true
   };
 }
 
