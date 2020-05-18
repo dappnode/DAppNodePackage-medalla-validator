@@ -8,7 +8,7 @@ import { LoadingView } from "./LoadingView";
 import { newTabProps, formatEth } from "utils";
 import { ValidatorCountDialog } from "./ValidatorCountDialog";
 import { AccountView } from "./AccountView";
-import { goerliFaucet } from "common/params";
+import params from "params";
 
 const useStyles = makeStyles((theme) => ({
   depositContext: {
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     "& > *:not(:last-child)": {
       marginRight: "1rem",
     },
-    textAlign: "center"
+    textAlign: "center",
   },
   buttonFunds: {},
   buttonAddValidator: {},
@@ -117,7 +117,7 @@ export function Eth1Account({
 
         <Grid item xs={12} sm={6} className={classes.buttons}>
           <Button
-            href={`${goerliFaucet}?address=${address}`}
+            href={`${params.goerliFaucet}?address=${address}`}
             {...newTabProps}
             variant="contained"
             color="default"

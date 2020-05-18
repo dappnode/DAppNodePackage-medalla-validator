@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "@material-ui/core";
 import LaunchIcon from "@material-ui/icons/Launch";
-import { goerliTxViewer } from "common/params";
+import params from "params";
 import { newTabProps, urlJoin } from "utils";
 import { DepositEvent } from "common";
 
@@ -36,7 +36,7 @@ export const Eth1TransactionView: React.FC<{
       {children}
       <Link
         className={classes.linkIcon}
-        href={urlJoin(goerliTxViewer, transactionHash || "")}
+        href={urlJoin(params.goerliTxViewer, transactionHash || "")}
         {...newTabProps}
       >
         <LaunchIcon fontSize="inherit" />

@@ -14,7 +14,7 @@ import {
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
-import { validatorCost } from "common/params";
+import params from "params";
 import { formatEth } from "utils";
 
 const useStyles = makeStyles((theme) => ({
@@ -48,7 +48,7 @@ export function ValidatorCountDialog({
   addValidators: (num: number) => void;
   onClose: () => void;
 }) {
-  const maxNumber = Math.floor(balance / validatorCost);
+  const maxNumber = Math.floor(balance / params.validatorCost);
   const minNumber = 1;
   const [num, setNum] = useState(maxNumber);
 

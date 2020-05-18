@@ -2,8 +2,8 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "@material-ui/core";
 import LaunchIcon from "@material-ui/icons/Launch";
-import { beaconAccountViewer } from "common/params";
-import { newTabProps } from "utils";
+import params from "params";
+import { newTabProps, urlJoin } from "utils";
 
 const useStyles = makeStyles((theme) => ({
   centerLink: {
@@ -25,7 +25,7 @@ export function PublicKeyView({ publicKey }: { publicKey: string }) {
       {shortHex}
       <Link
         className={classes.linkIcon}
-        href={`${beaconAccountViewer}/${publicKey}`}
+        href={urlJoin(params.beaconAccountViewer, publicKey)}
         {...newTabProps}
       >
         <LaunchIcon fontSize="inherit" />
