@@ -102,7 +102,7 @@
         "blockNumber": {
           "type": "number"
         },
-        "txHash": {
+        "transactionHash": {
           "type": "string"
         },
         "pubkey": {

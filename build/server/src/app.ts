@@ -5,7 +5,7 @@ import compression from "compression";
 import path from "path";
 import logger from "morgan";
 import cors from "cors";
-import { getRpcHandler } from "./routes/rpc";
+import { getRpcHandler } from "./utils/rpc";
 import * as methods from "./methods";
 import * as db from "./db";
 import * as auth from "./auth";

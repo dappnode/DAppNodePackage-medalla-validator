@@ -10,12 +10,13 @@ import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 
 export function InputPassword({
+  name = "Password",
   password,
   setPassword,
   id = "password-toogle-show",
   error,
-  ...props
 }: {
+  name?: string;
   password: string;
   setPassword: (password: string) => void;
   id?: string;
@@ -31,7 +32,7 @@ export function InputPassword({
       fullWidth
       required
     >
-      <InputLabel htmlFor={id}>Password</InputLabel>
+      <InputLabel htmlFor={id}>{name}</InputLabel>
       <OutlinedInput
         id={id}
         type={show ? "text" : "password"}
@@ -49,7 +50,7 @@ export function InputPassword({
           </InputAdornment>
         }
         labelWidth={90}
-        name="password"
+        name={name}
         autoComplete="current-password"
       />
     </FormControl>

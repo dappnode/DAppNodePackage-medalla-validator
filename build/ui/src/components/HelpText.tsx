@@ -60,7 +60,6 @@ export const HelpText = React.memo(function HelpText({
   table?: { name: string; text: string }[];
   body?: string;
 }) {
-  console.log("REndering");
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -122,7 +121,9 @@ export const HelpText = React.memo(function HelpText({
                     {table.map(({ name, text }) => (
                       <tr key={name}>
                         <td>
-                          <Typography>{name}</Typography>
+                          <Typography>
+                            <strong>{name}</strong>
+                          </Typography>
                         </td>
                         <td>
                           <Typography className={classes.descriptionBody}>

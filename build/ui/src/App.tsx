@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Layout } from "./Layout";
 import * as auth from "api/auth";
 import * as apiPaths from "api/paths";
 // import { Chart } from "./Chart";
-import { SummaryStats } from "./components/SummaryStats";
-import { AccountsTable } from "./components/AccountsTable";
+import { Layout } from "./Layout";
+import { LayoutItem } from "LayoutItem";
 import { SignIn } from "./components/SignIn";
-import { WelcomeFlow } from "./components/WelcomeFlow";
 import { LoadingView } from "components/LoadingView";
 import {
   Box,
@@ -15,6 +13,15 @@ import {
   makeStyles,
   CssBaseline,
 } from "@material-ui/core";
+import { useApi, api } from "api/rpc";
+import { Eth1Account } from "components/Eth1Account";
+import { ValidatorsTable } from "./components/ValidatorsTable";
+import { ValidatorsProgress } from "components/ValidatorsProgress";
+import { NodeStats } from "components/NodeStats";
+import { TotalBalance } from "components/TotalBalance";
+import { RequestStatus } from "types";
+import { PendingValidator } from "common";
+import { BackupWithdrawalDialog } from "components/BackupWithdrawalDialog";
 
 type LoginStatus = "login" | "logout" | "loading";
 const keyuserSettingDarkMode = "user-setting-dark-mode";
@@ -27,7 +34,6 @@ const useStyles = makeStyles({
 });
 
 export default function App() {
-  const [showValidatorFlow, setShowValidatorFlow] = useState(true);
   const [loginStatus, setLoginStatus] = useState<LoginStatus>();
   const [isOffline, setIsOffline] = useState<boolean>();
   const [darkMode, setDarkMode] = useState<boolean>();
@@ -51,7 +57,6 @@ export default function App() {
 
   // If it's logged in, keep checking for logged in
   useEffect(() => {
-    if (loginStatus === "logout") return;
     const interval = setInterval(checkLogin, 5000);
     return () => clearInterval(interval);
   }, [loginStatus, checkLogin]);
@@ -62,10 +67,6 @@ export default function App() {
 
   function logout() {
     auth.logout().then(checkLogin).catch(console.error);
-  }
-
-  function addValidator() {
-    setShowValidatorFlow(true);
   }
 
   function switchDark() {
@@ -93,21 +94,87 @@ export default function App() {
     if (userDarkMode) setDarkMode(true);
   }, []);
 
+  // Fetch app data
+
+  const [openWithdrawal, setOpenWithdrawal] = useState(false);
+  const [withdrawalIsMigration, setWithdrawalIsMigration] = useState(false);
+  const validators = useApi.getValidators();
+  const [statusAddingValidators, setStatusAddingValidators] = useState<
+    RequestStatus<PendingValidator[]>
+  >();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (validators.data) validators.revalidate();
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [validators]);
+
+  async function addValidators(num: number) {
+    try {
+      const withdrawalAccount = await api.withdrawalAccountGet();
+      if (withdrawalAccount.exists) {
+        setStatusAddingValidators({ loading: true });
+        const result = await api.addValidators(num);
+        setStatusAddingValidators({ result });
+        console.log(`Added ${num} validators`, result);
+      } else {
+        setWithdrawalIsMigration(withdrawalAccount.isMigration);
+        setOpenWithdrawal(true);
+      }
+    } catch (e) {
+      setStatusAddingValidators({ error: e });
+      console.error(`Error adding ${num} validators`, e);
+    }
+  }
+
   const classes = useStyles();
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       {loginStatus === "login" ? (
-        showValidatorFlow ? (
-          <WelcomeFlow onExit={() => setShowValidatorFlow(false)} />
-        ) : (
-          <Layout darkMode={darkMode} switchDark={switchDark} logout={logout}>
-            {/* <Chart /> */}
-            <SummaryStats />
-            <AccountsTable addValidator={addValidator} />
-          </Layout>
-        )
+        <Layout darkMode={darkMode} switchDark={switchDark} logout={logout}>
+          {/* <Chart /> */}
+          <LayoutItem sm={6}>
+            <TotalBalance validators={validators.data || []} />
+          </LayoutItem>
+          <LayoutItem sm={6}>
+            <NodeStats />
+          </LayoutItem>
+
+          {/* TEMP */}
+          <BackupWithdrawalDialog
+            open={openWithdrawal}
+            onClose={() => setOpenWithdrawal(false)}
+            withdrawalIsMigration={withdrawalIsMigration}
+          />
+
+          <LayoutItem>
+            <Eth1Account
+              addValidators={addValidators}
+              addingValidators={
+                statusAddingValidators && statusAddingValidators.loading
+              }
+            />
+          </LayoutItem>
+
+          {statusAddingValidators && (
+            <LayoutItem noPaper>
+              <ValidatorsProgress
+                status={statusAddingValidators}
+                closeProgress={() => setStatusAddingValidators(undefined)}
+              />
+            </LayoutItem>
+          )}
+
+          <LayoutItem>
+            <ValidatorsTable
+              validators={validators.data || []}
+              loading={!validators.data && validators.isValidating}
+            />
+          </LayoutItem>
+        </Layout>
       ) : loginStatus === "logout" ? (
         <SignIn onSignIn={onSignIn} isOffline={isOffline} />
       ) : (

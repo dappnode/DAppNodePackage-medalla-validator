@@ -1,23 +1,47 @@
-export interface EthdoWallets {
-  name: string;
-  accounts: string[];
-}
+// Table type
 
-export interface ValidatorAccount {
-  name: string;
-  wallet: string;
-  status: string;
-  balance: number;
-}
-
-export interface WalletAccount {
+export interface PendingValidator {
   account: string;
-  name: string;
-  uuid: string;
   publicKey: string;
-  createdTimestamp?: number;
-  available?: boolean;
+  status: "pending" | "mined" | "confirmed" | "error";
+  transactionHash?: string;
+  blockNumber?: number;
+  amountEth?: number;
+  error?: string;
 }
+
+export interface ValidatorStats {
+  index: number;
+  publicKey: string;
+  depositEvents: DepositEvent[];
+  status?: string;
+  balance: {
+    eth: number | null; // 32.4523
+    isEstimated: boolean;
+  };
+}
+
+export interface ApiStatus {
+  eth1Account: {
+    address: string;
+    balanceEth: string;
+  };
+  totalBalance: {
+    eth: string | null; // "32.543"
+    isEstimated: boolean;
+  };
+}
+
+export interface WithdrawalAccountInfo {
+  account: string | null; // "withdrawal/primary",
+  exists: boolean;
+  /**
+   * True if withdrawal account will be migrated and not generated
+   */
+  isMigration: boolean;
+}
+
+// Old types
 
 export interface EthdoAccountResult {
   account: string;
@@ -30,28 +54,22 @@ export interface EthdoAccount {
   passphrase: string;
 }
 
-export interface EthdoAccountNoPass {
-  account: string;
-  passphrase?: string;
-}
-
-export interface ValidatorStats {
-  account: string;
-  name: string;
-  uuid: string;
+export interface DepositEvents {
   publicKey: string;
-  createdTimestamp?: number;
-  depositEvents: {
-    [txHashAndLogIndex: string]: DepositEvent;
+  events: {
+    [transactionHashAndLogIndex: string]: DepositEvent;
   };
-  status?: string;
-  balance?: string;
-  effectiveBalance?: string;
 }
 
 export interface DepositEvent extends DepositEventArgs {
   blockNumber: number | undefined;
-  txHash: string | undefined;
+  transactionHash: string | undefined;
+}
+
+export interface Eth1AccountStats {
+  address: string;
+  balance: number;
+  insufficientFunds: boolean;
 }
 
 export interface NodeStats {
@@ -85,9 +103,9 @@ export const depositEventAbi = {
 
 // Metrics from Node's gRPC gateway
 
-export type ValidatorMetrics = ValidatorStatus &
-  ValidatorData &
-  ValidatorBalance;
+export type ValidatorMetrics = Partial<ValidatorStatus> &
+  Partial<ValidatorData> &
+  Partial<ValidatorBalance> & { publicKey: string };
 
 export interface ValidatorStatus {
   /**

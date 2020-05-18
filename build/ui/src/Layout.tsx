@@ -13,7 +13,6 @@ import {
   IconButton,
   Container,
   Grid,
-  Paper,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
@@ -130,8 +129,6 @@ export const Layout: React.FC<{
     setOpen(false);
   };
 
-  const childrenItems = Array.isArray(children) ? children : [children];
-
   return (
     <div className={classes.root}>
       {/* Top nav bar */}
@@ -205,12 +202,7 @@ export const Layout: React.FC<{
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
-            {/* Chart */}
-            {childrenItems.map((item, i) => (
-              <Grid key={i} item xs={12}>
-                <Paper className={classes.paper}>{item}</Paper>
-              </Grid>
-            ))}
+            {children}
           </Grid>
           <Box pt={4} className={classes.footer}>
             <FooterNote />

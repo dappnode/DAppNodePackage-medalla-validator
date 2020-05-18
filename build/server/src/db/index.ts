@@ -1,7 +1,9 @@
 import path from "path";
-import { lowDbStaticFactory } from "./dbFactory";
+import { createLowDb } from "./lowDb";
+import { createDb, collection, regular } from "./dbAdaptor";
 import {
-  DepositEvent,
+  PendingValidator,
+  DepositEvents,
   ValidatorMetrics,
   BeaconNodePeer,
   BeaconNodeChainhead
@@ -29,73 +31,27 @@ interface DbWithdrawal {
   createdTimestamp: number; // in miliseconds
 }
 
-const dbServerState: {
-  sessionsSecret: string | null;
-} = {
-  sessionsSecret: null
-};
+export const server = createDb(createLowDb(serverDbPath), {
+  sessionsSecret: regular<string>()
+});
 
-const dbAccountsState: {
-  validatorAccounts: {
-    [account: string]: DbValidator;
-  };
-  withdrawalAccounts: {
-    [account: string]: DbWithdrawal;
-  };
-  eth1Account:
-    | {
-        address: string;
-        privateKey: string;
-      }
-    | undefined;
-} = {
-  validatorAccounts: {},
-  withdrawalAccounts: {},
-  eth1Account: undefined
-};
+export const accounts = createDb(createLowDb(accountsDbPath), {
+  pendingValidators: collection<PendingValidator>(v => v.account),
+  validator: collection<DbValidator>(v => v.account),
+  withdrawal: collection<DbWithdrawal>(v => v.account),
+  eth1: regular<{ address: string; privateKey: string }>()
+});
 
-const dbDepositsState: {
-  depositEvents: {
-    [pubkey: string]: {
-      [txHashLogIndex: string]: DepositEvent;
-    };
-  };
-} = {
-  depositEvents: {}
-};
+export const deposits = createDb(createLowDb(depositsDbPath), {
+  depositEvents: collection<DepositEvents>(e => e.publicKey)
+});
 
-const dbMetricsState: {
-  current: {
-    [pubKey: string]: Partial<ValidatorMetrics>;
-  };
-  peers: BeaconNodePeer[];
-  syncing: {
-    syncing: boolean;
-  } | null;
-  chainhead: BeaconNodeChainhead | null;
-} = {
-  current: {},
-  peers: [],
-  syncing: null,
-  chainhead: null
-};
-
-export const server = lowDbStaticFactory(serverDbPath, dbServerState);
-export const accounts = lowDbStaticFactory(accountsDbPath, dbAccountsState);
-export const deposits = lowDbStaticFactory(depositsDbPath, dbDepositsState);
-export const metrics = lowDbStaticFactory(metricsDbPath, dbMetricsState);
-
-export function updateValidator(validator: DbValidator) {
-  accounts.validatorAccounts.merge({ [validator.account]: validator });
-}
-
-export function updateWithdrawal(withdrawal: DbWithdrawal) {
-  accounts.withdrawalAccounts.merge({ [withdrawal.account]: withdrawal });
-}
-
-export function updateMetrics(pubKey: string, data: Partial<ValidatorMetrics>) {
-  metrics.current.merge({ [pubKey]: data });
-}
+export const metrics = createDb(createLowDb(metricsDbPath), {
+  current: collection<ValidatorMetrics>(d => d.publicKey),
+  peers: regular<BeaconNodePeer[]>(),
+  syncing: regular<{ syncing: boolean }>(),
+  chainhead: regular<BeaconNodeChainhead>()
+});
 
 export function getSessionsSecretKey() {
   let secret = server.sessionsSecret.get();

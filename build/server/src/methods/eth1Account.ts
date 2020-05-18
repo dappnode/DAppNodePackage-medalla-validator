@@ -1,4 +1,4 @@
-import { getAddressAndBalance, makeDeposit } from "../services/eth1Account";
+import { getAddressAndBalance } from "../services/eth1";
 
 export async function eth1AccountGet(): Promise<{
   address: string;
@@ -6,10 +6,4 @@ export async function eth1AccountGet(): Promise<{
   insufficientFunds: boolean;
 }> {
   return await getAddressAndBalance();
-}
-
-export async function eth1MakeDeposit(
-  depositData: string
-): Promise<string | undefined> {
-  return await makeDeposit(depositData);
 }

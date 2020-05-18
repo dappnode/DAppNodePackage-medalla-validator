@@ -7,6 +7,7 @@ export const logFile = "/var/log/validator.log";
 export const extraOpts = process.env.EXTRA_OPTS || "";
 export const verbosity = process.env.VERBOSITY || "info";
 export const keymanagerFile = dataPath + "/keymanager.json";
+export const ethdoWalletsPath = path.join(dataPath, "wallets");
 export const beaconRpcProvider =
   process.env.BEACON_GRPC_URL || "prysm-beacon-chain.public.dappnode:4000";
 

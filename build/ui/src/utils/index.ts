@@ -44,10 +44,14 @@ export function urlJoin(...args: string[]): string {
  * Format an ETH value to a reasonable amount of decimal places
  * @param value
  */
-export function formatEth(value: string | number): number | string {
+export function formatEth(
+  value: string | number | null,
+  fractionDigits = 3
+): number | string {
+  if (value === null) return "";
   const num = typeof value === "string" ? parseFloat(value) : value;
   if (isNaN(num)) return value;
-  return +num.toFixed(3);
+  return +num.toFixed(fractionDigits);
 }
 
 const amount32Eth = "0x0040597307000000";
@@ -57,7 +61,7 @@ const amount32Eth = "0x0040597307000000";
  * @param depositEvents
  */
 export function getEstimatedBalanceFormDepositEvents(depositEvents: {
-  [txHashAndLogIndex: string]: DepositEvent;
+  [transactionHashAndLogIndex: string]: DepositEvent;
 }): number | undefined {
   const events = Object.values(depositEvents);
   const estimatedBalances = events.map((event) => {
