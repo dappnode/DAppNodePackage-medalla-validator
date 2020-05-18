@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
     "& > *:not(:last-child)": {
       marginRight: "1rem",
     },
+    textAlign: "center"
   },
   buttonFunds: {},
   buttonAddValidator: {},
