@@ -11,6 +11,7 @@ import {
   Box,
   TextField,
 } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 import LaunchIcon from "@material-ui/icons/Launch";
 
 const useStyles = makeStyles((theme) => ({
@@ -66,6 +67,12 @@ export function AccountView({ address }: { address: string }) {
           <DialogContentText id="alert-dialog-description">
             Internal Eth1 account exclusively used to fund validator deposits
           </DialogContentText>
+
+          <Box mb={3}>
+            <Alert severity="warning">
+              Do not send real ETH to this account, only Goerli test ETH
+            </Alert>
+          </Box>
 
           <TextField
             value={address}
