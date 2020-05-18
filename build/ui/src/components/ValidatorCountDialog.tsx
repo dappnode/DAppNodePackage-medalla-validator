@@ -34,6 +34,9 @@ const useStyles = makeStyles((theme) => ({
     "& > div > input": {
       fontSize: "1.8rem",
     },
+    "& > .MuiFormHelperText-root": {
+      whiteSpace: "pre",
+    },
   },
 }));
 
@@ -49,26 +52,27 @@ export function ValidatorCountDialog({
   onClose: () => void;
 }) {
   const maxNumber = Math.floor(balance / params.validatorCost);
-  const minNumber = 1;
-  const [num, setNum] = useState(maxNumber);
+  const [input, setInput] = useState<string | number>(maxNumber);
 
-  const onMinus = () => setNum((n) => n - 1);
-  const onAdd = () => setNum((n) => n + 1);
-  const onMax = () => setNum(maxNumber);
-  const onSet = (newNum: number) => setNum(newNum);
-
-  function onConfirm() {
-    addValidators(Math.floor(num));
-    onClose();
-    setNum(1);
-  }
+  const num = typeof input === "number" ? input : parseInt(input) || 0;
+  const onMinus = () => setInput(num - 1 || input);
+  const onAdd = () => setInput(num + 1 || input);
+  const onMax = () => setInput(maxNumber);
+  const onSet = (newNum: string | number) => setInput(newNum);
+  console.log({ input });
 
   const errors: string[] = [];
+
+  if (input && isNaN(num)) errors.push(`Input is not a number`);
   if (num > maxNumber)
     errors.push(`You only have balance for ${maxNumber} validators`);
-  if (num < minNumber)
-    errors.push(`You have to add at least ${minNumber} validator`);
   if (num < 0) errors.push(`Negative validators =D`);
+
+  function onConfirm() {
+    addValidators(num);
+    onClose();
+    setInput(1);
+  }
 
   const classes = useStyles();
 
@@ -92,11 +96,11 @@ export function ValidatorCountDialog({
 
         <Box my={4} className={classes.inputContainer}>
           <TextField
-            value={num}
-            onChange={(e) => onSet(parseInt(e.target.value))}
+            value={input}
+            onChange={(e) => onSet(e.target.value)}
             label="Validators"
             variant="outlined"
-            type="integer"
+            type="number"
             className={classes.numberInput}
             error={errors.length > 0}
             helperText={errors.join("\n")}
