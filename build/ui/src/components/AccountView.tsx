@@ -12,23 +12,36 @@ import {
   TextField,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import LaunchIcon from "@material-ui/icons/Launch";
+import { ExpandIcon } from "img/ExpandIcon";
 
 const useStyles = makeStyles((theme) => ({
   accountAddress: {
     lineHeight: 1,
-    marginBottom: "0.15rem",
   },
-  clickable: {
+  accountContainer: {
+    marginBottom: "0.15rem",
+    // Clicable
     "&:hover": {
       color: theme.palette.primary.main,
     },
     cursor: "pointer",
+    // Mimic Aragon account viewer
+    backgroundColor: "#ebf5f4",
+    alignSelf: "flex-start",
+    padding: "2px",
+    borderRadius: "4px",
   },
   iconOpen: {
     color: theme.palette.primary.main,
     display: "flex",
     marginLeft: "0.25rem",
+    "& > svg": {
+      fontSize: "1rem",
+      "& > path": {
+        // Specific coloring for Grommet/Expand
+        stroke: theme.palette.primary.main,
+      },
+    },
   },
 }));
 
@@ -45,14 +58,14 @@ export function AccountView({ address }: { address: string }) {
     <>
       <Box
         display="flex"
-        className={classes.clickable}
+        className={classes.accountContainer}
         onClick={handleClickOpen}
       >
         <Typography className={classes.accountAddress}>
           {accountShort}
         </Typography>
         <Box className={classes.iconOpen}>
-          <LaunchIcon fontSize="inherit" />
+          <ExpandIcon></ExpandIcon>
         </Box>
       </Box>
 
