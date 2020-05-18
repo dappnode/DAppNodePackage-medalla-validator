@@ -9,8 +9,8 @@ import {
 // New state
 
 let validatorCount = 0;
-let pendingValidators: { [index: number]: PendingValidator } = {};
-const validator: { [index: number]: ValidatorStats } = {};
+const pendingValidators = new Map<number, PendingValidator>();
+const validator = new Map<number, ValidatorStats>();
 let eth1Balance = 320.462112364172;
 let withdrawalAccountExists = false;
 
@@ -24,7 +24,7 @@ export async function addValidators(
 
   eth1Balance -= 32 * count;
 
-  pendingValidators = {};
+  pendingValidators.clear();
 
   const results = await Promise.all(
     indexes.map(
@@ -34,37 +34,47 @@ export async function addValidators(
         const transactionHash = String(Math.random());
         const blockNumber = Math.ceil(100000 * Math.random());
 
-        pendingValidators[index] = {
+        pendingValidators.set(index, {
           account,
           publicKey,
           status: "pending"
-        };
+        });
 
         // Simulate mined
         await waitMs(2000 + 2000 * Math.random());
 
-        pendingValidators[index] = {
+        pendingValidators.set(index, {
           account,
           publicKey,
           status: "mined",
           transactionHash
-        };
+        });
 
         // Simulate waiting for confirmation
         await waitMs(2000 + 2000 * Math.random());
 
-        validator[index] = {
+        validator.set(index, {
           index,
           publicKey,
-          depositEvents: {
-            [transactionHash]: { transactionHash, blockNumber }
-          },
+          depositEvents: [
+            {
+              transactionHash,
+              blockNumber,
+              pubkey: publicKey,
+              withdrawal_credentials:
+                "0x00b6589882996478845d4dd2ca85a57387d6a392217808c908add83b160a0fa7",
+              amount: "0x0040597307000000",
+              signature:
+                "0x9085a737a4490a403e9d0773abcb283b39270a97df7e6fc95c10ac6e6ade3698a88d00b0712fd95b3c2c519035b829160efa34962c92d1dd440db532c5b9bdabf91c7927c3ca1350eb2eb0b52700abd2e704bb547a2dd1ecfa0368a4d72da5e6",
+              index: "0x6200000000000000"
+            }
+          ],
           status: "DEPOSITED",
           balance: {
             eth: 32,
             isEstimated: true
           }
-        };
+        });
 
         if (Math.random() > 0.66)
           return {
@@ -88,17 +98,17 @@ export async function addValidators(
     )
   );
 
-  pendingValidators = {};
+  pendingValidators.clear();
 
   return results;
 }
 
 export async function getPendingValidators(): Promise<PendingValidator[]> {
-  return Object.values(pendingValidators);
+  return Array.from(pendingValidators.values());
 }
 
 export async function getValidators(): Promise<ValidatorStats[]> {
-  return Object.values(validator);
+  return Array.from(validator.values());
 }
 
 // Internal Eth1 account
