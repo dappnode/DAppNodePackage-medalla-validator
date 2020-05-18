@@ -35,10 +35,10 @@ export function TotalBalance({ validators }: { validators: ValidatorStats[] }) {
 
   return (
     <>
-      <Title>Total balance</Title>
+      <Title>Total balance validating</Title>
       <Typography component="p" variant="h4">
         {formatEth(totalBalance)}
-        {isEstimated ? "*" : ""} {isPartial ? "**" : ""} ETH
+        {isEstimated ? "*" : ""} {isPartial ? "**" : ""} ETH2
       </Typography>
       {isEstimated && (
         <Typography className={classes.noteText}>
