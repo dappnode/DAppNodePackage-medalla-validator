@@ -18,7 +18,7 @@ const depositsDbPath = path.join(dbDir, "deposits-db.json");
 const metricsDbPath = path.join(dbDir, "metrics-db.json");
 
 interface DbValidator {
-  account: string; // "Validator/1"
+  account: string; // "validator/1"
   publicKey: string;
   passphrase: string;
   depositData?: string;
@@ -26,7 +26,8 @@ interface DbValidator {
 }
 
 interface DbWithdrawal {
-  account: string; // "Validator/1"
+  account: string; // "withdrawal/primary"
+  publicKey: string;
   passphrase?: string;
   createdTimestamp: number; // in miliseconds
 }

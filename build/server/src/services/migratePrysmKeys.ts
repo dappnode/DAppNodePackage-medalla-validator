@@ -45,7 +45,7 @@ export async function migrateLegacyWithdrawal(
   const keystore = await readKeystore(keystorePath, password);
   await ethdo.assertWalletExists(withdrawalWallet);
   await ethdo.accountImport({ account, passphrase, key: keystore.privateKey });
-  db.accounts.validator.merge({
+  db.accounts.withdrawal.merge({
     account,
     passphrase,
     publicKey: keystore.publicKey,
@@ -108,6 +108,6 @@ export async function readKeystore(keystorePath: string, password: string) {
   return {
     publicKey: keystore.publickey,
     privateKey: await decryptPrysmKeystore(json, password),
-    lastMod: fs.statSync(keystorePath).mtimeMs
+    lastMod: Math.round(fs.statSync(keystorePath).mtimeMs)
   };
 }
