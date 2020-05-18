@@ -78,6 +78,7 @@ export function BackupWithdrawalDialog({
 
           <InputPassword
             name="Confirm"
+            id="confirm-password-toogle-show"
             password={passwordConfirm}
             setPassword={setPasswordConfirm}
             error={hasErrors}

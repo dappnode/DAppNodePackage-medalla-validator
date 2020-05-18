@@ -60,7 +60,6 @@ export const HelpText = React.memo(function HelpText({
   table?: { name: string; text: string }[];
   body?: string;
 }) {
-  console.log("REndering");
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
