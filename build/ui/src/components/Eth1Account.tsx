@@ -73,9 +73,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function Eth1Account({
+  canAddValidators,
   addValidators,
   addingValidators,
 }: {
+  canAddValidators: () => Promise<boolean>;
   addValidators: (num: number) => Promise<void>;
   addingValidators?: boolean;
 }) {
@@ -88,6 +90,14 @@ export function Eth1Account({
     }, 2000);
     return () => clearInterval(interval);
   }, [eth1Account]);
+
+  function onAddValidatorsButton() {
+    canAddValidators()
+      .then((canAdd) => {
+        if (canAdd) setOpen(true);
+      })
+      .catch(console.error);
+  }
 
   const classes = useStyles();
 
@@ -125,7 +135,7 @@ export function Eth1Account({
             Get funds
           </Button>
           <Button
-            onClick={() => setOpen(true)}
+            onClick={onAddValidatorsButton}
             disabled={addingValidators || insufficientFunds}
             variant="contained"
             color="primary"

@@ -110,17 +110,30 @@ export default function App() {
     return () => clearInterval(interval);
   }, [validators]);
 
-  async function addValidators(num: number) {
+  async function canAddValidators(): Promise<boolean> {
     try {
       const withdrawalAccount = await api.withdrawalAccountGet();
       if (withdrawalAccount.exists) {
+        return true;
+      } else {
+        setWithdrawalIsMigration(withdrawalAccount.isMigration);
+        setOpenWithdrawal(true);
+        return false;
+      }
+    } catch (e) {
+      setStatusAddingValidators({ error: e });
+      console.error(`Error getting withdrawal account`, e);
+      return false;
+    }
+  }
+
+  async function addValidators(num: number) {
+    try {
+      if (await canAddValidators()) {
         setStatusAddingValidators({ loading: true });
         const result = await api.addValidators(num);
         setStatusAddingValidators({ result });
         console.log(`Added ${num} validators`, result);
-      } else {
-        setWithdrawalIsMigration(withdrawalAccount.isMigration);
-        setOpenWithdrawal(true);
       }
     } catch (e) {
       setStatusAddingValidators({ error: e });
@@ -152,6 +165,7 @@ export default function App() {
 
           <LayoutItem>
             <Eth1Account
+              canAddValidators={canAddValidators}
               addValidators={addValidators}
               addingValidators={
                 statusAddingValidators && statusAddingValidators.loading
