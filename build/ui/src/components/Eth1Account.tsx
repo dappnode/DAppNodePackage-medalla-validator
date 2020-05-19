@@ -1,12 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import makeBlockie from "ethereum-blockies-base64";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Grid, Button, Box } from "@material-ui/core";
-import { useApi } from "api/rpc";
 import { ErrorView } from "./ErrorView";
 import { LoadingView } from "./LoadingView";
 import { newTabProps, formatEth } from "utils";
-import { ValidatorCountDialog } from "./ValidatorCountDialog";
 import { AccountView } from "./AccountView";
 import params from "params";
 import { responseInterface } from "swr";

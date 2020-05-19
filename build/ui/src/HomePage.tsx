@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { LayoutItem } from "LayoutItem";
 import { useApi, api } from "api/rpc";
 import { Eth1Account } from "components/Eth1Account";
