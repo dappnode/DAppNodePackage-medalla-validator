@@ -212,7 +212,7 @@ export function ValidatorsProgress({
 function PendingValidatorRow({ validator }: { validator: PendingValidator }) {
   return (
     <TableRow>
-      <TableCell>{validator.account}</TableCell>
+      <TableCell>{formatAccountName(validator.account)}</TableCell>
       <TableCell>
         <PendingValidatorStatus status={validator.status} />
       </TableCell>
@@ -232,6 +232,14 @@ function PendingValidatorRow({ validator }: { validator: PendingValidator }) {
       {validator.error && <TableCell>{validator.error}</TableCell>}
     </TableRow>
   );
+}
+
+/**
+ * @param account "validator/23"
+ * @returns "23"
+ */
+function formatAccountName(account: string): string {
+  return (account || "").split("/")[1] || account;
 }
 
 function PendingValidatorStatus({
