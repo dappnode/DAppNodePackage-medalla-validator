@@ -55,7 +55,6 @@ const useStyles = makeStyles((theme) => ({
   accountSubtitle: {
     flex: "auto",
     fontSize: "0.85rem",
-    opacity: 0.7,
   },
   accountBalance: {
     lineHeight: 1,

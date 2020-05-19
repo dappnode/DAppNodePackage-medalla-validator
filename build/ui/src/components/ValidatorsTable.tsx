@@ -30,12 +30,16 @@ const useStyles = makeStyles((theme) => ({
   seeMore: {
     marginTop: theme.spacing(3),
   },
-  header: {
-    marginBottom: theme.spacing(1),
+  title: {
+    display: "flex",
+    justifyContent: "space-between",
   },
   centerLink: {
     display: "flex",
     alignItems: "center",
+  },
+  total: {
+    color: theme.palette.text.secondary,
   },
   linkIcon: {
     marginLeft: theme.spacing(0.5),
@@ -95,10 +99,13 @@ export function ValidatorsTable({
 
   return (
     <React.Fragment>
-      <Title>
+      <Title className={classes.title}>
         <span className={classes.centerLink}>
           Validator accounts <HelpText table={prysmStatusDescription} />
         </span>
+        {validators.length > 1 && (
+          <span className={classes.total}>{validators.length} total</span>
+        )}
       </Title>
       <TableContainer>
         <Table size="small">
