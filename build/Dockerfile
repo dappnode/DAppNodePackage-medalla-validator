@@ -70,7 +70,7 @@ FROM debian:stretch-slim
 ENV NODE_ENV production
 ENV SERVER_PORT 80
 ENV CLIENT_FILES_PATH dist
-ENV DATA_PATH /app/data
+ENV DATA_PATH /root/.config/ethereum2
 ENV DB_API_DIR /app/db-api
 ENV GIT_DATA_PATH /app/.git-data.json
 ENV WORKDIR /app
@@ -84,7 +84,5 @@ COPY --from=validator-binary /usr/local/bin/validator /usr/local/bin/
 COPY --from=build-ui /app/build ${CLIENT_FILES_PATH}
 COPY --from=build-server /app/build server
 COPY --from=git-data /app/.git-data.json $GIT_DATA_PATH
-
-RUN ln -s /root/.config/ethereum2 ${DATA_PATH}
 
 CMD ["node", "server"]
