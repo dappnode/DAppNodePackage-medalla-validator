@@ -55,8 +55,8 @@ export default function App() {
       });
   }, [setLoginStatus]);
 
-  // If it's logged in, keep checking for logged in
   useEffect(() => {
+    checkLogin(); // Check for loggin immediately and every interval
     const interval = setInterval(checkLogin, 5000);
     return () => clearInterval(interval);
   }, [loginStatus, checkLogin]);
