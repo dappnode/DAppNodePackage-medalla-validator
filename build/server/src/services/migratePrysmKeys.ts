@@ -1,7 +1,7 @@
 import fs from "fs";
 import { ethers } from "ethers";
 import { ethdo, withdrawalAccount, withdrawalWallet } from "../ethdo";
-import { addValidatorToKeymanager } from "./keymanager";
+import { addValidatorsToKeymanager } from "./keymanager";
 import { logs } from "../logs";
 import {
   legacyValidatorPath,
@@ -18,7 +18,7 @@ export async function migrateLegacyValidator(): Promise<void> {
 
     const privateKey = await readKeystore(keystorePath, password);
     const account = await ethdo.importValidator(privateKey);
-    addValidatorToKeymanager(account);
+    addValidatorsToKeymanager([account]);
 
     fs.unlinkSync(keystorePath);
     logs.info(`Migrated legacy keystore ${keystorePath} > ${account.account}`);

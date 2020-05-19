@@ -4,7 +4,10 @@ import { logs } from "../logs";
 import shell from "../utils/shell";
 import { findFirstAvailableNum, findNAvailableNums } from "../utils/names";
 import { getRandomToken } from "../utils/token";
-import { ethdoKeymanager } from "../services/keymanager";
+import {
+  ethdoKeymanager,
+  addValidatorsToKeymanager
+} from "../services/keymanager";
 
 export const withdrawalWallet = "withdrawal";
 const validatorWallet = "validator";
@@ -51,6 +54,7 @@ export class Ethdo extends EthdoCmds {
     await ethdo.accountImport({ account, passphrase, key: privateKey });
     const publicKey = await this.accountPublicKey(account);
     const validator = { account, publicKey, passphrase };
+    addValidatorsToKeymanager([validator]);
     return validator;
   }
 
@@ -161,6 +165,8 @@ export class Ethdo extends EthdoCmds {
       await this.accountCreate({ account, passphrase });
       newAccounts.push({ account, passphrase });
     }
+
+    addValidatorsToKeymanager(newAccounts);
 
     // Get public key and passphrase for each account at once
     const newAccountsWithPubkey: EthdoAccountResult[] = [];

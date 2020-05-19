@@ -1,7 +1,7 @@
 import { EthdoAccountResult, PendingValidator } from "../../common";
 import {
-  addValidatorToKeymanager,
-  readKeymanagerAccounts
+  readkeymanagerMap,
+  addValidatorsToKeymanager
 } from "../services/keymanager";
 import { ethdo } from "../ethdo";
 import * as db from "../db";
@@ -14,6 +14,7 @@ import {
   depositContractAddress,
   depositCallGasLimit
 } from "../params";
+import { validatorBinary } from "../services/validatorBinary";
 
 /**
  * Resolves when all validators have resolved, either with success or errors
@@ -38,6 +39,7 @@ export async function addValidators(
   );
   let nonceOffset = 0;
 
+  const hasConfirmed = new Map<string, boolean>();
   const results: PendingValidator[] = await Promise.all(
     validators.map(
       async (validator): Promise<PendingValidator> => {
@@ -85,9 +87,7 @@ export async function addValidators(
             transactionHash: receipt.transactionHash,
             blockNumber: receipt.blockNumber
           };
-
-          // Confirmed successful deposit
-          addValidatorToKeymanager(validator);
+          hasConfirmed.set(validator.account, true);
 
           return {
             account: validator.account,
@@ -111,6 +111,11 @@ export async function addValidators(
         }
       }
     )
+  );
+
+  // Add to keymanager and restart validator
+  addValidatorsToKeymanager(
+    validators.filter(validator => hasConfirmed.get(validator.account))
   );
 
   // Clean progress data
@@ -139,10 +144,10 @@ async function getAvailableAndCreateValidatorAccounts(
   count: number
 ): Promise<EthdoAccountResult[]> {
   try {
-    const keymanagerAccounts = readKeymanagerAccounts();
+    const keymanagerMap = readkeymanagerMap();
     const unusedValidators = (
       await ethdo.listValidatorsWithPassphrase()
-    ).filter(v => !keymanagerAccounts.some(a => a.account === v.account));
+    ).filter(validator => !keymanagerMap.has(validator.account));
 
     const newValidatorsCount = count - unusedValidators.length;
     const newValidators =

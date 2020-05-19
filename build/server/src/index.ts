@@ -1,7 +1,7 @@
 import { logs } from "./logs";
 import app from "./app";
 import { listenToDepositEvents } from "./services/eth1";
-import { readKeymanagerAccounts } from "./services/keymanager";
+import { readkeymanagerMap } from "./services/keymanager";
 import { migrateLegacyValidator } from "./services/migratePrysmKeys";
 import { collectValidatorMetrics } from "./services/metrics";
 import { printGitData } from "./services/printGitData";
@@ -17,7 +17,7 @@ migrateLegacyValidator();
 printGitData();
 
 // Start validator binary if ready
-if (readKeymanagerAccounts().length > 0) validatorBinary.restart();
+if (readkeymanagerMap().size > 0) validatorBinary.restart();
 
 /**
  * Start Express server.
