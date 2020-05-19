@@ -2,10 +2,10 @@ import "mocha";
 import assert from "assert";
 import { DepositEvent } from "../../common";
 
-import { computeEstimatedBalance } from "../../src/utils/depositEvent";
+import { computeExpectedBalance } from "../../src/utils/depositEvent";
 
 describe("Utils > depositEvent", () => {
-  describe("computeEstimatedBalance", () => {
+  describe("computeExpectedBalance", () => {
     const depositEvent = {
       blockNumber: 2679205,
       transactionHash:
@@ -22,19 +22,19 @@ describe("Utils > depositEvent", () => {
 
     it("Parse balance from deposit event", () => {
       const depositEvents = [depositEvent];
-      const balance = computeEstimatedBalance(depositEvents);
+      const balance = computeExpectedBalance(depositEvents);
       assert.equal(balance, "32.0");
     });
 
     it("Parse balance from multiple deposit events", () => {
       const depositEvents = [depositEvent, depositEvent, depositEvent];
-      const balance = computeEstimatedBalance(depositEvents);
+      const balance = computeExpectedBalance(depositEvents);
       assert.equal(balance, "32.0");
     });
 
     it("Parse balance from no deposit events", () => {
       const depositEvents: DepositEvent[] = [];
-      const balance = computeEstimatedBalance(depositEvents);
+      const balance = computeExpectedBalance(depositEvents);
       assert.equal(balance, null);
     });
   });

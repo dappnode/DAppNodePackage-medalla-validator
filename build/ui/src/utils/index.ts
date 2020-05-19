@@ -60,11 +60,11 @@ const amount32Eth = "0x0040597307000000";
  * Fetches the highest amount from various deposit events
  * @param depositEvents
  */
-export function getEstimatedBalanceFormDepositEvents(depositEvents: {
+export function getExpectedBalanceFormDepositEvents(depositEvents: {
   [transactionHashAndLogIndex: string]: DepositEvent;
 }): number | undefined {
   const events = Object.values(depositEvents);
-  const estimatedBalances = events.map((event) => {
+  const expectedBalances = events.map((event) => {
     try {
       return parseDepositAmount(event.amount);
     } catch (e) {
@@ -72,7 +72,7 @@ export function getEstimatedBalanceFormDepositEvents(depositEvents: {
       return event.amount === amount32Eth ? 32 : 0;
     }
   });
-  return estimatedBalances.length ? Math.max(...estimatedBalances) : undefined;
+  return expectedBalances.length ? Math.max(...expectedBalances) : undefined;
 }
 
 function parseDepositAmount(amount: string): number {

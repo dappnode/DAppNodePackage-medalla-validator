@@ -134,8 +134,8 @@ export function ValidatorsTable({
                 </TableCell>
                 <TableCell>{validator.status}</TableCell>
                 <TableCell align="right">
-                  {validator.balance.isEstimated ? (
-                    <i>{formatEth(validator.balance.eth)} (estimated)</i>
+                  {validator.balance.isExpected ? (
+                    <i>{formatEth(validator.balance.eth)} (expected)</i>
                   ) : (
                     formatEth(validator.balance.eth)
                   )}

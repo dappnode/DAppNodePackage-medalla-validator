@@ -17,7 +17,7 @@ export interface ValidatorStats {
   status?: string;
   balance: {
     eth: number | null; // 32.4523
-    isEstimated: boolean;
+    isExpected: boolean;
   };
 }
 
@@ -28,7 +28,7 @@ export interface ApiStatus {
   };
   totalBalance: {
     eth: string | null; // "32.543"
-    isEstimated: boolean;
+    isExpected: boolean;
   };
 }
 

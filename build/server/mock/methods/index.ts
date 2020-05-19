@@ -72,7 +72,7 @@ export async function addValidators(
           status: "DEPOSITED",
           balance: {
             eth: 32,
-            isEstimated: true
+            isExpected: true
           }
         });
 

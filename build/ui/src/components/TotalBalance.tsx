@@ -26,8 +26,8 @@ export function TotalBalance({ validators }: { validators: ValidatorStats[] }) {
     (total, validator) => total + (validator.balance.eth || 0),
     0
   );
-  const isEstimated = validators.some(
-    (validator) => validator.balance.isEstimated
+  const isExpected = validators.some(
+    (validator) => validator.balance.isExpected
   );
   const isPartial = validators.some(
     (validator) => validator.balance.eth === null
@@ -38,11 +38,11 @@ export function TotalBalance({ validators }: { validators: ValidatorStats[] }) {
       <Title>Total balance validating</Title>
       <Typography component="p" variant="h4">
         {formatEth(totalBalance)}
-        {isEstimated ? "*" : ""} {isPartial ? "**" : ""} ETH2
+        {isExpected ? "*" : ""} {isPartial ? "**" : ""} ETH2
       </Typography>
-      {isEstimated && (
+      {isExpected && (
         <Typography className={classes.noteText}>
-          * Some validator balances are estimated from their eth1 deposit
+          * Some validator balances are expected upon deposit inclusion
         </Typography>
       )}
       {isPartial && (

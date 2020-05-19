@@ -8,11 +8,11 @@ const amount32EthLittleEdian = "0x0040597307000000";
  * Fetches the highest amount from various deposit events
  * @param depositEvents
  */
-export function computeEstimatedBalance(
+export function computeExpectedBalance(
   depositEvents: DepositEvent[]
 ): number | null {
   if (depositEvents.length === 0) return null;
-  const estimatedBalances = depositEvents.map(event => {
+  const expectedBalances = depositEvents.map(event => {
     try {
       return parseDepositAmount(event.amount);
     } catch (e) {
@@ -21,7 +21,7 @@ export function computeEstimatedBalance(
     }
   });
 
-  return estimatedBalances.reduce((max, b) => (max > b ? max : b), 0);
+  return expectedBalances.reduce((max, b) => (max > b ? max : b), 0);
 }
 
 function parseDepositAmount(amount: string): number {

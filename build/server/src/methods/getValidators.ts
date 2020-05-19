@@ -2,7 +2,7 @@ import { ValidatorStats, DepositEvent, PendingValidator } from "../../common";
 import * as db from "../db";
 import { readKeymanagerAccounts } from "../services/keymanager";
 import { ethdo, parseValidatorName } from "../ethdo";
-import { computeEstimatedBalance } from "../utils/depositEvent";
+import { computeExpectedBalance } from "../utils/depositEvent";
 import { ethers } from "ethers";
 
 export async function getValidators(): Promise<ValidatorStats[]> {
@@ -48,17 +48,17 @@ function computeBalance(
     status?: string;
   },
   depositEvents: DepositEvent[]
-): { eth: number | null; isEstimated: boolean } {
+): { eth: number | null; isExpected: boolean } {
   if (
     !balance &&
     (!status || status.includes("UNKNOWN") || status === "DEPOSITED") &&
     depositEvents.length > 0
   ) {
-    const estimatedBalance = computeEstimatedBalance(depositEvents);
-    if (estimatedBalance)
+    const expectedBalance = computeExpectedBalance(depositEvents);
+    if (expectedBalance)
       return {
-        eth: estimatedBalance,
-        isEstimated: true
+        eth: expectedBalance,
+        isExpected: true
       };
   }
 
@@ -68,6 +68,6 @@ function computeBalance(
         ? // API returns the balance in 9 decimals
           parseFloat(ethers.utils.formatUnits(balance, 9)) || null
         : null,
-    isEstimated: false
+    isExpected: false
   };
 }
