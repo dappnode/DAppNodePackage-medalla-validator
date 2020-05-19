@@ -12,7 +12,7 @@ export const ethdoWalletsPath = path.join(dataPath, "wallets");
 export const beaconRpcProvider =
   process.env.BEACON_GRPC_URL || "prysm-beacon-chain.public.dappnode:4000";
 export const goerliWeb3Url =
-  process.env.WEB3PROVIDER || "https://goerli.prylabs.net";
+  process.env.WEB3PROVIDER || "https://goerli.dappnode.net";
 
 // Login password
 export const adminPassword = process.env.PASSWORD;
