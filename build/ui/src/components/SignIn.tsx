@@ -16,6 +16,9 @@ import { FooterNote } from "./FooterNote";
 import { InputPassword } from "./InputPassword";
 import { RequestStatus } from "types";
 import { ErrorView } from "./ErrorView";
+import { Alert } from "@material-ui/lab";
+import { packageAdminConfigPage } from "common/params";
+import { newTabProps } from "utils";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -35,6 +38,9 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  yMargin: {
+    margin: theme.spacing(3, 0),
+  },
 }));
 
 export function SignIn({
@@ -46,6 +52,7 @@ export function SignIn({
 }) {
   const [input, setInput] = useState("");
   const [status, setStatus] = useState<RequestStatus<string>>({});
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const classes = useStyles();
 
   async function signIn(e: React.FormEvent<HTMLFormElement>) {
@@ -93,24 +100,27 @@ export function SignIn({
           >
             Sign In
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-          </Grid>
         </form>
       </div>
 
+      {showForgotPassword ? (
+        <Alert severity="info" className={classes.yMargin}>
+          If you are an admin go to the the{" "}
+          <Link href={packageAdminConfigPage} {...newTabProps}>
+            prysm-validator.public.dappnode.eth config page
+          </Link>{" "}
+          and see or change the PASSWORD property.
+        </Alert>
+      ) : (
+        <Link onClick={() => setShowForgotPassword(true)} variant="body2">
+          Forgot password?
+        </Link>
+      )}
+
       {isOffline && (
-        <Box m={4}>
-          <Typography color="error" align="center">
-            Cannot connect with the server
-            <br />
-            are you online?
-          </Typography>
-        </Box>
+        <Alert severity="error" className={classes.yMargin}>
+          Cannot connect with the server - are you online?
+        </Alert>
       )}
 
       <Box mt={8}>
