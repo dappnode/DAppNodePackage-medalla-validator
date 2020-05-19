@@ -25,8 +25,8 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.primary.main,
     },
     cursor: "pointer",
-    // Mimic Aragon account viewer
-    backgroundColor: "#ebf5f4",
+    // Mimic Aragon account viewer, add opacity to be compatible in dark mode
+    backgroundColor: theme.palette.primary.main + "1f",
     alignSelf: "flex-start",
     padding: "2px",
     borderRadius: "4px",
