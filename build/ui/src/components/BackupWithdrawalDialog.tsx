@@ -7,7 +7,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
-  DialogActions,
 } from "@material-ui/core";
 import { InputPassword } from "./InputPassword";
 import { api } from "api/rpc";
