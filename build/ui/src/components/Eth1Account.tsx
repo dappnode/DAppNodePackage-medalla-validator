@@ -9,6 +9,8 @@ import { newTabProps, formatEth } from "utils";
 import { ValidatorCountDialog } from "./ValidatorCountDialog";
 import { AccountView } from "./AccountView";
 import params from "params";
+import { responseInterface } from "swr";
+import { Eth1AccountStats } from "common";
 
 const useStyles = makeStyles((theme) => ({
   depositContext: {
@@ -73,32 +75,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function Eth1Account({
-  canAddValidators,
-  addValidators,
+  eth1Account,
+  onAddValidators,
   addingValidators,
 }: {
-  canAddValidators: () => Promise<boolean>;
-  addValidators: (num: number) => Promise<void>;
+  eth1Account: responseInterface<Eth1AccountStats, Error>;
+  onAddValidators: () => void;
   addingValidators?: boolean;
 }) {
-  const [open, setOpen] = React.useState(false);
-  const eth1Account = useApi.eth1AccountGet();
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (eth1Account.data) eth1Account.revalidate();
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [eth1Account]);
-
-  function onAddValidatorsButton() {
-    canAddValidators()
-      .then((canAdd) => {
-        if (canAdd) setOpen(true);
-      })
-      .catch(console.error);
-  }
-
   const classes = useStyles();
 
   if (eth1Account.data) {
@@ -135,7 +119,7 @@ export function Eth1Account({
             Get funds
           </Button>
           <Button
-            onClick={onAddValidatorsButton}
+            onClick={onAddValidators}
             disabled={addingValidators || insufficientFunds}
             variant="contained"
             color="primary"
@@ -143,14 +127,6 @@ export function Eth1Account({
             Add validators
           </Button>
         </Grid>
-
-        {/* Modal to confirm number of validators */}
-        <ValidatorCountDialog
-          open={open}
-          balance={balance}
-          addValidators={addValidators}
-          onClose={() => setOpen(false)}
-        />
       </Grid>
     );
   }

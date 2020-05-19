@@ -20,10 +20,12 @@ const keystoreName = "prysm-validator-dappnode-withdrawal.keystore";
 export function BackupWithdrawalDialog({
   open,
   onClose,
+  onSuccess,
   withdrawalIsMigration,
 }: {
   open: boolean;
   onClose: () => void;
+  onSuccess: () => void;
   withdrawalIsMigration: boolean;
 }) {
   const [password, setPassword] = useState("");
@@ -48,7 +50,9 @@ export function BackupWithdrawalDialog({
         type: "text/plain;charset=utf-8",
       });
       FileSaver.saveAs(blob, keystoreName);
-      setTimeout(onClose, 500);
+      onSuccess();
+      onClose();
+      // setTimeout(onClose, 500);
     } catch (e) {
       console.error(e);
       setKeystoreStatus({ error: e });

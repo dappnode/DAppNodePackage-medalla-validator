@@ -9,14 +9,17 @@ import { TotalBalance } from "components/TotalBalance";
 import { RequestStatus } from "types";
 import { PendingValidator } from "common";
 import { BackupWithdrawalDialog } from "components/BackupWithdrawalDialog";
+import { ValidatorCountDialog } from "components/ValidatorCountDialog";
 
 export function HomePage() {
   const [openWithdrawal, setOpenWithdrawal] = useState(false);
+  const [openAddValidators, setOpenAddValidators] = useState(false);
   const [withdrawalIsMigration, setWithdrawalIsMigration] = useState(false);
   const [statusAddingValidators, setStatusAddingValidators] = useState<
     RequestStatus<PendingValidator[]>
   >();
   const validators = useApi.getValidators();
+  const eth1Account = useApi.eth1AccountGet();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -24,6 +27,25 @@ export function HomePage() {
     }, 2000);
     return () => clearInterval(interval);
   }, [validators]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (eth1Account.data) eth1Account.revalidate();
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [eth1Account]);
+
+  /**
+   * On clicking the button Add Validators in the home page
+   * Either opens the backup modal or the validator count modal
+   */
+  async function onAddValidatorsButton() {
+    try {
+      if (await canAddValidators()) setOpenAddValidators(true);
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
   async function canAddValidators(): Promise<boolean> {
     try {
@@ -42,6 +64,11 @@ export function HomePage() {
     }
   }
 
+  /**
+   * After collecting the num of validators in the modal form,
+   * actually call the server to add them
+   * @param num
+   */
   async function addValidators(num: number) {
     try {
       if (await canAddValidators()) {
@@ -66,17 +93,25 @@ export function HomePage() {
         <NodeStats />
       </LayoutItem>
 
-      {/* TEMP */}
       <BackupWithdrawalDialog
         open={openWithdrawal}
         onClose={() => setOpenWithdrawal(false)}
+        onSuccess={() => setOpenAddValidators(true)}
         withdrawalIsMigration={withdrawalIsMigration}
+      />
+
+      {/* Modal to confirm number of validators */}
+      <ValidatorCountDialog
+        open={openAddValidators}
+        balance={eth1Account.data?.balance || 0}
+        addValidators={addValidators}
+        onClose={() => setOpenAddValidators(false)}
       />
 
       <LayoutItem>
         <Eth1Account
-          canAddValidators={canAddValidators}
-          addValidators={addValidators}
+          eth1Account={eth1Account}
+          onAddValidators={onAddValidatorsButton}
           addingValidators={
             statusAddingValidators && statusAddingValidators.loading
           }
