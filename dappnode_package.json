@@ -24,7 +24,7 @@
   "backup": [
     {
       "name": "data",
-      "path": "/app/data"
+      "path": "/root/.config/ethereum2"
     }
   ],
   "links": {
