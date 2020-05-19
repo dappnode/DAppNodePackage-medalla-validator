@@ -59,7 +59,6 @@ export function ValidatorCountDialog({
   const onAdd = () => setInput(num + 1 || input);
   const onMax = () => setInput(maxNumber);
   const onSet = (newNum: string | number) => setInput(newNum);
-  console.log({ input });
 
   const errors: string[] = [];
 

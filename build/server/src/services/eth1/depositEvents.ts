@@ -33,8 +33,8 @@ async function getDeposits() {
     topics: [depositInt.events[depositEventAbi.name].topic]
   });
 
-  if (depositLogs.length > 0)
-    logs.info(`Fetched ${depositLogs.length} deposit logs`);
+  if (depositLogs.length)
+    logs.info(`Fetched ${depositLogs.length} new deposit logs`);
 
   saveDepositEvents(
     depositLogs.map(log => {
@@ -61,7 +61,7 @@ function subscribeToEvents() {
         args[args.length - 1];
       saveDepositEvents([log]);
     } catch (e) {
-      logs.error(``);
+      logs.error("Error on new deposit event", e);
     }
   });
 }

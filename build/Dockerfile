@@ -20,6 +20,7 @@ COPY build/server/package.json build/server/yarn.lock ./
 RUN yarn
 COPY build/server .
 COPY --from=build-ui /app/src/common ../ui/src/common
+RUN yarn prepare
 RUN yarn build
 # Results in build/index.js
 

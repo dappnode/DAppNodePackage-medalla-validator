@@ -18,7 +18,8 @@
     "analyze": "webpack --profile --json > build/stats.json && npx webpack-bundle-analyzer build/stats.json",
     "common-build": "node common/validation/generateSchemas",
     "common-copy": "rm -rf ../ui/src/common/ && cp -r common/ ../ui/src/common/",
-    "common-watch": "node scripts/sync-common"
+    "common-watch": "node scripts/sync-common",
+    "prepare": "patch-package"
   },
   "repository": {
     "type": "git",
@@ -44,6 +45,7 @@
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.15",
     "lowdb": "^1.0.0",
+    "memoizee": "^0.4.14",
     "morgan": "^1.9.1",
     "node-fetch": "^2.6.0",
     "session-file-store": "^1.4.0",
@@ -62,6 +64,7 @@
     "@types/http-errors": "^1.6.2",
     "@types/json-stringify-safe": "^5.0.0",
     "@types/lowdb": "^1.0.9",
+    "@types/memoizee": "^0.4.4",
     "@types/mocha": "^7.0.2",
     "@types/morgan": "^1.7.37",
     "@types/node": "^12.7.7",
@@ -79,6 +82,7 @@
     "eslint": "^6.7.1",
     "json-loader": "^0.5.7",
     "mocha": "^7.1.2",
+    "patch-package": "^6.2.2",
     "prettier": "^1.17.0",
     "supertest": "^4.0.2",
     "ts-loader": "^6.2.0",
