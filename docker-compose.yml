@@ -19,7 +19,7 @@ services:
       - EXTRA_OPTS=--enable-account-metrics
       - "BEACON_GRPC_URL=prysm-beacon-chain.public.dappnode:4000"
       - "BEACON_GRPC_GATEWAY_URL=http://prysm-beacon-chain.public.dappnode:4001"
-      - "GOERLI_WEB3_URL=https://goerli.prylabs.net"
+      - "WEB3PROVIDER=https://goerli.prylabs.net"
 volumes:
   data: {}
   db-api: {}
