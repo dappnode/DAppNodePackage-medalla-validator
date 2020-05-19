@@ -153,23 +153,28 @@ export function ValidatorsTable({
         </Table>
       </TableContainer>
 
-      {validatorsToShow.length === 0 && loading ? (
-        <Box my={3}>
-          <LoadingView
-            steps={["Fetching validator accounts", "Quering validator metrics"]}
-          />
-        </Box>
-      ) : (
-        <Box m={6} textAlign="center">
-          <Typography
-            variant="caption"
-            className={classes.noValidators}
-            color="textSecondary"
-          >
-            No validators
-          </Typography>
-        </Box>
-      )}
+      {validatorsToShow.length === 0 ? (
+        loading ? (
+          <Box my={3}>
+            <LoadingView
+              steps={[
+                "Fetching validator accounts",
+                "Quering validator metrics",
+              ]}
+            />
+          </Box>
+        ) : (
+          <Box m={6} textAlign="center">
+            <Typography
+              variant="caption"
+              className={classes.noValidators}
+              color="textSecondary"
+            >
+              No validators
+            </Typography>
+          </Box>
+        )
+      ) : null}
 
       {/* Limit the amount of items to show at once >1000 can crash the page */}
       {validators.length > maxItems && (
