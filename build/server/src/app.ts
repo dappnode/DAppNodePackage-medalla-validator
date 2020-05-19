@@ -20,7 +20,7 @@ const app = express();
 // Express configuration
 app.set("port", serverPort);
 app.use(cors()); // default options. ALL CORS
-app.use(logger("dev", { skip: (_, res) => res.statusCode < 400 || logDebug })); // Log error requests in "dev" format
+app.use(logger("dev", { skip: (_, res) => res.statusCode < 500 && !logDebug })); // Log error requests in "dev" format
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
