@@ -1,5 +1,4 @@
 import fs from "fs";
-import * as db from "../db";
 import { ethers } from "ethers";
 import { ethdo, withdrawalAccount, withdrawalWallet } from "../ethdo";
 import { addValidatorToKeymanager } from "./keymanager";
@@ -16,12 +15,9 @@ export async function migrateLegacyValidator(): Promise<void> {
   try {
     if (!fs.existsSync(keystorePath)) return;
     const password = getPassword();
-    const wallet = "validator";
 
-    const { privateKey, lastMod } = await readKeystore(keystorePath, password);
-    const account = await ethdo.importAccount(privateKey, wallet);
-    db.accounts.validator.merge({ ...account, createdTimestamp: lastMod });
-    // Writes to keymanager and restart validator
+    const privateKey = await readKeystore(keystorePath, password);
+    const account = await ethdo.importValidator(privateKey);
     addValidatorToKeymanager(account);
 
     fs.unlinkSync(keystorePath);
@@ -42,15 +38,9 @@ export async function migrateLegacyWithdrawal(
   const keystorePath = legacyWithdrawalPath;
   const password = getPassword();
 
-  const keystore = await readKeystore(keystorePath, password);
+  const privateKey = await readKeystore(keystorePath, password);
   await ethdo.assertWalletExists(withdrawalWallet);
-  await ethdo.accountImport({ account, passphrase, key: keystore.privateKey });
-  db.accounts.withdrawal.merge({
-    account,
-    passphrase,
-    publicKey: keystore.publicKey,
-    createdTimestamp: keystore.lastMod
-  });
+  await ethdo.accountImport({ account, passphrase, key: privateKey });
 
   fs.unlinkSync(keystorePath);
   logs.info(`Migrated legacy withdrawal keystore ${keystorePath}`);
@@ -104,10 +94,5 @@ export async function decryptPrysmKeystore(
 export async function readKeystore(keystorePath: string, password: string) {
   if (!password) throw Error(`No ENV PASSWORD provided`);
   const json = fs.readFileSync(keystorePath, "utf8");
-  const keystore = JSON.parse(json);
-  return {
-    publicKey: keystore.publickey,
-    privateKey: await decryptPrysmKeystore(json, password),
-    lastMod: Math.round(fs.statSync(keystorePath).mtimeMs)
-  };
+  return await decryptPrysmKeystore(json, password);
 }

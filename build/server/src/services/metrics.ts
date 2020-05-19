@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 import querystring from "querystring";
 import * as db from "../db";
+import { ethdo } from "../ethdo";
 import { beaconGrpcGatewayUrl } from "../params";
 import { logs } from "../logs";
 import {
@@ -22,12 +23,12 @@ const apiUrl = beaconGrpcGatewayUrl;
 export function collectValidatorMetrics() {
   setInterval(async () => {
     try {
-      const validators = db.accounts.validator.getAll();
-      const pubKeys = validators.map(v => v.publicKey).filter(pubKey => pubKey);
-      for (const pubKey of pubKeys)
-        collectMetricsByPubkey(pubKey).catch(e => {
-          logs.debug(`Error collecting ${pubKey} metrics`, e);
-        });
+      const validators = await ethdo.accountList("validator");
+      for (const { publicKey } of validators)
+        if (publicKey)
+          collectMetricsByPubkey(publicKey).catch(e => {
+            logs.debug(`Error collecting ${publicKey} metrics`, e);
+          });
     } catch (e) {
       logs.debug(`Error collecting validator metrics`, e);
     }

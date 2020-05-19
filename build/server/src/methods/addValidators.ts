@@ -123,66 +123,37 @@ export async function addValidators(
  * Alias to reduce boilerplate when dynamically updating the UI
  * @param validator
  */
-function getUpdateStatus(validator: EthdoAccountResult) {
-  return function updateStatus(
-    data: Pick<PendingValidator, "status"> & Partial<PendingValidator>
-  ) {
-    db.accounts.pendingValidators.merge({
-      account: validator.account,
-      publicKey: validator.publicKey,
-      ...data
-    });
-  };
+function getUpdateStatus({ account, publicKey }: EthdoAccountResult) {
+  return (data: Pick<PendingValidator, "status"> & Partial<PendingValidator>) =>
+    db.accounts.pendingValidators.merge({ account, publicKey, ...data });
 }
 
+/**
+ * Finds existing validators that are not assigned
+ * Their password is fetched from the intermediate ethdo keymanager
+ * They are not added to the keymanager until the deposit tx is confirmed
+ * Then creates remaining necessary validators
+ * @param count
+ */
 async function getAvailableAndCreateValidatorAccounts(
   count: number
 ): Promise<EthdoAccountResult[]> {
   try {
-    // First, find existing validators that are not assigned
-    const existingValidators = await ethdo.accountList("validator");
     const keymanagerAccounts = readKeymanagerAccounts();
-    const unusedExistingValidators: EthdoAccountResult[] = [];
-    for (const validator of existingValidators) {
-      if (!keymanagerAccounts.some(a => a.account === validator.account)) {
-        // The password must be fetched from the API's storage since the accounts are
-        // not added to the keymanager until the deposit tx is confirmed
-        const localAccount = db.accounts.validator.get(validator.account);
-        if (localAccount)
-          unusedExistingValidators.push({
-            account: validator.account,
-            publicKey: validator.publicKey,
-            passphrase: localAccount.passphrase
-          });
-      }
-    }
+    const unusedValidators = (
+      await ethdo.listValidatorsWithPassphrase()
+    ).filter(v => !keymanagerAccounts.some(a => a.account === v.account));
 
-    // Then create remaining necessary validators
-    const newValidatorsCount = count - unusedExistingValidators.length;
+    const newValidatorsCount = count - unusedValidators.length;
     const newValidators =
       newValidatorsCount > 0
-        ? await createValidatorAccounts(newValidatorsCount)
+        ? await ethdo.createValidatorAccounts(newValidatorsCount)
         : [];
 
-    return [...unusedExistingValidators, ...newValidators];
+    return [...unusedValidators, ...newValidators];
   } catch (e) {
-    // If this fails, just create new validator accounts
+    // If reusing validators fails, just create new validator accounts
     logs.error(`Error creating available validators`, e);
-    return await createValidatorAccounts(count);
+    return await ethdo.createValidatorAccounts(count);
   }
-}
-
-/**
- * Stores the created accounts in the API's DB for when account creation fails.
- * Since the account (and its password) is not added to the keymanager until the
- * deposit tx is confirmed, the account's password has to be stored somewhere
- * @param count
- */
-async function createValidatorAccounts(
-  count: number
-): Promise<EthdoAccountResult[]> {
-  const validators = await ethdo.createValidatorAccounts(count);
-  for (const validator of validators)
-    db.accounts.validator.set({ ...validator, createdTimestamp: Date.now() });
-  return validators;
 }

@@ -17,29 +17,12 @@ const accountsDbPath = path.join(dbDir, "account-db.json");
 const depositsDbPath = path.join(dbDir, "deposits-db.json");
 const metricsDbPath = path.join(dbDir, "metrics-db.json");
 
-interface DbValidator {
-  account: string; // "validator/1"
-  publicKey: string;
-  passphrase: string;
-  depositData?: string;
-  createdTimestamp: number; // in miliseconds
-}
-
-interface DbWithdrawal {
-  account: string; // "withdrawal/primary"
-  publicKey: string;
-  passphrase?: string;
-  createdTimestamp: number; // in miliseconds
-}
-
 export const server = createDb(createLowDb(serverDbPath), {
   sessionsSecret: regular<string>()
 });
 
 export const accounts = createDb(createLowDb(accountsDbPath), {
   pendingValidators: collection<PendingValidator>(v => v.account),
-  validator: collection<DbValidator>(v => v.account),
-  withdrawal: collection<DbWithdrawal>(v => v.account),
   eth1: regular<{ address: string; privateKey: string }>()
 });
 
