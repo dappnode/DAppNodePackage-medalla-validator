@@ -24,15 +24,21 @@ export const api: Routes = mapValues(
   (data, route) => (...args: any[]) => callRoute(route, args)
 );
 
+/**
+ * Unique key per route domain to make SWR cache work
+ */
+const getKey = (route: string, args: any[]) =>
+  route + (args.length > 0 ? JSON.stringify(args) : "");
+
 export const useApi: {
   [K in keyof Routes]: (
     ...args: Parameters<Routes[K]>
   ) => responseInterface<ResolvedType<Routes[K]>, Error>;
 } = mapValues(api, (handler, route) => {
   return function (...args: any[]) {
-    const argsKey = args.length > 0 ? JSON.stringify(args) : "";
-    const cacheKey = route + argsKey;
     const fetcher: (...args: any[]) => Promise<any> = handler;
-    return useSWR([cacheKey, route], () => fetcher(...args));
+    return useSWR(getKey(route, args), () => fetcher(...args), {
+      refreshInterval: 2000,
+    });
   };
 });

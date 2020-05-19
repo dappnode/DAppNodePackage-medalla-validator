@@ -21,20 +21,6 @@ export function HomePage() {
   const validators = useApi.getValidators();
   const eth1Account = useApi.eth1AccountGet();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (validators.data) validators.revalidate();
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [validators]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (eth1Account.data) eth1Account.revalidate();
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [eth1Account]);
-
   /**
    * On clicking the button Add Validators in the home page
    * Either opens the backup modal or the validator count modal

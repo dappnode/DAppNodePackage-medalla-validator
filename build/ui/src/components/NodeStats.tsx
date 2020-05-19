@@ -6,13 +6,6 @@ import { useApi } from "api/rpc";
 export function NodeStats() {
   const nodeStats = useApi.nodeStats();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (nodeStats.data) nodeStats.revalidate();
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [nodeStats]);
-
   if (!nodeStats.data) return null;
 
   return (
