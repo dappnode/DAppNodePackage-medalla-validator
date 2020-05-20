@@ -6,6 +6,7 @@ import {
   keymanagerFile,
   verbosity,
   logFile,
+  graffiti,
   extraOpts
 } from "../params";
 
@@ -18,6 +19,7 @@ export const validatorBinary = Supervisor(
     keymanageropts: keymanagerFile,
     verbosity: verbosity,
     "log-file": logFile,
+    ...(graffiti ? { graffiti } : {}), // Ignore if empty
     _: [extraOpts]
   })
 );
