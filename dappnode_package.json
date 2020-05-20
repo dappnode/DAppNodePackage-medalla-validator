@@ -31,5 +31,7 @@
     "homepage": "https://github.com/dappnode/DAppNodePackage-prysm-validator",
     "ui": "http://prysm-validator.public.dappnode/"
   },
-  "dependencies": {}
+  "dependencies": {
+    "prysm-beacon-chain.public.dappnode.eth" : "latest"
+  }
 }
