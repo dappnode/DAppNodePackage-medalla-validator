@@ -1,2 +1,7 @@
 build_*
 .env
+node_modules/
+
+build/server/build
+build/server/db-api/
+build/ui/build

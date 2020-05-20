@@ -1,0 +1,16 @@
+# Dependencies
+**/node_modules
+node_modules/
+
+# API artifacts
+build/server/build/
+build/server/dist
+build/ui/build
+build/Dockerfile*
+db-api/
+
+# Tests
+build/server/test/
+
+# DNP artifacts
+build_*/

@@ -1,5 +1,4 @@
 {
-  "ui:order": ["validator_account", "*"],
   "password": {
     "ui:widget": "password"
   }
