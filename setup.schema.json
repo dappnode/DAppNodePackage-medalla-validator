@@ -6,6 +6,12 @@
       "type": "string",
       "title": "Password",
       "description": "Password to protect access to the account manager dashboard. Use a strong password, which you can generate and store with a password manager. You can change this password anytime."
+    },
+    "graffiti": {
+      "type": "string",
+      "title": "Graffiti",
+      "description": "You can use the graffiti validator parameter to add a string to your proposed blocks, which will be seen on the block explorer. This can be your name, your loved one’s name, an important hash of some real world data, or memes. Leave empty to not add any data.",
+      "maxLength": 32
     }
   },
   "required": ["password"]

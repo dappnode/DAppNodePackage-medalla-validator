@@ -2,5 +2,9 @@
   "password": {
     "type": "environment",
     "name": "PASSWORD"
+  },
+  "graffiti": {
+    "type": "environment",
+    "name": "GRAFFITI"
   }
 }

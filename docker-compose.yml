@@ -14,6 +14,7 @@ services:
     restart: always
     environment:
       - PASSWORD=
+      - GRAFFITI=prylabs-validator--from-dappnode
       - VERBOSITY=info
       - LOG_LEVEL=
       - EXTRA_OPTS=--enable-account-metrics

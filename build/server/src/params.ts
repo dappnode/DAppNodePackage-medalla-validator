@@ -13,6 +13,7 @@ export const beaconRpcProvider =
   process.env.BEACON_GRPC_URL || "prysm-beacon-chain.public.dappnode:4000";
 export const goerliWeb3Url =
   process.env.WEB3PROVIDER || "https://goerli.dappnode.net";
+export const graffiti = process.env.GRAFFITI || "";
 
 // Login password
 export const adminPassword = process.env.PASSWORD;
