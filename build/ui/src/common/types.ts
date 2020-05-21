@@ -80,6 +80,10 @@ export interface NodeStats {
   peers: BeaconNodePeer[] | null;
   syncing: { syncing: boolean } | null;
   chainhead: BeaconNodeChainhead | null;
+  /**
+   * e.g. Topaz
+   */
+  eth2NetworkName: string;
 }
 
 // Prysm deposit contract

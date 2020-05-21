@@ -75,6 +75,9 @@ ENV DB_API_DIR /app/db-api
 ENV GIT_DATA_PATH /app/.git-data.json
 ENV WORKDIR /app
 
+# ETH2 Config
+ENV ETH2_NETWORK_NAME Topaz Testnet
+
 WORKDIR ${WORKDIR}
 
 ADD build/ssl /app/ssl

@@ -145,7 +145,8 @@ export async function nodeStats(): Promise<NodeStats> {
       previousJustifiedSlot: "177600",
       previousJustifiedEpoch: "5550",
       previousJustifiedBlockRoot: "Bb/6F2NfmtilyxQb+2tItGlD1WNwR17gMVd5kIxjgCQ="
-    }
+    },
+    eth2NetworkName: "Topaz"
   };
 }
 

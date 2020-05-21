@@ -14,6 +14,7 @@ export const beaconRpcProvider =
 export const eth1Web3Url =
   process.env.WEB3PROVIDER || "https://goerli.dappnode.net";
 export const graffiti = process.env.GRAFFITI || "";
+export const eth2NetworkName = process.env.ETH2_NETWORK_NAME || "";
 
 // Login password
 export const adminPassword = process.env.PASSWORD;
