@@ -20,14 +20,15 @@
   "requirements": {
     "minimumDappnodeVersion": "0.2.22"
   },
-  "categories": [
-    "Blockchain",
-    "ETH2.0"
-  ],
+  "categories": ["Blockchain", "ETH2.0"],
   "backup": [
     {
       "name": "data",
       "path": "/root/.config/ethereum2"
+    },
+    {
+      "name": "api-accounts",
+      "path": "/app/db-api/account-db.json"
     }
   ],
   "links": {
