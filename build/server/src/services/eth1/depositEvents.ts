@@ -2,10 +2,6 @@ import { ethers } from "ethers";
 import retry from "async-retry";
 import * as db from "../../db";
 import {
-  depositContractAddress,
-  depositContractCreationBlock
-} from "../../params";
-import {
   DepositEventArgs,
   depositEventAbi,
   DepositEvents
@@ -13,10 +9,13 @@ import {
 import { getEth1Provider } from "./provider";
 import { logs } from "../../logs";
 import memoizee from "memoizee";
+import { getDepositContractAddress } from "./getDepositContractAddress";
 
 export function listenToDepositEvents() {
   requestPastDepositEvents();
-  subscribeToEvents();
+  subscribeToEvents().catch(e => {
+    logs.error(`Error subscribing to deposit events`, e);
+  });
 }
 
 export const requestPastDepositEvents = memoizee(
@@ -34,11 +33,12 @@ async function getDeposits() {
   const depositInt = new ethers.utils.Interface([depositEventAbi]);
   const provider = getEth1Provider();
   const highestSeenBlock = getHighestSeenBlock();
+  const depositContractAddress = await getDepositContractAddress();
   const depositLogs = await provider.getLogs({
     address: depositContractAddress, // or contractEnsName,
     fromBlock: highestSeenBlock
       ? highestSeenBlock - 100 // Consider re-orgs, fetch some past blocks
-      : depositContractCreationBlock,
+      : 0,
     toBlock: "latest",
     topics: [depositInt.events[depositEventAbi.name].topic]
   });
@@ -58,8 +58,9 @@ async function getDeposits() {
 /**
  * Subcribe to deposit events, will not fetch past events
  */
-function subscribeToEvents() {
+async function subscribeToEvents() {
   const provider = getEth1Provider();
+  const depositContractAddress = await getDepositContractAddress();
   const depositContract = new ethers.Contract(
     depositContractAddress,
     [depositEventAbi],

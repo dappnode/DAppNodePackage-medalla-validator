@@ -8,11 +8,8 @@ import * as eth1 from "../services/eth1";
 import { logs } from "../logs";
 import { ethers } from "ethers";
 import { getAddressAndBalance } from "../services/eth1";
-import {
-  depositAmountEth,
-  depositContractAddress,
-  depositCallGasLimit
-} from "../params";
+import { depositAmountEth, depositCallGasLimit } from "../params";
+import { getDepositContractAddress } from "../services/eth1/getDepositContractAddress";
 
 /**
  * Pending validator state for progress reporting in the UI, stored in memory
@@ -48,6 +45,9 @@ export async function addValidators(
     wallet.getAddress()
   );
   let nonceOffset = 0;
+
+  // Get deposit contract address from beacon node
+  const depositContractAddress = await getDepositContractAddress();
 
   const hasConfirmed = new Map<string, boolean>();
   const results: PendingValidator[] = await Promise.all(
