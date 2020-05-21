@@ -31,7 +31,7 @@ export async function getValidators(): Promise<ValidatorStats[]> {
         };
       }
     )
-    .filter(({ depositEvents }) => depositEvents.length > 0);
+    .filter(({ depositEvents, status }) => depositEvents.length > 0 || status);
 }
 
 export async function getPendingValidators(): Promise<PendingValidator[]> {
