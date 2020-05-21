@@ -83,7 +83,7 @@ export function AccountView({ address }: { address: string }) {
 
           <Box mb={3}>
             <Alert severity="warning">
-              Do not send real ETH to this account, only Goerli test ETH
+              Do not send real ETH to this account, only test ETH
             </Alert>
           </Box>
 

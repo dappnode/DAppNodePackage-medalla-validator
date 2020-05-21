@@ -69,6 +69,10 @@ export interface DepositEvent extends DepositEventArgs {
 export interface Eth1AccountStats {
   address: string;
   balance: number;
+  /**
+   * Testnet name, e.g. "Goerli"
+   */
+  network: string;
   insufficientFunds: boolean;
 }
 

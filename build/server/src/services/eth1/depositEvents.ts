@@ -10,7 +10,7 @@ import {
   depositEventAbi,
   DepositEvents
 } from "../../../common";
-import { getGoerliProvider } from "./provider";
+import { getEth1Provider } from "./provider";
 import { logs } from "../../logs";
 import memoizee from "memoizee";
 
@@ -32,7 +32,7 @@ export const requestPastDepositEvents = memoizee(
  */
 async function getDeposits() {
   const depositInt = new ethers.utils.Interface([depositEventAbi]);
-  const provider = getGoerliProvider();
+  const provider = getEth1Provider();
   const highestSeenBlock = getHighestSeenBlock();
   const depositLogs = await provider.getLogs({
     address: depositContractAddress, // or contractEnsName,
@@ -59,7 +59,7 @@ async function getDeposits() {
  * Subcribe to deposit events, will not fetch past events
  */
 function subscribeToEvents() {
-  const provider = getGoerliProvider();
+  const provider = getEth1Provider();
   const depositContract = new ethers.Contract(
     depositContractAddress,
     [depositEventAbi],
