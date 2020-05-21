@@ -12,13 +12,20 @@ import {
 } from "../../../common";
 import { getGoerliProvider } from "./provider";
 import { logs } from "../../logs";
+import memoizee from "memoizee";
 
 export function listenToDepositEvents() {
-  retry(getDeposits).catch(e => {
-    logs.error(`Error getting past deposit events`, e);
-  });
+  requestPastDepositEvents();
   subscribeToEvents();
 }
+
+export const requestPastDepositEvents = memoizee(
+  () =>
+    retry(getDeposits).catch(e => {
+      logs.error(`Error getting past deposit events`, e);
+    }),
+  { maxAge: 60 * 1000, promise: true }
+);
 
 /**
  * Fetch past deposit events
@@ -26,9 +33,12 @@ export function listenToDepositEvents() {
 async function getDeposits() {
   const depositInt = new ethers.utils.Interface([depositEventAbi]);
   const provider = getGoerliProvider();
+  const highestSeenBlock = getHighestSeenBlock();
   const depositLogs = await provider.getLogs({
     address: depositContractAddress, // or contractEnsName,
-    fromBlock: getHighestSeenBlock() || depositContractCreationBlock,
+    fromBlock: highestSeenBlock
+      ? highestSeenBlock - 100 // Consider re-orgs, fetch some past blocks
+      : depositContractCreationBlock,
     toBlock: "latest",
     topics: [depositInt.events[depositEventAbi.name].topic]
   });

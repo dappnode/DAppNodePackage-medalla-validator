@@ -3,6 +3,7 @@ import * as db from "../db";
 import { ethdo } from "../ethdo";
 import { computeExpectedBalance } from "../utils/depositEvent";
 import { ethers } from "ethers";
+import { requestPastDepositEvents } from "../services/eth1";
 
 /**
  * Show validator stats.
@@ -10,6 +11,8 @@ import { ethers } from "ethers";
  */
 export async function getValidators(): Promise<ValidatorStats[]> {
   const accounts = await ethdo.accountList("validator");
+  // Keep fetching logs in the background only when UI is connected
+  requestPastDepositEvents();
 
   return accounts
     .map(
