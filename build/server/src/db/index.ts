@@ -2,7 +2,6 @@ import path from "path";
 import { createLowDb } from "./lowDb";
 import { createDb, collection, regular } from "./dbAdaptor";
 import {
-  PendingValidator,
   DepositEvents,
   ValidatorMetrics,
   BeaconNodePeer,
@@ -22,7 +21,6 @@ export const server = createDb(createLowDb(serverDbPath), {
 });
 
 export const accounts = createDb(createLowDb(accountsDbPath), {
-  pendingValidators: collection<PendingValidator>(v => v.account),
   eth1: regular<{ address: string; privateKey: string }>()
 });
 

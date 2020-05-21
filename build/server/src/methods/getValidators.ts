@@ -34,11 +34,6 @@ export async function getValidators(): Promise<ValidatorStats[]> {
     .filter(({ depositEvents, status }) => depositEvents.length > 0 || status);
 }
 
-export async function getPendingValidators(): Promise<PendingValidator[]> {
-  // Pending accounts
-  return db.accounts.pendingValidators.getAll();
-}
-
 function computeBalance(
   {
     balance,
