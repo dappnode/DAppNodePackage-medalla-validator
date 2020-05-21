@@ -25,10 +25,6 @@
     {
       "name": "data",
       "path": "/root/.config/ethereum2"
-    },
-    {
-      "name": "api-accounts",
-      "path": "/app/db-api/account-db.json"
     }
   ],
   "links": {
