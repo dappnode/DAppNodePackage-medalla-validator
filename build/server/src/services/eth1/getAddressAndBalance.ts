@@ -21,7 +21,7 @@ const getNetwork = memoize(
   async () => {
     const provider = getEth1Provider();
     const network = await provider.getNetwork();
-    return `${network.name} - ${network.chainId}`;
+    return network.name || `Testnet ID ${network.chainId}`;
   },
   { promise: true, maxAge: 60000 }
 );
