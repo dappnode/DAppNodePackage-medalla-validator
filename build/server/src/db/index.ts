@@ -21,7 +21,7 @@ const metricsDbPath = path.join(dbDir, "metrics-db.json");
 
 // Migrate accounts DB if exists
 try {
-  fs.renameSync(accountsDbPathOld, accountsDbPath);
+  fs.copyFileSync(accountsDbPathOld, accountsDbPath);
 } catch (e) {
   if (e.code !== "ENOENT") logs.error(`Error migrating accounts db`, e);
 }
