@@ -1,9 +1,9 @@
 import { ethers } from "ethers";
-import { goerliWeb3Url } from "../../params";
+import { eth1Web3Url } from "../../params";
 
 let provider: ethers.providers.JsonRpcProvider;
 
-export function getGoerliProvider(): ethers.providers.JsonRpcProvider {
-  if (!provider) provider = new ethers.providers.JsonRpcProvider(goerliWeb3Url);
+export function getEth1Provider(): ethers.providers.JsonRpcProvider {
+  if (!provider) provider = new ethers.providers.JsonRpcProvider(eth1Web3Url);
   return provider;
 }

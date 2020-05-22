@@ -83,7 +83,7 @@ export function Eth1Account({
   const classes = useStyles();
 
   if (eth1Account.data) {
-    const { address, balance, insufficientFunds } = eth1Account.data;
+    const { address, balance, network, insufficientFunds } = eth1Account.data;
     return (
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6} className={classes.accountContainer}>
@@ -98,7 +98,7 @@ export function Eth1Account({
               color="textSecondary"
               className={classes.accountSubtitle}
             >
-              Eth1 account (Goerli)
+              Eth1 account ({network})
             </Typography>
             <Typography className={classes.accountBalance}>
               {formatEth(balance)} ETH
@@ -108,7 +108,7 @@ export function Eth1Account({
 
         <Grid item xs={12} sm={6} className={classes.buttons}>
           <Button
-            href={`${params.goerliFaucet}?address=${address}`}
+            href={`${params.eth1Faucet}?address=${address}`}
             {...newTabProps}
             variant="contained"
             color="default"

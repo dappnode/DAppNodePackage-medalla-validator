@@ -117,6 +117,7 @@ export async function eth1AccountGet(): Promise<Eth1AccountStats> {
   return {
     address: "0x11111111111111111111111111111111111111111",
     balance: +eth1Balance.toFixed(3),
+    network: "Goerli",
     insufficientFunds: false
   };
 }
@@ -144,7 +145,8 @@ export async function nodeStats(): Promise<NodeStats> {
       previousJustifiedSlot: "177600",
       previousJustifiedEpoch: "5550",
       previousJustifiedBlockRoot: "Bb/6F2NfmtilyxQb+2tItGlD1WNwR17gMVd5kIxjgCQ="
-    }
+    },
+    eth2NetworkName: "Topaz"
   };
 }
 

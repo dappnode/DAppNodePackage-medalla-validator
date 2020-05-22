@@ -1,6 +1,6 @@
 import {
-  goerliFaucet,
-  goerliTxViewer,
+  eth1Faucet,
+  eth1TxViewer,
   beaconAccountViewer,
   validatorCost,
 } from "common/params";
@@ -8,15 +8,15 @@ import {
 type Params = { [key: string]: string | number };
 const localStorageParams = "params";
 const defaultParams = {
-  goerliFaucet,
-  goerliTxViewer,
+  eth1Faucet,
+  eth1TxViewer,
   beaconAccountViewer,
   validatorCost,
 };
 
 export default {
-  goerliFaucet,
-  goerliTxViewer,
+  eth1Faucet,
+  eth1TxViewer,
   beaconAccountViewer,
   validatorCost,
   ...getLocalAndUrlParams(),

@@ -69,6 +69,10 @@ export interface DepositEvent extends DepositEventArgs {
 export interface Eth1AccountStats {
   address: string;
   balance: number;
+  /**
+   * Testnet name, e.g. "Goerli"
+   */
+  network: string;
   insufficientFunds: boolean;
 }
 
@@ -76,6 +80,10 @@ export interface NodeStats {
   peers: BeaconNodePeer[] | null;
   syncing: { syncing: boolean } | null;
   chainhead: BeaconNodeChainhead | null;
+  /**
+   * e.g. Topaz
+   */
+  eth2NetworkName: string;
 }
 
 // Prysm deposit contract

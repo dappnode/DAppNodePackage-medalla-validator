@@ -2,33 +2,43 @@ import { ethers } from "ethers";
 import retry from "async-retry";
 import * as db from "../../db";
 import {
-  depositContractAddress,
-  depositContractCreationBlock
-} from "../../params";
-import {
   DepositEventArgs,
   depositEventAbi,
   DepositEvents
 } from "../../../common";
-import { getGoerliProvider } from "./provider";
+import { getEth1Provider } from "./provider";
 import { logs } from "../../logs";
+import memoizee from "memoizee";
+import { getDepositContractAddress } from "./getDepositContractAddress";
 
 export function listenToDepositEvents() {
-  retry(getDeposits).catch(e => {
-    logs.error(`Error getting past deposit events`, e);
+  requestPastDepositEvents();
+  subscribeToEvents().catch(e => {
+    logs.error(`Error subscribing to deposit events`, e);
   });
-  subscribeToEvents();
 }
+
+export const requestPastDepositEvents = memoizee(
+  () =>
+    retry(getDeposits).catch(e => {
+      logs.error(`Error getting past deposit events`, e);
+    }),
+  { maxAge: 60 * 1000, promise: true }
+);
 
 /**
  * Fetch past deposit events
  */
 async function getDeposits() {
   const depositInt = new ethers.utils.Interface([depositEventAbi]);
-  const provider = getGoerliProvider();
+  const provider = getEth1Provider();
+  const highestSeenBlock = getHighestSeenBlock();
+  const depositContractAddress = await getDepositContractAddress();
   const depositLogs = await provider.getLogs({
     address: depositContractAddress, // or contractEnsName,
-    fromBlock: getHighestSeenBlock() || depositContractCreationBlock,
+    fromBlock: highestSeenBlock
+      ? highestSeenBlock - 100 // Consider re-orgs, fetch some past blocks
+      : 0,
     toBlock: "latest",
     topics: [depositInt.events[depositEventAbi.name].topic]
   });
@@ -48,8 +58,9 @@ async function getDeposits() {
 /**
  * Subcribe to deposit events, will not fetch past events
  */
-function subscribeToEvents() {
-  const provider = getGoerliProvider();
+async function subscribeToEvents() {
+  const provider = getEth1Provider();
+  const depositContractAddress = await getDepositContractAddress();
   const depositContract = new ethers.Contract(
     depositContractAddress,
     [depositEventAbi],

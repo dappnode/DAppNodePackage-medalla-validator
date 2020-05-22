@@ -28,6 +28,9 @@ export function NodeStats() {
           {nodeStats.data.peers ? nodeStats.data.peers.length : "?"}
         </strong>
       </Typography>
+      <Typography>
+        Network: <strong>{nodeStats.data.eth2NetworkName}</strong>
+      </Typography>
     </>
   );
 }

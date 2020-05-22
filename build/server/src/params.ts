@@ -11,9 +11,10 @@ export const ethdoKeymanagerFile = dataPath + "ethdoKeymanager.json";
 export const ethdoWalletsPath = path.join(dataPath, "wallets");
 export const beaconRpcProvider =
   process.env.BEACON_GRPC_URL || "prysm-beacon-chain.public.dappnode:4000";
-export const goerliWeb3Url =
+export const eth1Web3Url =
   process.env.WEB3PROVIDER || "https://goerli.dappnode.net";
 export const graffiti = process.env.GRAFFITI || "";
+export const eth2NetworkName = process.env.ETH2_NETWORK_NAME || "";
 
 // Login password
 export const adminPassword = process.env.PASSWORD;
@@ -25,9 +26,6 @@ export const beaconGrpcGatewayUrl =
   "http://prysm-beacon-chain.public.dappnode:4001";
 
 // Eth1 Deposit contract
-export const depositContractAddress =
-  "0x5cA1e00004366Ac85f492887AAab12d0e6418876";
-export const depositContractCreationBlock = 2523557;
 export const depositCallGasLimit = 600000; // Typical value 360k-365k, but with margin since it changes per transaction
 export const depositAmountEth = "32.0";
 

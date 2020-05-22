@@ -36,7 +36,7 @@ export const Eth1TransactionView: React.FC<{
       {children}
       <Link
         className={classes.linkIcon}
-        href={urlJoin(params.goerliTxViewer, transactionHash || "")}
+        href={urlJoin(params.eth1TxViewer, transactionHash || "")}
         {...newTabProps}
       >
         <LaunchIcon fontSize="inherit" />

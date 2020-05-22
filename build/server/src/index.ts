@@ -7,7 +7,7 @@ import { collectValidatorMetrics } from "./services/metrics";
 import { printGitData } from "./services/printGitData";
 import { validatorBinary } from "./services/validatorBinary";
 
-// Connect to a Goerli node
+// Connect to a Eth1.x node
 listenToDepositEvents();
 // Collect latest metrics for available validators
 collectValidatorMetrics();

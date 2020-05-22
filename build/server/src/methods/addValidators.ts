@@ -4,17 +4,24 @@ import {
   addValidatorsToKeymanager
 } from "../services/keymanager";
 import { ethdo } from "../ethdo";
-import * as db from "../db";
 import * as eth1 from "../services/eth1";
 import { logs } from "../logs";
 import { ethers } from "ethers";
 import { getAddressAndBalance } from "../services/eth1";
-import {
-  depositAmountEth,
-  depositContractAddress,
-  depositCallGasLimit
-} from "../params";
-import { validatorBinary } from "../services/validatorBinary";
+import { depositAmountEth, depositCallGasLimit } from "../params";
+import { getDepositContractAddress } from "../services/eth1/getDepositContractAddress";
+
+/**
+ * Pending validator state for progress reporting in the UI, stored in memory
+ */
+const pendingValidators = new Map<string, PendingValidator>();
+
+/**
+ * Return pending validators to the UI
+ */
+export async function getPendingValidators(): Promise<PendingValidator[]> {
+  return Array.from(pendingValidators.values());
+}
 
 /**
  * Resolves when all validators have resolved, either with success or errors
@@ -38,6 +45,9 @@ export async function addValidators(
     wallet.getAddress()
   );
   let nonceOffset = 0;
+
+  // Get deposit contract address from beacon node
+  const depositContractAddress = await getDepositContractAddress();
 
   const hasConfirmed = new Map<string, boolean>();
   const results: PendingValidator[] = await Promise.all(
@@ -119,7 +129,7 @@ export async function addValidators(
   );
 
   // Clean progress data
-  db.accounts.pendingValidators.clearAll();
+  pendingValidators.clear();
 
   return results;
 }
@@ -128,9 +138,17 @@ export async function addValidators(
  * Alias to reduce boilerplate when dynamically updating the UI
  * @param validator
  */
-function getUpdateStatus({ account, publicKey }: EthdoAccountResult) {
-  return (data: Pick<PendingValidator, "status"> & Partial<PendingValidator>) =>
-    db.accounts.pendingValidators.merge({ account, publicKey, ...data });
+function getUpdateStatus(validator: EthdoAccountResult) {
+  return (
+    data: Pick<PendingValidator, "status"> & Partial<PendingValidator>
+  ) => {
+    const account = validator.account;
+    pendingValidators.set(account, {
+      ...validator,
+      ...(pendingValidators.get(account) || {}),
+      ...data
+    });
+  };
 }
 
 /**

@@ -1,4 +1,5 @@
 import { NodeStats } from "../../common";
+import { eth2NetworkName } from "../params";
 import * as db from "../db";
 
 export async function nodeStats(): Promise<NodeStats> {
@@ -9,6 +10,7 @@ export async function nodeStats(): Promise<NodeStats> {
   return {
     peers: peers || null,
     syncing: syncing || null,
-    chainhead: chainhead || null
+    chainhead: chainhead || null,
+    eth2NetworkName
   };
 }
