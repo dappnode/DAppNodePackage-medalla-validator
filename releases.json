@@ -214,36 +214,36 @@
     }
   },
   "1.0.0": {
-    "hash": "/ipfs/QmQFqB4himf6GGBZTYMfktdyTT1djddUgu5Fv62feayDGo",
+    "hash": "/ipfs/QmNrzjAfAA8wudQkHs1VdA6uhQFRBLiyPGnDQLCtjzd3Uj",
     "type": "directory",
     "uploadedTo": {
-      "dappnode": "Wed, 15 Apr 2020 14:40:02 GMT"
+      "remote": "Wed, 10 Jun 2020 15:21:00 GMT"
     },
-    "link": "http://my.dappnode/#/sdk/publish/r=prysm-validator.public.dappnode.eth&v=1.0.0&h=%2Fipfs%2FQmQFqB4himf6GGBZTYMfktdyTT1djddUgu5Fv62feayDGo"
+    "link": "http://my.dappnode/#/sdk/publish/r=prysm-onyx-validator.dnp.dappnode.eth&v=1.0.0&h=%2Fipfs%2FQmNrzjAfAA8wudQkHs1VdA6uhQFRBLiyPGnDQLCtjzd3Uj&d=0xF35960302a07022aBa880DFFaEC2Fdd64d5BF1c1"
   },
   "1.0.1": {
-    "hash": "/ipfs/QmNLuPtPwhUweGgYSeaP5u4KbLwWmjHFBDjAYQJ3BHmmAZ",
+    "hash": "/ipfs/QmVLsBh9qZ9kq56CxbB37eEjAxyFwtresRqoq2pdHmewgN",
     "type": "directory",
     "uploadedTo": {
-      "remote": "Thu, 16 Apr 2020 12:56:23 GMT"
+      "dappnode": "Sat, 13 Jun 2020 08:28:26 GMT"
     },
-    "link": "http://my.dappnode/#/sdk/publish/r=prysm-validator.public.dappnode.eth&v=1.0.1&h=%2Fipfs%2FQmNLuPtPwhUweGgYSeaP5u4KbLwWmjHFBDjAYQJ3BHmmAZ"
+    "link": "http://my.dappnode/#/sdk/publish/r=prysm-onyx-validator.dnp.dappnode.eth&v=1.0.1&h=%2Fipfs%2FQmQSKr4hYzbPSEuT1H8QfpEYQejgSw4QkGpCG1wyKErawQ"
   },
   "1.0.2": {
-    "hash": "/ipfs/QmeeaN8JQA5FzwNZ6Xn6xLpK7bi2jVzZ44HXR7ppiGHbjA",
+    "hash": "/ipfs/Qmf125T1vA9SiDLW2a9RKHJjjs45xsZGcWS7FGKUxPMHnA",
     "type": "directory",
     "uploadedTo": {
-      "remote": "Thu, 16 Apr 2020 17:38:20 GMT"
+      "remote": "Sat, 13 Jun 2020 11:26:03 GMT"
     },
-    "link": "http://my.dappnode/#/sdk/publish/r=prysm-validator.public.dappnode.eth&v=1.0.2&h=%2Fipfs%2FQmeeaN8JQA5FzwNZ6Xn6xLpK7bi2jVzZ44HXR7ppiGHbjA"
+    "link": "http://my.dappnode/#/sdk/publish/r=prysm-onyx-validator.dnp.dappnode.eth&v=1.0.2&h=%2Fipfs%2FQmf125T1vA9SiDLW2a9RKHJjjs45xsZGcWS7FGKUxPMHnA"
   },
   "1.0.3": {
-    "hash": "/ipfs/QmaVEvfpKoQk6f9kPPn28BdAaG1ZALSJoJYEpkyd1VADtH",
+    "hash": "/ipfs/QmaQ1pe39TAqVCkme3NcK1LsHzxz2B8j1ZhMBYnGUgoKqW",
     "type": "directory",
     "uploadedTo": {
-      "remote": "Thu, 16 Apr 2020 20:09:16 GMT"
+      "remote": "Mon, 15 Jun 2020 16:21:11 GMT"
     },
-    "link": "http://my.dappnode/#/sdk/publish/r=prysm-validator.public.dappnode.eth&v=1.0.3&h=%2Fipfs%2FQmaVEvfpKoQk6f9kPPn28BdAaG1ZALSJoJYEpkyd1VADtH"
+    "link": "http://my.dappnode/#/sdk/publish/r=prysm-onyx-validator.dnp.dappnode.eth&v=1.0.3&h=%2Fipfs%2FQmaQ1pe39TAqVCkme3NcK1LsHzxz2B8j1ZhMBYnGUgoKqW"
   },
   "1.0.4": {
     "hash": "/ipfs/QmaBES8hUd5m6vitcw67CxDbG8s23b21YyjMb8JVAfZzE6",

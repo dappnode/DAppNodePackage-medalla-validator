@@ -19,12 +19,12 @@ const sideNavMainItems = [
   {
     name: "Metrics",
     Icon: BarChartIcon,
-    href: "http://dms.dappnode/d/DNPE2D/dappnode-eth-2-0-dashboard",
+    href: "http://dms.dappnode/d/DNPE2POD/dappnode-eth-2-0-prysm-onyx-dashboard",
   },
   {
     name: "Nodes",
     Icon: LayersIcon,
-    href: "https://eth2stats.io/topaz-testnet",
+    href: "https://eth2stats.io/onyx-testnet",
   },
 ];
 
@@ -33,7 +33,7 @@ const sideNameSecondaryItems = [
     name: "Logs",
     Icon: AssignmentIcon,
     href:
-      "http://my.dappnode/#/packages/prysm-validator.public.dappnode.eth/logs",
+      "http://my.dappnode/#/packages/prysm-onyx-validator.public.dappnode.eth/logs",
   },
   {
     name: "Support",

@@ -1,6 +1,6 @@
 Go to the accounts manager dashboard to get started
 
-[prysm-validator.public.dappnode](http://prysm-validator.public.dappnode/)
+[prysm-onyx-validator.dappnode](http://prysm-onyx-validator.dappnode/)
 
 ---
 

@@ -11,4 +11,4 @@ export const validatorCost = 32.1;
 
 // Help links
 export const packageAdminConfigPage =
-  "http://my.dappnode/#/packages/prysm-validator.public.dappnode.eth/config";
+  "http://my.dappnode/#/packages/prysm-onyx-validator.public.dappnode.eth/config";

@@ -106,7 +106,7 @@ export function SignIn({
         <Alert severity="info" className={classes.yMargin}>
           If you are an admin go to the the{" "}
           <Link href={packageAdminConfigPage} {...newTabProps}>
-            prysm-validator.public.dappnode.eth config page
+            prysm-onyx-validator.public.dappnode.eth config page
           </Link>{" "}
           and see or change the PASSWORD property.
         </Alert>

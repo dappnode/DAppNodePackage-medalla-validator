@@ -1,12 +1,12 @@
 version: '3.4'
 services:
-  prysm-validator.public.dappnode.eth:
-    image: 'prysm-validator.public.dappnode.eth:1.0.14'
+  prysm-onyx-validator.dnp.dappnode.eth:
+    image: 'prysm-onyx-validator.dnp.dappnode.eth:1.0.4'
     build:
       context: .
       dockerfile: build/Dockerfile
       args:
-        - VERSION=v1.0.0-alpha.6
+        - VERSION
     volumes:
       - 'logs:/var/log'
       - 'data:/root/.config/ethereum2/'
@@ -14,12 +14,12 @@ services:
     restart: always
     environment:
       - PASSWORD=
-      - GRAFFITI=prylabs-validator--from-dappnode
+      - GRAFFITI=prylabs-validator-from-dappnode
       - VERBOSITY=info
       - LOG_LEVEL=
-      - EXTRA_OPTS=--enable-account-metrics
-      - 'BEACON_GRPC_URL=prysm-beacon-chain.public.dappnode:4000'
-      - 'BEACON_GRPC_GATEWAY_URL=http://prysm-beacon-chain.public.dappnode:4001'
+      - EXTRA_OPTS=
+      - 'BEACON_GRPC_URL=prysm-onyx-beacon-chain.dappnode:4000'
+      - 'BEACON_GRPC_GATEWAY_URL=http://prysm-onyx-beacon-chain.dappnode:3500'
       - 'WEB3PROVIDER=https://goerli.dappnode.net'
 volumes:
   data: {}
