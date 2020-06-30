@@ -214,28 +214,28 @@
     }
   },
   "1.0.0": {
-    "hash": "/ipfs/QmNrzjAfAA8wudQkHs1VdA6uhQFRBLiyPGnDQLCtjzd3Uj",
+    "hash": "/ipfs/QmXsf1YLBD6TPsbqeEPbhwi8GNV9ochMYGBj2wpKbMcSPV",
     "type": "directory",
     "uploadedTo": {
-      "remote": "Wed, 10 Jun 2020 15:21:00 GMT"
+      "remote": "Tue, 30 Jun 2020 10:37:33 GMT"
     },
-    "link": "http://my.dappnode/#/sdk/publish/r=prysm-onyx-validator.dnp.dappnode.eth&v=1.0.0&h=%2Fipfs%2FQmNrzjAfAA8wudQkHs1VdA6uhQFRBLiyPGnDQLCtjzd3Uj&d=0xF35960302a07022aBa880DFFaEC2Fdd64d5BF1c1"
+    "link": "http://my.dappnode/#/sdk/publish/r=prysm-altona-validator.dnp.dappnode.eth&v=1.0.0&h=%2Fipfs%2FQmXsf1YLBD6TPsbqeEPbhwi8GNV9ochMYGBj2wpKbMcSPV&d=0xF35960302a07022aBa880DFFaEC2Fdd64d5BF1c1"
   },
   "1.0.1": {
-    "hash": "/ipfs/QmVLsBh9qZ9kq56CxbB37eEjAxyFwtresRqoq2pdHmewgN",
+    "hash": "/ipfs/QmaALqEcAUoASnYmR25nyrzL7vJP8tyD86XyG8VsGERpot",
     "type": "directory",
     "uploadedTo": {
-      "dappnode": "Sat, 13 Jun 2020 08:28:26 GMT"
+      "remote": "Tue, 30 Jun 2020 10:55:56 GMT"
     },
-    "link": "http://my.dappnode/#/sdk/publish/r=prysm-onyx-validator.dnp.dappnode.eth&v=1.0.1&h=%2Fipfs%2FQmQSKr4hYzbPSEuT1H8QfpEYQejgSw4QkGpCG1wyKErawQ"
+    "link": "http://my.dappnode/#/sdk/publish/r=prysm-altona-validator.dnp.dappnode.eth&v=1.0.1&h=%2Fipfs%2FQmaALqEcAUoASnYmR25nyrzL7vJP8tyD86XyG8VsGERpot"
   },
   "1.0.2": {
-    "hash": "/ipfs/Qmf125T1vA9SiDLW2a9RKHJjjs45xsZGcWS7FGKUxPMHnA",
+    "hash": "/ipfs/QmVL3ABfLJUsqLiuCDFMkNPBebsZMSmiRZL9kcNYuivTFq",
     "type": "directory",
     "uploadedTo": {
-      "remote": "Sat, 13 Jun 2020 11:26:03 GMT"
+      "remote": "Tue, 30 Jun 2020 12:08:43 GMT"
     },
-    "link": "http://my.dappnode/#/sdk/publish/r=prysm-onyx-validator.dnp.dappnode.eth&v=1.0.2&h=%2Fipfs%2FQmf125T1vA9SiDLW2a9RKHJjjs45xsZGcWS7FGKUxPMHnA"
+    "link": "http://my.dappnode/#/sdk/publish/r=prysm-altona-validator.dnp.dappnode.eth&v=1.0.2&h=%2Fipfs%2FQmVL3ABfLJUsqLiuCDFMkNPBebsZMSmiRZL9kcNYuivTFq"
   },
   "1.0.3": {
     "hash": "/ipfs/QmaQ1pe39TAqVCkme3NcK1LsHzxz2B8j1ZhMBYnGUgoKqW",

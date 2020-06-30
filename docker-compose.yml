@@ -1,7 +1,7 @@
 version: '3.4'
 services:
-  prysm-onyx-validator.dnp.dappnode.eth:
-    image: 'prysm-onyx-validator.dnp.dappnode.eth:1.0.6'
+  prysm-altona-validator.dnp.dappnode.eth:
+    image: 'prysm-altona-validator.dnp.dappnode.eth:1.0.2'
     build:
       context: .
       dockerfile: build/Dockerfile
@@ -18,8 +18,8 @@ services:
       - VERBOSITY=info
       - LOG_LEVEL=
       - EXTRA_OPTS=
-      - 'BEACON_GRPC_URL=prysm-onyx-beacon-chain.dappnode:4000'
-      - 'BEACON_GRPC_GATEWAY_URL=http://prysm-onyx-beacon-chain.dappnode:3500'
+      - 'BEACON_GRPC_URL=prysm-altona-beacon-chain.dappnode:4000'
+      - 'BEACON_GRPC_GATEWAY_URL=http://prysm-altona-beacon-chain.dappnode:3500'
       - 'WEB3PROVIDER=https://goerli.dappnode.net'
 volumes:
   data: {}

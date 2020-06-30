@@ -14,6 +14,8 @@ export const validatorBinary = Supervisor(
   "validator",
   dargs({
     // "tls-cert": tlsCert,
+    "altona": true,
+    "monitoring-host": "0.0.0.0",
     "beacon-rpc-provider": beaconRpcProvider,
     keymanager: "wallet",
     keymanageropts: keymanagerFile,

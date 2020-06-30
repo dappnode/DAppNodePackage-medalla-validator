@@ -1,9 +1,9 @@
 {
-  "name": "prysm-onyx-validator.dnp.dappnode.eth",
-  "version": "1.0.6",
+  "name": "prysm-altona-validator.dnp.dappnode.eth",
+  "version": "1.0.2",
   "upstreamVersion": "v1.0.0-alpha.13",
-  "shortDescription": "ETH2.0 Onyx Test Network Validator",
-  "description": "A validator client which manages a staking user's private/public keys, connects to a beacon node, and acts as a validator in Ethereum 2.0 by staking 32 ETH and participating in proof of stake consensus by proposing and voting on blocks. [more info](https://medium.com/prysmatic-labs/introducing-topaz-testnet-8e8a4e00a700)",
+  "shortDescription": "ETH2.0 Altona Test Network Validator",
+  "description": "A validator client which manages a staking user's private/public keys, connects to a beacon node, and acts as a validator in Ethereum 2.0 by staking 32 ETH and participating in proof of stake consensus by proposing and voting on blocks.",
   "type": "service",
   "author": "DAppNode Association <admin@dappnode.io> (https://github.com/dappnode)",
   "contributors": [
@@ -32,9 +32,9 @@
   ],
   "links": {
     "homepage": "https://github.com/dappnode/DAppNodePackage-prysm-validator",
-    "ui": "http://prysm-onyx-validator.dappnode/"
+    "ui": "http://prysm-altona-validator.dappnode/"
   },
   "dependencies": {
-    "prysm-onyx-beacon-chain.dnp.dappnode.eth": "latest"
+    "prysm-altona-beacon-chain.dnp.dappnode.eth": "latest"
   }
 }
