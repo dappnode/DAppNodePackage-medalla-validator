@@ -2,12 +2,7 @@ import path from "path";
 import fs from "fs";
 import { createLowDb } from "./lowDb";
 import { createDb, collection, regular } from "./dbAdaptor";
-import {
-  DepositEvents,
-  ValidatorMetrics,
-  BeaconNodePeer,
-  BeaconNodeChainhead
-} from "../../common";
+import { DepositEvents } from "../../common";
 import { getRandomToken } from "../utils/token";
 import { dbDir, dataPath } from "../params";
 import { logs } from "../logs";
@@ -17,7 +12,6 @@ const serverDbPath = path.join(dbDir, "server-db.json");
 const accountsDbPathOld = path.join(dbDir, "account-db.json");
 const accountsDbPath = path.join(dataPath, "eth1Keymanager.json");
 const depositsDbPath = path.join(dbDir, "deposits-db.json");
-const metricsDbPath = path.join(dbDir, "metrics-db.json");
 
 // Migrate accounts DB if exists
 try {
@@ -36,13 +30,6 @@ export const accounts = createDb(createLowDb(accountsDbPath), {
 
 export const deposits = createDb(createLowDb(depositsDbPath), {
   depositEvents: collection<DepositEvents>(e => e.publicKey)
-});
-
-export const metrics = createDb(createLowDb(metricsDbPath), {
-  current: collection<ValidatorMetrics>(d => d.publicKey),
-  peers: regular<BeaconNodePeer[]>(),
-  syncing: regular<{ syncing: boolean }>(),
-  chainhead: regular<BeaconNodeChainhead>()
 });
 
 export function getSessionsSecretKey() {
