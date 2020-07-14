@@ -8,6 +8,10 @@ module.exports = {
     path: path.resolve(__dirname, "build"),
     filename: "index.js"
   },
+  optimization: {
+    // We no not want to minimize our code.
+    minimize: false
+  },
   // externals: [/node_modules/, "bufferutil", "utf-8-validate"],
   resolve: {
     extensions: [".ts", ".js"]
