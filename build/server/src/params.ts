@@ -1,7 +1,7 @@
 import path from "path";
 
-export const workdir = process.env.WORKDIR || "/app";
-export const dataPath = process.env.DATA_PATH || "/app/data";
+export const workdir = process.env.WORKDIR || ".";
+export const dataPath = process.env.DATA_PATH || "data";
 export const tlsCert = workdir + "/ssl/ssl.crt";
 export const logFile = "/var/log/validator.log";
 export const extraOpts = process.env.EXTRA_OPTS || "";
@@ -23,7 +23,7 @@ export const disablePassword = process.env.DISABLE_PASSWORD;
 // To collect metrics
 export const beaconGrpcGatewayUrl =
   process.env.BEACON_GRPC_GATEWAY_URL ||
-  "http://prysm-beacon-chain.public.dappnode:4001";
+  "http://prysm-altona-beacon-chain.dappnode:3500";
 
 // Eth1 Deposit contract
 export const depositCallGasLimit = 600000; // Typical value 360k-365k, but with margin since it changes per transaction

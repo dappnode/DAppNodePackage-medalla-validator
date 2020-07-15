@@ -1,7 +1,4 @@
 import querystring from "querystring";
-import * as db from "../db";
-import { ethdo } from "../ethdo";
-import { logs } from "../logs";
 import {
   ValidatorStatus,
   ValidatorData,
@@ -14,83 +11,17 @@ import { qsPubKeys, base64ToHex, fetchGrpc, hexToBase64 } from "../utils/grpc";
 // Metrics fetch in intervals the data and store it in the db
 // Then the UI fetches the db state
 
-/**
- * Collect metrics assuming accounts might be missing and could fail
- */
-export function collectValidatorMetrics() {
-  setInterval(async () => {
-    try {
-      const validators = await ethdo.accountList("validator");
-      for (const { publicKey } of validators)
-        if (publicKey)
-          collectMetricsByPubkey(publicKey).catch(e => {
-            logs.debug(`Error collecting ${publicKey} metrics`, e);
-          });
-    } catch (e) {
-      logs.debug(`Error collecting validator metrics`, e);
-    }
-
-    try {
-      const peers = await ethNodePeers();
-      db.metrics.peers.set(peers);
-    } catch (e) {
-      logs.debug(`Error collecting peer metrics`, e);
-    }
-
-    try {
-      const syncing = await ethNodeSyncing();
-      db.metrics.syncing.set(syncing);
-    } catch (e) {
-      logs.debug(`Error collecting syncing metrics`, e);
-    }
-
-    try {
-      const chainhead = await ethBeaconChainhead();
-      db.metrics.chainhead.set(chainhead);
-    } catch (e) {
-      logs.debug(`Error collecting chainhead metrics`, e);
-    }
-  }, 5000);
-}
-
-async function collectMetricsByPubkey(publicKey: string) {
-  const status = await ethValidatorStatus(publicKey);
-  db.metrics.current.merge({ publicKey, ...status });
-  // If the validator deposit in not recognized by layer2, skip other calls
-  if (
-    status.status === "UNKNOWN" ||
-    status.status === "UNKNOWN_STATUS" ||
-    status.status === "DEPOSITED"
-  )
-    return;
-
-  try {
-    const balances = await ethValidatorsBalances([publicKey]);
-    const balanceData = balances[publicKey];
-    if (balanceData) db.metrics.current.merge({ publicKey, ...balanceData });
-  } catch (e) {
-    logs.debug(`Error collecting ${publicKey} balance`, e);
-  }
-
-  try {
-    const data = await ethValidator(publicKey);
-    if (data) db.metrics.current.merge({ publicKey, ...data });
-  } catch (e) {
-    logs.debug(`Error collecting ${publicKey} data`, e);
-  }
-}
-
-async function ethBeaconChainhead(): Promise<BeaconNodeChainhead> {
+export async function ethBeaconChainhead(): Promise<BeaconNodeChainhead> {
   const data = await fetchGrpc(`eth/v1alpha1/beacon/chainhead`);
   return data;
 }
 
-async function ethNodePeers(): Promise<BeaconNodePeer[]> {
+export async function ethNodePeers(): Promise<BeaconNodePeer[]> {
   const data = await fetchGrpc(`/eth/v1alpha1/node/peers`);
   return data.peers;
 }
 
-async function ethNodeSyncing(): Promise<{ syncing: boolean }> {
+export async function ethNodeSyncing(): Promise<{ syncing: boolean }> {
   const data = await fetchGrpc(`/eth/v1alpha1/node/syncing`);
   return data;
 }
@@ -100,16 +31,30 @@ async function ethValidatorStatus(publicKey: string): Promise<ValidatorStatus> {
   return await fetchGrpc(`/eth/v1alpha1/validator/status?${qs}`);
 }
 
-async function ethValidatorsStatus(
+export async function ethValidatorStatuses(
   pubKeys: string[]
 ): Promise<{ [pubKey: string]: ValidatorStatus }> {
-  const dataByPubkey: { [pubKey: string]: ValidatorStatus } = {};
-  await Promise.all(
-    pubKeys.map(async pubKey => {
-      dataByPubkey[pubKey] = await ethValidatorStatus(pubKey);
-    })
+  const qs = qsPubKeys(pubKeys);
+  // res = { publicKeys: [
+  //     'sTbt9DfodQZFVg0k8Nb/ud5N4RmaOiokpRhbS+/e7OniCojDr6vQNdXi4sd14Rtv',
+  //     'goiRvNAyXUNjT5UPrAQtsqXXu04a7RGfAGg7PJJtg/LfzEzadYOg7LvVa/o/qYP6'
+  //   ],
+  //   statuses: [
+  //     { status: 'ACTIVE', ... },
+  //     { status: 'ACTIVE', ... }
+  //   ],
+  //   indices: [ '2502', '3592' ] }
+  const res: {
+    publicKeys: string[];
+    statuses: ValidatorStatus[];
+  } = await fetchGrpc(`/eth/v1alpha1/validator/statuses?${qs}`);
+  return res.statuses.reduce(
+    (dataByPubkey: { [pubKey: string]: ValidatorStatus }, status, i) => {
+      const pubkey = base64ToHex(res.publicKeys[i]);
+      return { ...dataByPubkey, [pubkey]: status };
+    },
+    {}
   );
-  return dataByPubkey;
 }
 
 async function ethValidator(publicKey: string): Promise<ValidatorData> {
@@ -129,7 +74,7 @@ async function ethValidators(
   return dataByPubkey;
 }
 
-async function ethValidatorsBalances(
+export async function ethValidatorsBalances(
   pubKeys: string[]
 ): Promise<{ [pubKey: string]: ValidatorBalance }> {
   const qs = qsPubKeys(pubKeys);

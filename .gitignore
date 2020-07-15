@@ -1,7 +1,19 @@
-build_*
-.env
+# Dependencies
+**/node_modules
 node_modules/
 
-build/server/build
-build/server/db-api/
+# API artifacts
+build/server/build/
+build/server/dist
 build/ui/build
+build/Dockerfile*
+db-api/
+
+# Tests
+build/server/test/
+build/server/data/
+build/server/db-api/
+
+# DNP artifacts
+build_*/
+.env

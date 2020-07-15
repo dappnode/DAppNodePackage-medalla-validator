@@ -1,9 +1,28 @@
-import { ValidatorStats, DepositEvent, PendingValidator } from "../../common";
+import memoizee from "memoizee";
+import { ethers } from "ethers";
+import { ValidatorStats, DepositEvent } from "../../common";
 import * as db from "../db";
 import { ethdo } from "../ethdo";
 import { computeExpectedBalance } from "../utils/depositEvent";
-import { ethers } from "ethers";
 import { requestPastDepositEvents } from "../services/eth1";
+import {
+  ethValidatorsBalances,
+  ethValidatorStatuses
+} from "../services/metrics";
+import { logs } from "../logs";
+
+const ethValidatorsBalancesMem = memoizee(ethValidatorsBalances, {
+  maxAge: 12 * 1000,
+  promise: true,
+  // Cache by contents of pubKeys not by the array containing it
+  normalizer: args => JSON.stringify(args[0])
+});
+const ethValidatorStatusesMem = memoizee(ethValidatorStatuses, {
+  maxAge: 12 * 1000,
+  promise: true,
+  // Cache by contents of pubKeys not by the array containing it
+  normalizer: args => JSON.stringify(args[0])
+});
 
 /**
  * Show validator stats.
@@ -14,13 +33,21 @@ export async function getValidators(): Promise<ValidatorStats[]> {
   // Keep fetching logs in the background only when UI is connected
   requestPastDepositEvents();
 
+  const pubkeys = accounts.map(a => a.publicKey);
+  const balancesByPubkey = await ethValidatorsBalancesMem(pubkeys).catch(e =>
+    logs.error(`Error fetching validators balances`, e)
+  );
+  const statusByPubkey = await ethValidatorStatusesMem(pubkeys).catch(e =>
+    logs.error(`Error fetching validators status`, e)
+  );
+
   return accounts
     .map(
       ({ name, publicKey }): ValidatorStats => {
         const depositEventsObj = db.deposits.depositEvents.get(publicKey);
         const depositEvents = Object.values(depositEventsObj?.events || {});
-        const metrics = db.metrics.current.get(publicKey);
-        const { balance, status } = metrics || {};
+        const { balance } = (balancesByPubkey || {})[publicKey] || {};
+        const { status } = (statusByPubkey || {})[publicKey] || {};
 
         return {
           index: parseInt(name) || 0,

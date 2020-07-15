@@ -11,6 +11,7 @@ db-api/
 
 # Tests
 build/server/test/
+build/server/data/
 
 # DNP artifacts
 build_*/
