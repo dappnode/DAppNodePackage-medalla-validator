@@ -1,7 +1,7 @@
 ################
 # UI build
 ################
-FROM node:stretch-slim as build-ui
+FROM node:buster-slim as build-ui
 WORKDIR /app
 # Copy and install deps first to cache
 COPY build/ui/package.json build/ui/yarn.lock ./
@@ -14,7 +14,7 @@ RUN yarn build
 ################
 # Server build
 ################
-FROM node:stretch-slim as build-server
+FROM node:buster-slim as build-server
 WORKDIR /app
 COPY build/server/package.json build/server/yarn.lock ./
 RUN yarn
@@ -27,7 +27,7 @@ RUN yarn build
 ################
 # Git data
 ################
-FROM node:stretch-slim as git-data
+FROM node:buster-slim as git-data
 WORKDIR /app
 RUN apt update && apt install --assume-yes git
 COPY .git .git
@@ -39,7 +39,7 @@ RUN node getGitData /app/.git-data.json
 ################
 # ethdo binary
 ################
-FROM golang:stretch as ethdo-binary
+FROM golang:buster as ethdo-binary
 
 RUN DEBIAN_FRONTEND=noninteractive \
   apt update && apt install --assume-yes --no-install-recommends \
@@ -50,7 +50,7 @@ RUN GO111MODULE=on go get github.com/wealdtech/ethdo
 ################
 # Prysm binary
 ################
-FROM debian:stretch-slim as validator-binary
+FROM debian:buster-slim as validator-binary
 
 ARG VERSION
 ENV DOWNLOAD_URL https://github.com/prysmaticlabs/prysm/releases/download
@@ -65,7 +65,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
 ################
 # Final layer
 ################
-FROM debian:stretch-slim
+FROM debian:buster-slim
 
 ENV NODE_ENV production
 ENV SERVER_PORT 80
@@ -80,8 +80,19 @@ ENV ETH2_NETWORK_NAME Altona Testnet
 
 WORKDIR ${WORKDIR}
 
+# Add Lighthouse dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  libssl-dev \
+  ca-certificates \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
 ADD build/ssl /app/ssl
-COPY --from=node:10.20.1-stretch-slim /usr/local/bin/node /usr/local/bin
+COPY --from=node:10.20.1-buster-slim /usr/local/bin/node /usr/local/bin
+# Get Lighthouse binary
+COPY --from=sigp/lighthouse /usr/local/bin/lighthouse /usr/local/bin/lighthouse
+COPY --from=sigp/lighthouse /usr/local/bin/lcli /usr/local/bin/lcli
+# Get Prysm binary
 COPY --from=ethdo-binary /go/bin/ethdo /usr/local/bin/ 
 COPY --from=validator-binary /usr/local/bin/validator /usr/local/bin/
 COPY --from=build-ui /app/build ${CLIENT_FILES_PATH}
