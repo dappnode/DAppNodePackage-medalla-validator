@@ -7,11 +7,10 @@ import {
   verbosity,
   logFile,
   graffiti,
-  extraOpts
+  extraOpts,
+  LIGHTHOUSE_SECRETS_DIR,
+  LIGHTHOUSE_DATA_DIR
 } from "../params";
-
-const lighthouseDataDir = "/lighthouse";
-const lighthouseSecretsDir = "/lighthouse/secrets";
 
 export const prysmBinary = Supervisor(
   "validator",
@@ -35,8 +34,8 @@ export const lighthouseBinary = Supervisor(
     altona: true,
     "auto-register": true,
     "strict-lockfiles": true,
-    datadir: lighthouseDataDir,
-    "secrets-dir": lighthouseSecretsDir,
+    datadir: LIGHTHOUSE_DATA_DIR,
+    "secrets-dir": LIGHTHOUSE_SECRETS_DIR,
     server: beaconRpcProvider
   })
 );

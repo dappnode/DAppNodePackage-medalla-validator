@@ -1,3 +1,7 @@
+// Server types
+
+export type Eth2ClientName = "lighthouse" | "prysm";
+
 // Table type
 
 export interface PendingValidator {
@@ -41,7 +45,7 @@ export interface WithdrawalAccountInfo {
   isMigration: boolean;
 }
 
-export interface ValidatorImport {
+export interface ValidatorFiles {
   pubkey: string;
   keystore: Eth2Keystore;
   passphrase: string;

@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs";
 import { createLowDb } from "./lowDb";
 import { createDb, collection, regular } from "./dbAdaptor";
-import { DepositEvents } from "../../common";
+import { DepositEvents, Eth2ClientName } from "../../common";
 import { getRandomToken } from "../utils/token";
 import { dbDir, dataPath } from "../params";
 import { logs } from "../logs";
@@ -21,7 +21,8 @@ try {
 }
 
 export const server = createDb(createLowDb(serverDbPath), {
-  sessionsSecret: regular<string>()
+  sessionsSecret: regular<string>(),
+  validatorClient: regular<Eth2ClientName>("lighthouse")
 });
 
 export const accounts = createDb(createLowDb(accountsDbPath), {

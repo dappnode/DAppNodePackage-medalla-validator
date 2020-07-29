@@ -16,6 +16,13 @@ export const eth1Web3Url =
 export const graffiti = process.env.GRAFFITI || "";
 export const eth2NetworkName = process.env.ETH2_NETWORK_NAME || "";
 
+/**
+ * Lighthouse config and paths
+ */
+export const LIGHTHOUSE_DATA_DIR = "/lighthouse";
+export const LIGHTHOUSE_KEYSTORES_DIR = "/lighthouse/keystores";
+export const LIGHTHOUSE_SECRETS_DIR = "/lighthouse/secrets";
+
 // Login password
 export const adminPassword = process.env.PASSWORD;
 export const disablePassword = process.env.DISABLE_PASSWORD;
