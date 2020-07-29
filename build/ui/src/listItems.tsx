@@ -6,7 +6,6 @@ import {
   ListItemText,
   ListSubheader,
   SvgIconTypeMap,
-  makeStyles,
 } from "@material-ui/core";
 // import DashboardIcon from "@material-ui/icons/Dashboard";
 import HomeIcon from "@material-ui/icons/Home";
@@ -18,13 +17,6 @@ import LayersIcon from "@material-ui/icons/Layers";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import { newTabProps } from "utils";
 import { OverridableComponent } from "@material-ui/core/OverridableComponent";
-
-const useStyles = makeStyles((theme) => ({
-  noStyleA: {
-    color: "inherit",
-    textDecoration: "none",
-  },
-}));
 
 const sideNavMainItems = [
   {

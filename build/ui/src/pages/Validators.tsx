@@ -9,9 +9,11 @@ export function Validators() {
 
   return (
     <>
-      <div>
-        <Typography variant="h3">Validators</Typography>
-      </div>
+      <LayoutItem noPaper>
+        <Typography variant="h4" color="textSecondary">
+          Validators
+        </Typography>
+      </LayoutItem>
 
       <LayoutItem>
         <ValidatorActionsTable
