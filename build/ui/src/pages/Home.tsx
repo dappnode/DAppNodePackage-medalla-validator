@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { LayoutItem } from "LayoutItem";
 import { useApi, api } from "api/rpc";
+import { LayoutItem } from "components/LayoutItem";
 import { ManageValidators } from "components/ManageValidators";
-import { ValidatorsTable } from "./components/ValidatorsTable";
+import { ValidatorStatsTable } from "components/ValidatorStatsTable";
 import { ValidatorsProgress } from "components/ValidatorsProgress";
 import { ImportValidatorsDialog } from "components/ImportValidatorsDialog";
 import { NodeStats } from "components/NodeStats";
@@ -12,9 +12,10 @@ import { PendingValidator } from "common";
 import { BackupWithdrawalDialog } from "components/BackupWithdrawalDialog";
 import { ValidatorCountDialog } from "components/ValidatorCountDialog";
 
-export function HomePage() {
+export function Home() {
   const [openWithdrawal, setOpenWithdrawal] = useState(false);
   const [openAddValidators, setOpenAddValidators] = useState(false);
+  const [openImportValidators, setOpenImportValidators] = useState(false);
   const [withdrawalIsMigration, setWithdrawalIsMigration] = useState(false);
   const [statusAddingValidators, setStatusAddingValidators] = useState<
     RequestStatus<PendingValidator[]>
@@ -95,11 +96,10 @@ export function HomePage() {
         onClose={() => setOpenAddValidators(false)}
       />
 
+      {/* Modal to import validator files */}
       <ImportValidatorsDialog
-        open={true}
-        onClose={() => setOpenWithdrawal(false)}
-        onSuccess={() => setOpenAddValidators(true)}
-        withdrawalIsMigration={withdrawalIsMigration}
+        open={openImportValidators}
+        onClose={() => setOpenImportValidators(false)}
       />
 
       <LayoutItem>
@@ -122,7 +122,7 @@ export function HomePage() {
       )}
 
       <LayoutItem>
-        <ValidatorsTable
+        <ValidatorStatsTable
           validators={validators.data || []}
           loading={!validators.data && validators.isValidating}
         />

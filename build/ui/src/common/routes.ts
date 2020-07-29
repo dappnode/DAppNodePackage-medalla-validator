@@ -4,6 +4,7 @@ import {
   Eth1AccountStats,
   NodeStats,
   WithdrawalAccountInfo,
+  ValidatorImport,
 } from "./types";
 
 export interface Routes {
@@ -20,6 +21,10 @@ export interface Routes {
    * Returns stringified encrypted keystore JSON
    */
   withdrawalAccountCreate: (passphrase: string) => Promise<string>;
+  /**
+   * Import validator keystores and passphrases
+   */
+  importValidators: (validators: ValidatorImport[]) => Promise<void>;
 }
 
 export const routesData: { [P in keyof Routes]: {} } = {
@@ -30,6 +35,7 @@ export const routesData: { [P in keyof Routes]: {} } = {
   nodeStats: {},
   withdrawalAccountGet: {},
   withdrawalAccountCreate: {},
+  importValidators: {},
 };
 
 // DO NOT REMOVE

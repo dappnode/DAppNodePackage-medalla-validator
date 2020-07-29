@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function ValidatorsTable({
+export function ValidatorActionsTable({
   validators,
   loading,
 }: {

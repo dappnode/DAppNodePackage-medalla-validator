@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Route, Switch } from "react-router-dom";
 import * as auth from "api/auth";
 import * as apiPaths from "api/paths";
 // import { Chart } from "./Chart";
 import { Layout } from "./Layout";
 import { SignIn } from "./components/SignIn";
+import { NoMatch } from "pages/NoMatch";
+import { Validators } from "pages/Validators";
+import { Settings } from "pages/Settings";
+import { Home } from "pages/Home";
 import { LoadingView } from "components/LoadingView";
 import {
   Box,
@@ -12,7 +17,6 @@ import {
   makeStyles,
   CssBaseline,
 } from "@material-ui/core";
-import { HomePage } from "HomePage";
 
 type LoginStatus = "login" | "logout" | "loading";
 const keyuserSettingDarkMode = "user-setting-dark-mode";
@@ -92,7 +96,12 @@ export default function App() {
       <CssBaseline />
       {loginStatus === "login" ? (
         <Layout darkMode={darkMode} switchDark={switchDark} logout={logout}>
-          <HomePage></HomePage>
+          <Switch>
+            <Route path="/validators" component={Validators} />
+            <Route path="/settings" component={Settings} />
+            <Route path="/" exact component={Home} />
+            <Route path="*" component={NoMatch} />
+          </Switch>
         </Layout>
       ) : loginStatus === "logout" ? (
         <SignIn onSignIn={onSignIn} isOffline={isOffline} />
