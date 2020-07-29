@@ -21,6 +21,7 @@ import Brightness7Icon from "@material-ui/icons/Brightness7";
 import Brightness4Icon from "@material-ui/icons/Brightness4";
 import { mainListItems, secondaryListItems } from "./listItems";
 import { FooterNote } from "./components/FooterNote";
+import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -30,6 +31,9 @@ const useStyles = makeStyles((theme) => ({
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
+    display: "grid",
+    // Force second item (title) to collapse on small screens
+    gridTemplateColumns: "min-content minmax(0, auto) repeat(10, min-content)",
   },
   toolbarIcon: {
     display: "flex",
@@ -63,8 +67,10 @@ const useStyles = makeStyles((theme) => ({
   menuButtonHidden: {
     display: "none",
   },
-  title: {
-    flexGrow: 1,
+  mainLogo: {
+    color: "inherit",
+    textDecoration: "none",
+    display: "flex",
   },
   drawerPaper: {
     position: "relative",
@@ -151,16 +157,13 @@ export const Layout: React.FC<{
           >
             <MenuIcon />
           </IconButton>
-          <img src={dappnodeLogo} className={classes.topBarLogo} alt="logo" />
-          <Typography
-            component="h1"
-            variant="h6"
-            color="inherit"
-            noWrap
-            className={classes.title}
-          >
-            Validator dashboard
-          </Typography>
+
+          <Link to="/" className={classes.mainLogo}>
+            <img src={dappnodeLogo} className={classes.topBarLogo} alt="logo" />
+            <Typography component="h1" variant="h6" color="inherit" noWrap>
+              Validator dashboard
+            </Typography>
+          </Link>
 
           <IconButton color="inherit" onClick={switchDark}>
             {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
