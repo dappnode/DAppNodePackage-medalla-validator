@@ -87,7 +87,7 @@ function ListItems(
         <ListItemText primary={name} />
       </ListItem>
     ) : path ? (
-      <Link to={path}>
+      <Link to={path} style={{ color: "inherit", textDecoration: "none" }}>
         <ListItem key={name} button component="a">
           <ListItemIcon>
             <Icon />
