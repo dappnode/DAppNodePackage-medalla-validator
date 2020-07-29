@@ -10,11 +10,14 @@ import {
   extraOpts
 } from "../params";
 
-export const validatorBinary = Supervisor(
+const lighthouseDataDir = "/lighthouse";
+const lighthouseSecretsDir = "/lighthouse/secrets";
+
+export const prysmBinary = Supervisor(
   "validator",
   dargs({
     // "tls-cert": tlsCert,
-    "altona": true,
+    altona: true,
     "monitoring-host": "0.0.0.0",
     "beacon-rpc-provider": beaconRpcProvider,
     keymanager: "wallet",
@@ -23,5 +26,17 @@ export const validatorBinary = Supervisor(
     "log-file": logFile,
     ...(graffiti ? { graffiti } : {}), // Ignore if empty
     _: [extraOpts]
+  })
+);
+
+export const lighthouseBinary = Supervisor(
+  "lighthouse validator_client",
+  dargs({
+    altona: true,
+    "auto-register": true,
+    "strict-lockfiles": true,
+    datadir: lighthouseDataDir,
+    "secrets-dir": lighthouseSecretsDir,
+    server: beaconRpcProvider
   })
 );
