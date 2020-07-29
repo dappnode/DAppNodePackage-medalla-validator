@@ -1,13 +1,7 @@
 import React from "react";
-import { Typography } from "@material-ui/core";
 import { LayoutItem } from "components/LayoutItem";
+import { TitlePage } from "components/Title";
 
 export function ValidatorsExport() {
-  return (
-    <LayoutItem noPaper>
-      <Typography variant="h4" color="textSecondary">
-        Settings
-      </Typography>
-    </LayoutItem>
-  );
+  return <TitlePage>Export validators</TitlePage>;
 }

@@ -8,7 +8,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { LayoutItem } from "components/LayoutItem";
-import { Title } from "components/Title";
+import { Title, TitlePage } from "components/Title";
 
 type BeaconProvider = "lighthouse" | "prysm" | "custom";
 type ValidatorClient = "lighthouse" | "prysm";
@@ -60,11 +60,7 @@ export function Settings() {
 
   return (
     <>
-      <LayoutItem noPaper>
-        <Typography variant="h4" color="textSecondary">
-          Settings
-        </Typography>
-      </LayoutItem>
+      <TitlePage>Settings</TitlePage>
 
       <LayoutItem sm={6}>
         <Title>Beacon node provider</Title>

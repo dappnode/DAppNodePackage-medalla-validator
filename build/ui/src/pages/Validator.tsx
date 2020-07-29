@@ -3,7 +3,7 @@ import { useApi } from "api/rpc";
 import { Typography, Box, Button } from "@material-ui/core";
 import { LayoutItem } from "components/LayoutItem";
 import { RouteComponentProps } from "react-router";
-import { Title } from "components/Title";
+import { Title, TitlePage } from "components/Title";
 import { PublicKeyView } from "components/PublicKeyView";
 import { formatEth } from "utils";
 
@@ -13,14 +13,7 @@ export function Validator({ match }: RouteComponentProps<{ pubkey: string }>) {
 
   if (validators.data) {
     const validator = validators.data.find((v) => v.publicKey === pubkey);
-    if (!validator)
-      return (
-        <LayoutItem noPaper>
-          <Typography variant="h6" color="textSecondary">
-            Validator {pubkey} not found
-          </Typography>
-        </LayoutItem>
-      );
+    if (!validator) return <TitlePage>Validator {pubkey} not found</TitlePage>;
 
     return (
       <>
