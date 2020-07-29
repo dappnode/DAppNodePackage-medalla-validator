@@ -7,32 +7,34 @@ import {
   ListSubheader,
   SvgIconTypeMap,
 } from "@material-ui/core";
+import { OverridableComponent } from "@material-ui/core/OverridableComponent";
 // import DashboardIcon from "@material-ui/icons/Dashboard";
 import HomeIcon from "@material-ui/icons/Home";
 import StorageIcon from "@material-ui/icons/Storage";
+import BackupIcon from "@material-ui/icons/Backup";
 import SettingsIcon from "@material-ui/icons/Settings";
 import PeopleIcon from "@material-ui/icons/People";
 import BarChartIcon from "@material-ui/icons/BarChart";
 import LayersIcon from "@material-ui/icons/Layers";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import { newTabProps } from "utils";
-import { OverridableComponent } from "@material-ui/core/OverridableComponent";
+import { paths } from "paths";
 
 const sideNavMainItems = [
   {
     name: "Dashboard",
     Icon: HomeIcon,
-    path: "/",
+    path: paths.home,
   },
   {
-    name: "Validators",
-    Icon: StorageIcon,
-    path: "/validators",
+    name: "Import",
+    Icon: BackupIcon,
+    path: paths.validatorsImport,
   },
   {
     name: "Settings",
     Icon: SettingsIcon,
-    path: "/settings",
+    path: paths.settings,
   },
 ];
 

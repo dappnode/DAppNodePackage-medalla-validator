@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
   linkIcon: {
     marginLeft: theme.spacing(0.5),
     display: "flex",
-    fontSize: "1.2rem",
+    fontSize: "135%",
   },
 }));
 

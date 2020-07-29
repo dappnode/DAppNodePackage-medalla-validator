@@ -4,7 +4,6 @@ import { LayoutItem } from "components/LayoutItem";
 import { ManageValidators } from "components/ManageValidators";
 import { ValidatorStatsTable } from "components/ValidatorStatsTable";
 import { ValidatorsProgress } from "components/ValidatorsProgress";
-import { ImportValidatorsDialog } from "components/ImportValidatorsDialog";
 import { NodeStats } from "components/NodeStats";
 import { TotalBalance } from "components/TotalBalance";
 import { RequestStatus } from "types";
@@ -73,7 +72,6 @@ export function Home() {
 
   return (
     <>
-      {/* <Chart /> */}
       <LayoutItem sm={6}>
         <TotalBalance validators={validators.data || []} />
       </LayoutItem>
@@ -94,12 +92,6 @@ export function Home() {
         balance={eth1Account.data?.balance || 0}
         addValidators={addValidators}
         onClose={() => setOpenAddValidators(false)}
-      />
-
-      {/* Modal to import validator files */}
-      <ImportValidatorsDialog
-        open={openImportValidators}
-        onClose={() => setOpenImportValidators(false)}
       />
 
       <LayoutItem>

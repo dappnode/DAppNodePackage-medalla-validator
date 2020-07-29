@@ -22,6 +22,7 @@ import Brightness4Icon from "@material-ui/icons/Brightness4";
 import { mainListItems, secondaryListItems } from "./listItems";
 import { FooterNote } from "./components/FooterNote";
 import { Link } from "react-router-dom";
+import { paths } from "paths";
 
 const drawerWidth = 240;
 
@@ -158,7 +159,7 @@ export const Layout: React.FC<{
             <MenuIcon />
           </IconButton>
 
-          <Link to="/" className={classes.mainLogo}>
+          <Link to={paths.home} className={classes.mainLogo}>
             <img src={dappnodeLogo} className={classes.topBarLogo} alt="logo" />
             <Typography component="h1" variant="h6" color="inherit" noWrap>
               Validator dashboard

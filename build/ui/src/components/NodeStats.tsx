@@ -10,7 +10,7 @@ export function NodeStats() {
 
   return (
     <>
-      <Title>Node Stats</Title>
+      <Title>Node stats</Title>
       <Typography>
         Current epoch:{" "}
         <strong>

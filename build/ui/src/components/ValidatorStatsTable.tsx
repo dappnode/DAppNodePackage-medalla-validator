@@ -21,6 +21,8 @@ import { PublicKeyView } from "./PublicKeyView";
 import { DepositEventsView } from "./Eth1TransactionView";
 import { formatEth } from "utils";
 import { LoadingView } from "./LoadingView";
+import { Link } from "react-router-dom";
+import { paths } from "paths";
 
 const maxItems = 10;
 type SortOption = "index" | "blockNumber" | "status" | "balance";
@@ -95,6 +97,7 @@ export function ValidatorStatsTable({
     { text: "Deposit", option: "blockNumber" },
     { text: "Status", option: "status" },
     { text: "Balance", option: "balance", align: "right" },
+    { text: "Manage", align: "right" },
   ];
 
   return (
@@ -146,6 +149,11 @@ export function ValidatorStatsTable({
                   ) : (
                     formatEth(validator.balance.eth)
                   )}
+                </TableCell>
+                <TableCell align="right">
+                  <Link to={paths.validatorByPubkey.to(validator.publicKey)}>
+                    Manage
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}

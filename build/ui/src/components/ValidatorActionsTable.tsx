@@ -111,22 +111,8 @@ export function ValidatorActionsTable({
         <Table size="small">
           <TableHead>
             <TableRow>
-              {headers.map(({ text, option, align, helpTable }) => (
-                <TableCell key={text} align={align}>
-                  {option ? (
-                    <TableSortLabel
-                      active={sortProperty === option}
-                      direction={direction}
-                      // style={alignRight ? { justifyContent: "flex-end" } : {}}
-                      onClick={() => onHeaderClick(option)}
-                    >
-                      {text}
-                    </TableSortLabel>
-                  ) : (
-                    text
-                  )}
-                </TableCell>
-              ))}
+              <TableCell>Pubkey</TableCell>
+              <TableCell>Exit</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

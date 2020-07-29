@@ -6,10 +6,13 @@ import * as apiPaths from "api/paths";
 import { Layout } from "./Layout";
 import { SignIn } from "./components/SignIn";
 import { NoMatch } from "pages/NoMatch";
-import { Validators } from "pages/Validators";
+import { Validator } from "pages/Validator";
+import { ValidatorsExport } from "pages/ValidatorsExport";
+import { ValidatorsImport } from "pages/ValidatorsImport";
 import { Settings } from "pages/Settings";
 import { Home } from "pages/Home";
 import { LoadingView } from "components/LoadingView";
+import { paths } from "paths";
 import {
   Box,
   ThemeProvider,
@@ -97,9 +100,11 @@ export default function App() {
       {loginStatus === "login" ? (
         <Layout darkMode={darkMode} switchDark={switchDark} logout={logout}>
           <Switch>
-            <Route path="/validators" component={Validators} />
-            <Route path="/settings" component={Settings} />
-            <Route path="/" exact component={Home} />
+            <Route path={paths.validatorByPubkey.match} component={Validator} />
+            <Route path={paths.validatorsExport} component={ValidatorsExport} />
+            <Route path={paths.validatorsImport} component={ValidatorsImport} />
+            <Route path={paths.settings} component={Settings} />
+            <Route path={paths.home} exact component={Home} />
             <Route path="*" component={NoMatch} />
           </Switch>
         </Layout>

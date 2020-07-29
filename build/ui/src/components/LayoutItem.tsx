@@ -13,19 +13,23 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const LayoutItem: React.FC<{
+  xs?: GridSize;
   sm?: GridSize;
+  md?: GridSize;
+  lg?: GridSize;
+  xl?: GridSize;
   noPaper?: boolean;
-}> = function LayoutItem({ sm, noPaper, children }) {
+}> = function LayoutItem({ noPaper, children, ...props }) {
   const classes = useStyles();
   if (noPaper)
     return (
-      <Grid item xs={12} sm={sm}>
+      <Grid item xs={12} {...props}>
         {children}
       </Grid>
     );
   else
     return (
-      <Grid item xs={12} sm={sm}>
+      <Grid item xs={12} {...props}>
         <Paper className={classes.paper}>{children}</Paper>
       </Grid>
     );
