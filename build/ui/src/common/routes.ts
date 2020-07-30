@@ -1,41 +1,34 @@
 import {
   ValidatorStats,
-  PendingValidator,
-  Eth1AccountStats,
   NodeStats,
-  WithdrawalAccountInfo,
-  ValidatorImport,
+  ValidatorFiles,
+  Eth2ClientName,
 } from "./types";
 
 export interface Routes {
-  addValidators: (count: number) => Promise<PendingValidator[]>;
-  getPendingValidators: () => Promise<PendingValidator[]>;
-  getValidators: () => Promise<ValidatorStats[]>;
-  // Internal Eth1 account
-  eth1AccountGet: () => Promise<Eth1AccountStats>;
-  // Node stats
-  nodeStats: () => Promise<NodeStats>;
-  // Backup withdrawal
-  withdrawalAccountGet: () => Promise<WithdrawalAccountInfo>;
   /**
-   * Returns stringified encrypted keystore JSON
+   * List current validator files in disk, plus their stats
    */
-  withdrawalAccountCreate: (passphrase: string) => Promise<string>;
+  getValidators: () => Promise<ValidatorStats[]>;
+  /**
+   * Current beacon node stats
+   */
+  nodeStats: () => Promise<NodeStats>;
   /**
    * Import validator keystores and passphrases
    */
-  importValidators: (validators: ValidatorImport[]) => Promise<void>;
+  importValidators: (validators: ValidatorFiles[]) => Promise<void>;
+  /**
+   * Switch validator client. Kills current one and starts next after exit
+   */
+  switchValidatorClient: (nextClient: Eth2ClientName) => Promise<void>;
 }
 
 export const routesData: { [P in keyof Routes]: {} } = {
-  addValidators: {},
-  getPendingValidators: {},
   getValidators: {},
-  eth1AccountGet: {},
   nodeStats: {},
-  withdrawalAccountGet: {},
-  withdrawalAccountCreate: {},
   importValidators: {},
+  switchValidatorClient: {},
 };
 
 // DO NOT REMOVE

@@ -4,16 +4,6 @@ export type Eth2ClientName = "lighthouse" | "prysm";
 
 // Table type
 
-export interface PendingValidator {
-  account: string;
-  publicKey: string;
-  status: "pending" | "mined" | "confirmed" | "error";
-  transactionHash?: string;
-  blockNumber?: number;
-  amountEth?: number;
-  error?: string;
-}
-
 export interface ValidatorStats {
   index: number;
   publicKey: string;
@@ -23,26 +13,6 @@ export interface ValidatorStats {
     eth: number | null; // 32.4523
     isExpected: boolean;
   };
-}
-
-export interface ApiStatus {
-  eth1Account: {
-    address: string;
-    balanceEth: string;
-  };
-  totalBalance: {
-    eth: string | null; // "32.543"
-    isExpected: boolean;
-  };
-}
-
-export interface WithdrawalAccountInfo {
-  account: string | null; // "withdrawal/primary",
-  exists: boolean;
-  /**
-   * True if withdrawal account will be migrated and not generated
-   */
-  isMigration: boolean;
 }
 
 export interface ValidatorFiles {
@@ -78,17 +48,6 @@ export interface Eth2Deposit {
 
 // Old types
 
-export interface EthdoAccountResult {
-  account: string;
-  publicKey: string;
-  passphrase: string;
-}
-
-export interface EthdoAccount {
-  account: string;
-  passphrase: string;
-}
-
 export interface DepositEvents {
   publicKey: string;
   events: {
@@ -99,16 +58,6 @@ export interface DepositEvents {
 export interface DepositEvent extends DepositEventArgs {
   blockNumber: number | undefined;
   transactionHash: string | undefined;
-}
-
-export interface Eth1AccountStats {
-  address: string;
-  balance: number;
-  /**
-   * Testnet name, e.g. "Goerli"
-   */
-  network: string;
-  insufficientFunds: boolean;
 }
 
 export interface NodeStats {
