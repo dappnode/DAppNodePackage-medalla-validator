@@ -25,4 +25,5 @@ const server = app.listen(app.get("port"), () => {
   logs.info(`App is running at http://localhost:${port} in ${env} mode`);
 });
 
+// For testing
 export default server;

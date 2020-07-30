@@ -6,7 +6,7 @@ import { logs } from "../logs";
 
 type Indexer = string | number;
 
-export function lowDbFactory(
+function lowDbFactory(
   dbPath: string,
   options?: low.AdapterOptions<any>
 ): low.LowdbSync<any> {
