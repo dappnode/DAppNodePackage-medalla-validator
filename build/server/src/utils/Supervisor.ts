@@ -121,8 +121,9 @@ export class Supervisor {
       this.child = child;
 
       // Pipe output
-      if (child.stdout) child.stdout.pipe(process.stdout);
-      if (child.stderr) child.stderr.pipe(process.stderr);
+      const onData = (data: Buffer) => this.log(data.toString());
+      if (child.stdout) child.stdout.on("data", onData.bind(this));
+      if (child.stderr) child.stderr.on("data", onData.bind(this));
 
       const that = this;
       child.addListener("exit", async code => {

@@ -12,18 +12,28 @@ import {
   LIGHTHOUSE_SECRETS_DIR,
   LIGHTHOUSE_DATA_DIR
 } from "../params";
+import { logs } from "../logs";
 
-const lighthouseBinary = new Supervisor("lighthouse", [
-  "validator_client",
-  ...dargs({
-    altona: true,
-    "auto-register": true,
-    "strict-lockfiles": true,
-    datadir: LIGHTHOUSE_DATA_DIR,
-    "secrets-dir": LIGHTHOUSE_SECRETS_DIR,
-    server: beaconRpcProvider
-  })
-]);
+const lighthouseBinary = new Supervisor(
+  "lighthouse",
+  [
+    "validator_client",
+    ...dargs({
+      altona: true,
+      "auto-register": true,
+      "strict-lockfiles": true,
+      datadir: LIGHTHOUSE_DATA_DIR,
+      "secrets-dir": LIGHTHOUSE_SECRETS_DIR,
+      server: beaconRpcProvider
+    })
+  ],
+  {
+    timeoutKill: 10 * 1000,
+    restartWait: 1000,
+    resolveStartOnData: true,
+    log: data => logs.info("[lighthouse]", data)
+  }
+);
 
 const prysmBinary = new Supervisor(
   "validator",
@@ -38,7 +48,13 @@ const prysmBinary = new Supervisor(
     "log-file": logFile,
     ...(graffiti ? { graffiti } : {}), // Ignore if empty
     _: [extraOpts]
-  })
+  }),
+  {
+    timeoutKill: 10 * 1000,
+    restartWait: 1000,
+    resolveStartOnData: true,
+    log: data => logs.info("[prysm]", data)
+  }
 );
 
 function getValidatorBinary(client: Eth2ClientName): Supervisor {
@@ -55,7 +71,8 @@ function getValidatorBinary(client: Eth2ClientName): Supervisor {
 }
 
 /**
- * Kill `prevClient` binary (which should be running), and start `nextClient` binary
+ * Kills `prevClient` running binary ensuring it has exited.
+ * Then, it start the `nextClient` binary resolving when data is emitted
  */
 export async function switchValidatorBinary(
   prevClient: Eth2ClientName,
