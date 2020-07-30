@@ -1,5 +1,14 @@
 import { spawn, ChildProcess } from "child_process";
 
+type ChildProcessWithExitCode = ChildProcess & {
+  /**
+   * The subprocess.exitCode property indicates the exit code of the child process.
+   * If the child process is still running, the field will be null.
+   * https://nodejs.org/api/child_process.html#child_process_subprocess_exitcode
+   */
+  exitCode?: number | null;
+};
+
 const signalsToPass: NodeJS.Signals[] = [
   "SIGTERM",
   "SIGINT",
@@ -7,16 +16,7 @@ const signalsToPass: NodeJS.Signals[] = [
   "SIGQUIT"
 ];
 
-interface SupervisorOptions {
-  timeoutKill?: number; // Timeout to kill process with "SIGKILL" after "SIGTERM"
-  restartWait?: number; // Wait between restarts
-  resolveStartOnData?: boolean; // Resolve the start call once 'data' event is received
-  log?: (message: string) => void;
-}
-
 class TimeoutError extends Error {}
-
-type ChildProcessWithExitCode = ChildProcess & { exitCode?: number | null };
 
 /**
  * Restarts a child process when it crashes
@@ -28,22 +28,26 @@ type ChildProcessWithExitCode = ChildProcess & { exitCode?: number | null };
  */
 export class Supervisor {
   // Settings
-  command: string;
-  args: string[];
-  timeoutKill: number = 10 * 1000;
-  restartWait: number = 1000;
-  resolveStartOnData: boolean = false;
-  log: (msg: string) => void = console.log;
+  private command: string;
+  private args: string[];
+  private timeoutKill: number = 10 * 1000;
+  private restartWait: number = 1000;
+  private resolveStartOnData: boolean = false;
+  private log: (msg: string) => void = console.log;
 
   // State
-  child: ChildProcessWithExitCode | null = null;
-  private crash_queued: boolean = false;
-  private status: "killing" | "starting" | null;
+  private child: ChildProcessWithExitCode | null = null;
+  private status: "killing" | "starting" | null = null;
 
   constructor(
     command: string,
     args: string[],
-    options: SupervisorOptions = {}
+    options: {
+      timeoutKill?: number; // Timeout to kill process with "SIGKILL" after "SIGTERM"
+      restartWait?: number; // Wait between restarts
+      resolveStartOnData?: boolean; // Resolve the start call once 'data' event is received
+      log?: (message: string) => void;
+    } = {}
   ) {
     this.command = command;
     this.args = args;
@@ -66,57 +70,85 @@ export class Supervisor {
     process.on("exit", onParentKill.bind(this, "SIGTERM"));
   }
 
+  /**
+   * kill child_process first with SIGTERM, then SIGKILL
+   * Can only be called once at a time, otherwise will error
+   */
   async kill() {
-    if (this.crash_queued || !this.child) return;
-
-    this.crash_queued = true;
-    await pause(50);
-
-    // Remove crash listeners, to prevent triggering an automatic restart
-    this.child.removeAllListeners();
-
-    // First, try to kill with SIGTERM
-    process.kill(this.child.pid, "SIGTERM");
     try {
-      await this.waitExit(this.timeoutKill);
-    } catch (e) {
-      if (e instanceof TimeoutError) {
-        // Kill for good if necessary
-        process.kill(this.child.pid, "SIGKILL");
+      if (!this.child) return;
+      if (this.status !== null) throw Error(`status = ${this.status}`);
+      this.status = "killing";
+
+      // Remove crash listeners, to prevent triggering an automatic restart
+      this.child.removeAllListeners();
+
+      // First, try to kill with SIGTERM
+      process.kill(this.child.pid, "SIGTERM");
+      try {
         await this.waitExit(this.timeoutKill);
+      } catch (e) {
+        if (e instanceof TimeoutError) {
+          // Kill for good if necessary
+          process.kill(this.child.pid, "SIGKILL");
+          await this.waitExit(this.timeoutKill);
+        }
       }
-    }
 
-    // Make sure the process is exited
-    if (this.child.exitCode === null) {
-      throw Error(`child process is not exited after SIGKILL`);
+      // Make sure the process is exited
+      if (!isExited(this.child)) {
+        throw Error(`child process is not exited after SIGKILL`);
+      }
+    } catch (e) {
+      this.status = null;
+      throw e;
     }
   }
 
+  /**
+   * Start child_process and add listener to restart it on exit
+   * If resolveStartOnData = true, will wait for first 'data' event
+   * Can only be called once at a time, otherwise will error
+   */
   async start() {
-    this.crash_queued = false;
-    const child = spawn(this.command, this.args);
-    const cmdStr = `'${this.command} ${this.args.join(" ")}'`;
-    this.log(`Starting child process with ${cmdStr} ${child.pid}`);
-    this.child = child;
+    try {
+      if (this.status !== null) throw Error(`status = ${this.status}`);
+      this.status = "starting";
 
-    // Pipe output
-    if (child.stdout) child.stdout.pipe(process.stdout);
-    if (child.stderr) child.stderr.pipe(process.stderr);
+      const child = spawn(this.command, this.args);
+      const cmdStr = `'${this.command} ${this.args.join(" ")}'`;
+      this.log(`Starting child process with ${cmdStr} ${child.pid}`);
+      this.child = child;
 
-    const that = this;
-    child.addListener("exit", async code => {
-      that.log(`Program ${cmdStr} exited with code ${code}`);
-      await pause(that.restartWait);
-      that.start();
-    });
+      // Pipe output
+      if (child.stdout) child.stdout.pipe(process.stdout);
+      if (child.stderr) child.stderr.pipe(process.stderr);
 
-    if (this.resolveStartOnData && child.stdout)
-      await new Promise(r => child.stdout.once("data", r));
+      const that = this;
+      child.addListener("exit", async code => {
+        that.log(`Program ${cmdStr} exited with code ${code}`);
+        await pause(that.restartWait);
+        that.start();
+      });
+
+      if (this.resolveStartOnData && child.stdout)
+        await new Promise((resolve, reject) => {
+          child.stdout.once("data", resolve);
+          child.once("error", reject);
+          child.once("exit", code => reject(Error(`Exited ${code}`)));
+        });
+    } catch (e) {
+      this.status = null;
+      throw e;
+    }
   }
 
+  /**
+   * Kill child_process, then start
+   * @see kill
+   * @see start
+   */
   async restart() {
-    if (this.crash_queued) return;
     await this.kill();
     await this.start();
   }
@@ -130,7 +162,7 @@ export class Supervisor {
     timeoutMs: number
   ): Promise<"already-exited" | number | null> {
     const child = this.child;
-    if (!child || typeof child.exitCode === "number") return "already-exited";
+    if (!child || isExited(child)) return "already-exited";
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         reject(new TimeoutError(`Timeout ${timeout}`));
@@ -143,6 +175,18 @@ export class Supervisor {
   }
 }
 
+/**
+ * Util: Checks if a child_process is exited.
+ * True if it has a non null exitCode
+ * @param child
+ */
+function isExited(child: ChildProcessWithExitCode): boolean {
+  return typeof child.exitCode === "number";
+}
+
+/**
+ * Util: timeout `ms` miliseconds
+ */
 function pause(ms: number) {
   return new Promise(r => setTimeout(r, ms));
 }
