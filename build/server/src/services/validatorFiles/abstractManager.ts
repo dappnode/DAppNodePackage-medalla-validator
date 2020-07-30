@@ -1,5 +1,8 @@
 import { ValidatorFiles } from "../../../common";
 
 export interface ValidatorFileManager {
-  write: (validatorFiles: ValidatorFiles) => void;
+  hasKeys: () => boolean;
+  readPubkeys: () => string[];
+  read: () => ValidatorFiles[];
+  write: (validatorFiles: ValidatorFiles[]) => void;
 }

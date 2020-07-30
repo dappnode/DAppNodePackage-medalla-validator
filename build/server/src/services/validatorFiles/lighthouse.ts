@@ -1,7 +1,9 @@
 import fs from "fs";
 import path from "path";
 import { ValidatorFileManager } from "./abstractManager";
-import { ValidatorFiles } from "../../../common";
+import { ValidatorFiles, Eth2Keystore } from "../../../common";
+
+const keystoreFileName = "voting-keystore.json";
 
 interface ValidatorPaths {
   keystore: string;
@@ -40,10 +42,36 @@ export class LighthouseValidatorFileManager implements ValidatorFileManager {
     this.secretsDir = paths.secretsDir;
   }
 
-  write(validatorFiles: ValidatorFiles): void {
-    const paths = this.getPaths(validatorFiles);
-    fs.writeFileSync(paths.keystore, JSON.stringify(validatorFiles.keystore));
-    fs.writeFileSync(paths.secret, validatorFiles.passphrase);
+  hasKeys(): boolean {
+    return fs.readdirSync(this.keystoresDir).length > 0;
+  }
+
+  readPubkeys(): string[] {
+    return fs.readdirSync(this.keystoresDir);
+  }
+
+  read(): ValidatorFiles[] {
+    return fs.readdirSync(this.keystoresDir).map(
+      (validatorDirName): ValidatorFiles => {
+        const paths = this.getPaths({ pubkey: validatorDirName });
+        const keystoreStr = fs.readFileSync(paths.keystore, "utf8");
+        const keystore: Eth2Keystore = JSON.parse(keystoreStr);
+        const passphrase = fs.readFileSync(paths.secret, "utf8");
+        return {
+          pubkey: keystore.pubkey,
+          keystore: keystore,
+          passphrase
+        };
+      }
+    );
+  }
+
+  write(validatorsFiles: ValidatorFiles[]): void {
+    for (const validatorFiles of validatorsFiles) {
+      const paths = this.getPaths(validatorFiles);
+      fs.writeFileSync(paths.keystore, JSON.stringify(validatorFiles.keystore));
+      fs.writeFileSync(paths.secret, validatorFiles.passphrase);
+    }
   }
 
   private getPaths({ pubkey }: { pubkey: string }): ValidatorPaths {

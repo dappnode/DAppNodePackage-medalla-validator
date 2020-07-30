@@ -1,27 +1,28 @@
 import { logs } from "./logs";
 import app from "./app";
 import { listenToDepositEvents } from "./services/eth1";
-import { readkeymanagerMap } from "./services/keymanager";
-import { migrateLegacyValidator } from "./services/migratePrysmKeys";
 import { printGitData } from "./services/printGitData";
-import { validatorBinary } from "./services/validatorBinary";
+import { startValidatorBinary } from "./services/validatorBinary";
+import { thereAreValidatorFiles } from "./services/validatorFiles";
 
 // Connect to a Eth1.x node
 listenToDepositEvents();
-// Migrate keys previously controlled by the validator binary to ethdo
-migrateLegacyValidator();
 // For debugging only: print DNP version, git branch and commit
 printGitData();
 
 // Start validator binary if ready
-if (readkeymanagerMap().size > 0) validatorBinary.restart();
+if (thereAreValidatorFiles())
+  startValidatorBinary().then(
+    () => logs.info(`Started validator client`),
+    e => logs.error(`Error starting validator client`, e)
+  );
 
 /**
  * Start Express server.
  */
 const port = app.get("port");
 const env = app.get("env");
-const server = app.listen(app.get("port"), () => {
+const server = app.listen(port, () => {
   logs.info(`App is running at http://localhost:${port} in ${env} mode`);
 });
 

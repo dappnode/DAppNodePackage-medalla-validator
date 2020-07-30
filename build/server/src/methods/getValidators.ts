@@ -2,9 +2,9 @@ import memoizee from "memoizee";
 import { ethers } from "ethers";
 import { ValidatorStats, DepositEvent } from "../../common";
 import * as db from "../db";
-import { ethdo } from "../ethdo";
 import { computeExpectedBalance } from "../utils/depositEvent";
 import { requestPastDepositEvents } from "../services/eth1";
+import { getCurrentValidatorFileManager } from "../services/validatorFiles";
 import {
   ethValidatorsBalances,
   ethValidatorStatuses
@@ -29,11 +29,11 @@ const ethValidatorStatusesMem = memoizee(ethValidatorStatuses, {
  * Only show validators that have a confirmed deposit
  */
 export async function getValidators(): Promise<ValidatorStats[]> {
-  const accounts = await ethdo.accountList("validator");
+  const validatorFileManager = getCurrentValidatorFileManager();
+  const pubkeys = validatorFileManager.readPubkeys();
   // Keep fetching logs in the background only when UI is connected
   requestPastDepositEvents();
 
-  const pubkeys = accounts.map(a => a.publicKey);
   const balancesByPubkey = await ethValidatorsBalancesMem(pubkeys).catch(e =>
     logs.error(`Error fetching validators balances`, e)
   );
@@ -41,16 +41,16 @@ export async function getValidators(): Promise<ValidatorStats[]> {
     logs.error(`Error fetching validators status`, e)
   );
 
-  return accounts
+  return pubkeys
     .map(
-      ({ name, publicKey }): ValidatorStats => {
+      (publicKey, index): ValidatorStats => {
         const depositEventsObj = db.deposits.depositEvents.get(publicKey);
         const depositEvents = Object.values(depositEventsObj?.events || {});
         const { balance } = (balancesByPubkey || {})[publicKey] || {};
         const { status } = (statusByPubkey || {})[publicKey] || {};
 
         return {
-          index: parseInt(name) || 0,
+          index,
           publicKey,
           depositEvents,
           status,
