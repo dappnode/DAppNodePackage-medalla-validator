@@ -3,6 +3,7 @@ import {
   NodeStats,
   ValidatorFiles,
   Eth2ClientName,
+  ValidatorSettings,
 } from "./types";
 
 export interface Routes {
@@ -18,6 +19,11 @@ export interface Routes {
    * Import validator keystores and passphrases
    */
   importValidators: (validators: ValidatorFiles[]) => Promise<void>;
+
+  /**
+   * Returns configurable validator parameters
+   */
+  getValidatorSettings: () => Promise<ValidatorSettings>;
   /**
    * Switch validator client. Kills current one and starts next after exit
    */
@@ -28,6 +34,7 @@ export const routesData: { [P in keyof Routes]: {} } = {
   getValidators: {},
   nodeStats: {},
   importValidators: {},
+  getValidatorSettings: {},
   switchValidatorClient: {},
 };
 

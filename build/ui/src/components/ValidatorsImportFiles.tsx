@@ -19,10 +19,13 @@ import CloseIcon from "@material-ui/icons/Close";
 import { useDropzone } from "react-dropzone";
 import { processEth2File } from "../utils/eth2FileParser";
 import { PublicKeyView } from "components/PublicKeyView";
-import { ValidatorImport, Eth2Keystore, Eth2Deposit } from "common";
+import { ValidatorFiles } from "common";
 import { api } from "api/rpc";
 import { Title } from "components/Title";
 import { LoadingView } from "components/LoadingView";
+
+type ValidatorFilesPartial = Partial<ValidatorFiles> &
+  Pick<ValidatorFiles, "pubkey">;
 
 const useStyles = makeStyles((theme) => ({
   dropzone: {
@@ -46,16 +49,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface ValidatorFiles {
-  pubkey: string;
-  keystore?: Eth2Keystore;
-  depositData?: Eth2Deposit;
-  passphrase?: string;
-}
-
 export function ValidatorsImportFiles() {
   const [validators, setValidators] = useState(
-    new Map<string, ValidatorFiles>()
+    new Map<string, ValidatorFilesPartial>()
   );
   const [loadingFiles, setLoadingFiles] = useState<string>();
   const [importStatus, setImportStatus] = useState<RequestStatus<string>>({});
@@ -80,15 +76,15 @@ export function ValidatorsImportFiles() {
                 break;
               }
 
-              case "deposit": {
-                for (const deposit of eth2File.data) {
-                  let validator = validators.get(deposit.pubkey);
-                  if (!validator) validator = { pubkey: deposit.pubkey };
-                  validator.depositData = deposit;
-                  validators.set(validator.pubkey, validator);
-                }
-                break;
-              }
+              // case "deposit": {
+              //   for (const deposit of eth2File.data) {
+              //     let validator = validators.get(deposit.pubkey);
+              //     if (!validator) validator = { pubkey: deposit.pubkey };
+              //     validator.depositData = deposit;
+              //     validators.set(validator.pubkey, validator);
+              //   }
+              //   break;
+              // }
 
               case "passphrase": {
                 let validator = validators.get(eth2File.pubkey);
@@ -118,10 +114,10 @@ export function ValidatorsImportFiles() {
     try {
       if (importStatus.loading) return;
 
-      const validatorsReady: ValidatorImport[] = [];
+      const validatorsReady: ValidatorFiles[] = [];
       for (const validator of Array.from(validators.values()))
         if (validator.pubkey && validator.keystore && validator.passphrase)
-          validatorsReady.push(validator as ValidatorImport);
+          validatorsReady.push(validator as ValidatorFiles);
 
       if (validatorsReady.length === 0) return;
 
@@ -179,7 +175,7 @@ export function ValidatorsImportFiles() {
                 <TableCell>Pubkey</TableCell>
                 <TableCell>Keystore</TableCell>
                 <TableCell>Passphrase</TableCell>
-                <TableCell>Deposit data</TableCell>
+                {/* <TableCell>Deposit data</TableCell> */}
                 <TableCell></TableCell>
               </TableRow>
             </TableHead>
@@ -193,9 +189,9 @@ export function ValidatorsImportFiles() {
                   <TableCell>
                     {validator.passphrase ? "OK" : "missing"}
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     {validator.depositData ? "OK" : "missing"}
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell
                     className={classes.deleteValidator}
                     onClick={() => validators.delete(validator.pubkey)}
@@ -249,7 +245,7 @@ export function ValidatorsImportFiles() {
   );
 }
 
-function isValidatorReady(validator: ValidatorFiles): boolean {
+function isValidatorReady(validator: ValidatorFilesPartial): boolean {
   return Boolean(
     validator.keystore && validator.passphrase && validator.pubkey
   );

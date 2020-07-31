@@ -2,6 +2,11 @@
 
 export type Eth2ClientName = "lighthouse" | "prysm";
 
+export interface ValidatorSettings {
+  validatorClient: Eth2ClientName;
+  beaconProvider: "lighthouse" | "prysm" | string;
+}
+
 // Table type
 
 export interface ValidatorStats {

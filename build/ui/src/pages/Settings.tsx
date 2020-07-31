@@ -1,43 +1,12 @@
-import React, { useState } from "react";
-import {
-  Typography,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  makeStyles,
-} from "@material-ui/core";
+import React from "react";
+import { useApi } from "api/rpc";
+import { Typography, makeStyles } from "@material-ui/core";
 import { LayoutItem } from "components/LayoutItem";
 import { Title, TitlePage } from "components/Title";
-
-type BeaconProvider = "lighthouse" | "prysm" | "custom";
-type ValidatorClient = "lighthouse" | "prysm";
-
-const beaconProviderOptions: { value: BeaconProvider; label: string }[] = [
-  {
-    value: "lighthouse",
-    label: "Local DAppNode Lighthouse",
-  },
-  {
-    value: "prysm",
-    label: "Local DAppNode Prysm",
-  },
-  {
-    value: "custom",
-    label: "Custom",
-  },
-];
-
-const validatorClientOptions: { value: ValidatorClient; label: string }[] = [
-  {
-    value: "lighthouse",
-    label: "Lighthouse",
-  },
-  {
-    value: "prysm",
-    label: "Prysm",
-  },
-];
+import { SelectBeaconProvider } from "components/SelectBeaconProvider";
+import { SelectValidatorClient } from "components/SelectValidatorClient";
+import { ErrorView } from "components/ErrorView";
+import { LoadingView } from "components/LoadingView";
 
 const useStyles = makeStyles((theme) => ({
   selectDescription: {
@@ -49,57 +18,36 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function Settings() {
-  const [beaconProvider, setBeaconProvider] = useState<BeaconProvider>(
-    beaconProviderOptions[0].value
-  );
-  const [validatorClient, setValidatorClient] = useState<ValidatorClient>(
-    validatorClientOptions[0].value
-  );
-
+  const validatorSettings = useApi.getValidatorSettings();
   const classes = useStyles();
-
   return (
     <>
       <TitlePage>Settings</TitlePage>
 
-      <LayoutItem sm={6}>
-        <Title>Beacon node provider</Title>
-        <Typography className={classes.selectDescription}>
-          Beacon node provider that all validators connect to, to fetch duties
-          and publish attestations and blocks
-        </Typography>
-        <FormControl variant="outlined" className={classes.selectFormControl}>
-          <Select
-            value={beaconProvider}
-            onChange={(e) =>
-              setBeaconProvider(e.target.value as BeaconProvider)
-            }
-          >
-            {beaconProviderOptions.map(({ value, label }) => (
-              <MenuItem value={value}>{label}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </LayoutItem>
+      {validatorSettings.data ? (
+        <>
+          <LayoutItem>
+            <Title>Beacon node provider</Title>
+            <Typography className={classes.selectDescription}>
+              Beacon node provider that all validators connect to, to fetch
+              duties and publish attestations and blocks
+            </Typography>
+            <SelectBeaconProvider validatorSettings={validatorSettings.data} />
+          </LayoutItem>
 
-      <LayoutItem sm={6}>
-        <Title>Validator client</Title>
-        <Typography className={classes.selectDescription}>
-          Validator client used to validate with all provided keystores
-        </Typography>
-        <FormControl variant="outlined" className={classes.selectFormControl}>
-          <Select
-            value={validatorClient}
-            onChange={(e) =>
-              setValidatorClient(e.target.value as ValidatorClient)
-            }
-          >
-            {validatorClientOptions.map(({ value, label }) => (
-              <MenuItem value={value}>{label}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </LayoutItem>
+          <LayoutItem>
+            <Title>Validator client</Title>
+            <Typography className={classes.selectDescription}>
+              Validator client used to validate with all provided keystores
+            </Typography>
+            <SelectValidatorClient validatorSettings={validatorSettings.data} />
+          </LayoutItem>
+        </>
+      ) : validatorSettings.error ? (
+        <ErrorView error={validatorSettings.error} />
+      ) : validatorSettings.isValidating ? (
+        <LoadingView steps={["Loading settings..."]} />
+      ) : null}
     </>
   );
 }

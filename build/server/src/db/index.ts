@@ -22,7 +22,8 @@ try {
 
 export const server = createDb(createLowDb(serverDbPath), {
   sessionsSecret: regular<string>(),
-  validatorClient: regular<Eth2ClientName>("lighthouse")
+  validatorClient: regular<Eth2ClientName>("lighthouse"),
+  beaconProvider: regular<string>("lighthouse")
 });
 
 export const accounts = createDb(createLowDb(accountsDbPath), {

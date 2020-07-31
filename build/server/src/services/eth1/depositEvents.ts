@@ -117,7 +117,7 @@ function saveDepositEvents(
 function getHighestSeenBlock(): number {
   try {
     const depositEvents = db.deposits.depositEvents.getAll();
-    let blockNumber: number = 0;
+    let blockNumber = 0;
     for (const { events } of depositEvents)
       for (const event of Object.values(events))
         if (event.blockNumber && event.blockNumber > blockNumber)

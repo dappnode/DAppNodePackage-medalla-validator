@@ -1,9 +1,11 @@
 import fs from "fs";
 import path from "path";
-import { ValidatorFileManager } from "./abstractManager";
+import rimraf from "rimraf";
+import { promisify } from "util";
+import { ValidatorFileManager, BaseFileManager } from "./abstractManager";
 import { ValidatorFiles, Eth2Keystore } from "../../../common";
 
-const keystoreFileName = "voting-keystore.json";
+const rimrafAsync = promisify(rimraf);
 
 interface ValidatorPaths {
   keystore: string;
@@ -33,11 +35,13 @@ interface ValidatorPaths {
  *         └── 96ae14b4-46d7-42dc-afd8-c782e9af87ef (json)
  * ```
  */
-export class LighthouseValidatorFileManager implements ValidatorFileManager {
+export class LighthouseValidatorFileManager extends BaseFileManager
+  implements ValidatorFileManager {
   keystoresDir: string;
   secretsDir: string;
 
   constructor(paths: { keystoresDir: string; secretsDir: string }) {
+    super();
     this.keystoresDir = paths.keystoresDir;
     this.secretsDir = paths.secretsDir;
   }
@@ -50,28 +54,48 @@ export class LighthouseValidatorFileManager implements ValidatorFileManager {
     return fs.readdirSync(this.keystoresDir);
   }
 
-  read(): ValidatorFiles[] {
-    return fs.readdirSync(this.keystoresDir).map(
-      (validatorDirName): ValidatorFiles => {
+  /**
+   * Read all keystores and passphrases in disk
+   */
+  async read(): Promise<ValidatorFiles[]> {
+    return this.ifNotLocked(async () => {
+      const validatorsFiles: ValidatorFiles[] = [];
+      for (const validatorDirName of fs.readdirSync(this.keystoresDir)) {
         const paths = this.getPaths({ pubkey: validatorDirName });
-        const keystoreStr = fs.readFileSync(paths.keystore, "utf8");
+        const keystoreStr = await fs.promises.readFile(paths.keystore, "utf8");
         const keystore: Eth2Keystore = JSON.parse(keystoreStr);
-        const passphrase = fs.readFileSync(paths.secret, "utf8");
-        return {
+        const passphrase = await fs.promises.readFile(paths.secret, "utf8");
+        validatorsFiles.push({
           pubkey: keystore.pubkey,
           keystore: keystore,
           passphrase
-        };
+        });
       }
-    );
+      return validatorsFiles;
+    });
   }
 
-  write(validatorsFiles: ValidatorFiles[]): void {
-    for (const validatorFiles of validatorsFiles) {
-      const paths = this.getPaths(validatorFiles);
-      fs.writeFileSync(paths.keystore, JSON.stringify(validatorFiles.keystore));
-      fs.writeFileSync(paths.secret, validatorFiles.passphrase);
-    }
+  /**
+   * Write validatorsFiles to disk
+   */
+  async write(validatorsFiles: ValidatorFiles[]): Promise<void> {
+    this.ifNotLocked(async () => {
+      for (const { pubkey, keystore, passphrase } of validatorsFiles) {
+        const paths = this.getPaths({ pubkey });
+        await fs.promises.writeFile(paths.keystore, JSON.stringify(keystore));
+        await fs.promises.writeFile(paths.secret, passphrase);
+      }
+    });
+  }
+
+  /**
+   * Delete all files in keystoresDir and secretsDir
+   */
+  async delete(): Promise<void> {
+    this.ifNotLocked(async () => {
+      await rimrafAsync(this.keystoresDir);
+      await rimrafAsync(this.secretsDir);
+    });
   }
 
   private getPaths({ pubkey }: { pubkey: string }): ValidatorPaths {

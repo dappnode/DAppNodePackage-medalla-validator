@@ -5,7 +5,8 @@
   ],
   "parserOptions": {
     "ecmaVersion": 2018,
-    "sourceType": "module" // Allows for the use of imports
+    "sourceType": "module", // Allows for the use of imports
+    "project": "tsconfig.json"
   },
   "env": {
     "node": true,
@@ -15,6 +16,7 @@
   "rules": {
     "no-console": "error",
     "max-len": ["error", 1000],
+    "@typescript-eslint/no-floating-promises": "error",
     // ##### Some libraries do not have typings and the compiler does not understand .d.ts files
     "@typescript-eslint/no-var-requires": "off",
     // ##### typescript does not understand hoisting

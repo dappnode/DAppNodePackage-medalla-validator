@@ -4,9 +4,17 @@ import { LighthouseValidatorFileManager } from "./lighthouse";
 import { ValidatorFiles, Eth2ClientName } from "../../../common";
 import { LIGHTHOUSE_KEYSTORES_DIR, LIGHTHOUSE_SECRETS_DIR } from "../../params";
 
-export function writeValidatorFiles(validatorsFiles: ValidatorFiles[]): void {
+// Create unique instances to make sure files are not being written more than once
+const lighthouseFileManager = new LighthouseValidatorFileManager({
+  keystoresDir: LIGHTHOUSE_KEYSTORES_DIR,
+  secretsDir: LIGHTHOUSE_SECRETS_DIR
+});
+
+export async function writeValidatorFiles(
+  validatorsFiles: ValidatorFiles[]
+): Promise<void> {
   const validatorFileManager = getCurrentValidatorFileManager();
-  validatorFileManager.write(validatorsFiles);
+  await validatorFileManager.write(validatorsFiles);
 }
 
 /**
@@ -26,13 +34,12 @@ export function getCurrentValidatorFileManager(): ValidatorFileManager {
 /**
  * Return a client specific validator file manager
  */
-function getValidatorFileManager(client: Eth2ClientName): ValidatorFileManager {
+export function getValidatorFileManager(
+  client: Eth2ClientName
+): ValidatorFileManager {
   switch (client) {
     case "lighthouse":
-      return new LighthouseValidatorFileManager({
-        keystoresDir: LIGHTHOUSE_KEYSTORES_DIR,
-        secretsDir: LIGHTHOUSE_SECRETS_DIR
-      });
+      return lighthouseFileManager;
 
     case "prysm":
     default:

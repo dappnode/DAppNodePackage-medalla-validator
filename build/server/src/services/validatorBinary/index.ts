@@ -5,18 +5,6 @@ import { lighthouseBinary } from "./lighthouse";
 import { prysmBinary } from "./prysm";
 
 /**
- * Kills `prevClient` running binary ensuring it has exited.
- * Then, it start the `nextClient` binary resolving when data is emitted
- */
-export async function switchValidatorBinary(nextClient: Eth2ClientName) {
-  const prevClient = server.validatorClient.get();
-  if (prevClient === nextClient) return;
-
-  await getValidatorBinary(prevClient).kill();
-  await getValidatorBinary(nextClient).start();
-}
-
-/**
  * Start `client` binary
  */
 export async function startValidatorBinary() {
@@ -29,7 +17,7 @@ export function getCurrentValidatorBinary(): Supervisor {
   return getValidatorBinary(client);
 }
 
-function getValidatorBinary(client: Eth2ClientName): Supervisor {
+export function getValidatorBinary(client: Eth2ClientName): Supervisor {
   switch (client) {
     case "lighthouse":
       return lighthouseBinary;

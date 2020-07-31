@@ -31,8 +31,8 @@ export class Supervisor {
   private command: string;
   private args: string[];
   private timeoutKill: number = 10 * 1000;
-  private restartWait: number = 1000;
-  private resolveStartOnData: boolean = false;
+  private restartWait = 1000;
+  private resolveStartOnData = false;
   private log: (msg: string) => void = console.log;
 
   // State
