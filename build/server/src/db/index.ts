@@ -34,7 +34,7 @@ export const deposits = createDb(createLowDb(depositsDbPath), {
   depositEvents: collection<DepositEvents>(e => e.publicKey)
 });
 
-export function getSessionsSecretKey() {
+export function getSessionsSecretKey(): string {
   let secret = server.sessionsSecret.get();
   if (!secret) {
     secret = getRandomToken();

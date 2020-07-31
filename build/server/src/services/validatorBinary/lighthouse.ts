@@ -24,6 +24,6 @@ export const lighthouseBinary = new Supervisor(
     timeoutKill: 10 * 1000,
     restartWait: 1000,
     resolveStartOnData: true,
-    log: data => logs.info("[lighthouse]", data)
+    log: (data): void => logs.info("[lighthouse]", data)
   }
 );

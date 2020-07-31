@@ -79,7 +79,7 @@ export class LighthouseValidatorFileManager extends BaseFileManager
    * Write validatorsFiles to disk
    */
   async write(validatorsFiles: ValidatorFiles[]): Promise<void> {
-    this.ifNotLocked(async () => {
+    return this.ifNotLocked(async () => {
       for (const { pubkey, keystore, passphrase } of validatorsFiles) {
         const paths = this.getPaths({ pubkey });
         await fs.promises.writeFile(paths.keystore, JSON.stringify(keystore));
@@ -92,7 +92,7 @@ export class LighthouseValidatorFileManager extends BaseFileManager
    * Delete all files in keystoresDir and secretsDir
    */
   async delete(): Promise<void> {
-    this.ifNotLocked(async () => {
+    return this.ifNotLocked(async () => {
       await rimrafAsync(this.keystoresDir);
       await rimrafAsync(this.secretsDir);
     });

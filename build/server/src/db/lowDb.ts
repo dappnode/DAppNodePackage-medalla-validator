@@ -6,10 +6,10 @@ import { logs } from "../logs";
 
 type Indexer = string | number;
 
-function lowDbFactory(
+function lowDbFactory<SchemaT = unknown>(
   dbPath: string,
-  options?: low.AdapterOptions<any>
-): low.LowdbSync<any> {
+  options?: low.AdapterOptions<SchemaT>
+): low.LowdbSync<SchemaT> {
   // Define dbPath and make sure it exists (mkdir -p)
   if (fs.existsSync(dbPath)) {
     logs.info(`Connecting to existing lowdb ${dbPath}`);
@@ -25,6 +25,7 @@ function lowDbFactory(
   return low(adapter);
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function createLowDb(dbPath: string) {
   const db = lowDbFactory(dbPath);
 
@@ -39,6 +40,7 @@ export function createLowDb(dbPath: string) {
   const set = <T>(key: Indexer, value: T): void =>
     db.set(formatKey(key), value).write();
   const del = (key: string): void => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     db.unset(formatKey(key)).write();
   };
   return {

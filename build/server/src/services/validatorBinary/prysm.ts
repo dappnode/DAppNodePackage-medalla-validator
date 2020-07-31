@@ -28,6 +28,6 @@ export const prysmBinary = new Supervisor(
     timeoutKill: 10 * 1000,
     restartWait: 1000,
     resolveStartOnData: true,
-    log: data => logs.info("[prysm]", data)
+    log: (data): void => logs.info("[prysm]", data)
   }
 );

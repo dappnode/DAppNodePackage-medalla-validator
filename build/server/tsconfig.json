@@ -13,6 +13,6 @@
     "types": ["mocha", "node"],
     "outDir": "build"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.test.ts"]
+  "include": ["src/**/*", "test/**/*", "mock/**/*"],
+  "exclude": ["node_modules"]
 }

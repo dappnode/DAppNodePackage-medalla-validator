@@ -32,7 +32,9 @@ export async function getValidators(): Promise<ValidatorStats[]> {
   const validatorFileManager = getCurrentValidatorFileManager();
   const pubkeys = validatorFileManager.readPubkeys();
   // Keep fetching logs in the background only when UI is connected
-  requestPastDepositEvents();
+  requestPastDepositEvents().catch(e => {
+    logs.error(`Error requesting past deposit events`, e);
+  });
 
   const balancesByPubkey = await ethValidatorsBalancesMem(pubkeys).catch(e =>
     logs.error(`Error fetching validators balances`, e)

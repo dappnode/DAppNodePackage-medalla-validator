@@ -1,4 +1,5 @@
 import { spawn, ChildProcess } from "child_process";
+import { logs } from "../logs";
 
 type ChildProcessWithExitCode = ChildProcess & {
   /**
@@ -33,7 +34,7 @@ export class Supervisor {
   private timeoutKill: number = 10 * 1000;
   private restartWait = 1000;
   private resolveStartOnData = false;
-  private log: (msg: string) => void = console.log;
+  private log: (msg: string) => void = logs.info;
 
   // State
   private child: ChildProcessWithExitCode | null = null;
@@ -58,7 +59,7 @@ export class Supervisor {
     }
 
     // Pass kill signals through to child
-    const onParentKill = (signal: NodeJS.Signals) => {
+    const onParentKill = (signal: NodeJS.Signals): void => {
       if (!this.child) return;
       this.log(`Received ${signal}, killing child process...`);
       this.child.removeAllListeners();
@@ -74,7 +75,7 @@ export class Supervisor {
    * kill child_process first with SIGTERM, then SIGKILL
    * Can only be called once at a time, otherwise will error
    */
-  async kill() {
+  async kill(): Promise<void> {
     try {
       if (!this.child) return;
       if (this.status !== null) throw Error(`status = ${this.status}`);
@@ -110,7 +111,7 @@ export class Supervisor {
    * If resolveStartOnData = true, will wait for first 'data' event
    * Can only be called once at a time, otherwise will error
    */
-  async start() {
+  async start(): Promise<void> {
     try {
       if (this.status !== null) throw Error(`status = ${this.status}`);
       this.status = "starting";
@@ -121,15 +122,17 @@ export class Supervisor {
       this.child = child;
 
       // Pipe output
-      const onData = (data: Buffer) => this.log(data.toString());
+      const onData = (data: Buffer): void => this.log(data.toString());
       if (child.stdout) child.stdout.on("data", onData.bind(this));
       if (child.stderr) child.stderr.on("data", onData.bind(this));
 
       const that = this;
       child.addListener("exit", async code => {
-        that.log(`Program ${cmdStr} exited with code ${code}`);
+        that.log(`child process exited with code ${code} ${cmdStr}`);
         await pause(that.restartWait);
-        that.start();
+        that.start().catch(e => {
+          that.log(`child process restart error after exit: ${e.message}`);
+        });
       });
 
       if (this.resolveStartOnData && child.stdout)
@@ -149,7 +152,7 @@ export class Supervisor {
    * @see kill
    * @see start
    */
-  async restart() {
+  async restart(): Promise<void> {
     await this.kill();
     await this.start();
   }
@@ -188,6 +191,6 @@ function isExited(child: ChildProcessWithExitCode): boolean {
 /**
  * Util: timeout `ms` miliseconds
  */
-function pause(ms: number) {
+function pause(ms: number): Promise<void> {
   return new Promise(r => setTimeout(r, ms));
 }

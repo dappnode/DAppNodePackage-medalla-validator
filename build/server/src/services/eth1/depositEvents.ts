@@ -11,8 +11,10 @@ import { logs } from "../../logs";
 import memoizee from "memoizee";
 import { getDepositContractAddress } from "./getDepositContractAddress";
 
-export function listenToDepositEvents() {
-  requestPastDepositEvents();
+export function listenToDepositEvents(): void {
+  requestPastDepositEvents().catch(e => {
+    logs.error(`Error requesting past deposit events`, e);
+  });
   subscribeToEvents().catch(e => {
     logs.error(`Error subscribing to deposit events`, e);
   });
@@ -29,7 +31,7 @@ export const requestPastDepositEvents = memoizee(
 /**
  * Fetch past deposit events
  */
-async function getDeposits() {
+async function getDeposits(): Promise<void> {
   const depositInt = new ethers.utils.Interface([depositEventAbi]);
   const provider = getEth1Provider();
   const highestSeenBlock = getHighestSeenBlock();
@@ -58,7 +60,7 @@ async function getDeposits() {
 /**
  * Subcribe to deposit events, will not fetch past events
  */
-async function subscribeToEvents() {
+async function subscribeToEvents(): Promise<void> {
   const provider = getEth1Provider();
   const depositContractAddress = await getDepositContractAddress();
   const depositContract = new ethers.Contract(
@@ -66,6 +68,7 @@ async function subscribeToEvents() {
     [depositEventAbi],
     provider
   );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   depositContract.on(depositEventAbi.name, (...args: any[]) => {
     try {
       const log: ethers.providers.Log & { args: DepositEventArgs } =
@@ -82,7 +85,7 @@ async function subscribeToEvents() {
  */
 function saveDepositEvents(
   depositLogs: (ethers.providers.Log & { args: DepositEventArgs })[]
-) {
+): void {
   const depositEvents: { [pubkey: string]: DepositEvents } = {};
 
   for (const log of depositLogs) {

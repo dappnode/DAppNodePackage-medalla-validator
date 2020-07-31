@@ -13,6 +13,7 @@ export const getRpcHandler = (
     if (typeof req.body !== "object") throw new JsonRpcError("Invalid body");
 
     // Parse request
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { method, params }: { method: keyof Routes; params: any[] } =
       req.body || {};
     if (!method) throw new JsonRpcError("No method");
@@ -20,6 +21,7 @@ export const getRpcHandler = (
     if (!Array.isArray(params)) throw new JsonRpcError("Invalid params");
 
     // Get handler
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handler = methods[method] as (...params: any[]) => Promise<any>;
     if (!handler) throw new JsonRpcError(`Method not found ${method}`);
 

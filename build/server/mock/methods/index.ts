@@ -8,46 +8,46 @@ import {
 } from "../../common";
 
 // New state
-
-let validatorCount = 0;
 const validator = new Map<number, ValidatorStats>();
 
-addValidators(2);
+// Add some mock validators to start with
+addValidatorToMockSet(2);
+
+function addValidatorToMockSet(index: number): void {
+  const publicKey = "0x" + crypto.randomBytes(48).toString("hex");
+  const transactionHash = "0x" + crypto.randomBytes(32).toString("hex");
+  const blockNumber = Math.ceil(100000 * Math.random());
+
+  validator.set(index, {
+    index,
+    publicKey,
+    depositEvents: [
+      {
+        transactionHash,
+        blockNumber,
+        pubkey: publicKey,
+        withdrawal_credentials:
+          "0x00b6589882996478845d4dd2ca85a57387d6a392217808c908add83b160a0fa7",
+        amount: "0x0040597307000000",
+        signature:
+          "0x9085a737a4490a403e9d0773abcb283b39270a97df7e6fc95c10ac6e6ade3698a88d00b0712fd95b3c2c519035b829160efa34962c92d1dd440db532c5b9bdabf91c7927c3ca1350eb2eb0b52700abd2e704bb547a2dd1ecfa0368a4d72da5e6",
+        index: "0x6200000000000000"
+      }
+    ],
+    status: "DEPOSITED",
+    balance: {
+      eth: 32,
+      isExpected: true
+    }
+  });
+}
 
 // New routes
 
-export async function addValidators(count: number) {
-  const indexes: number[] = [];
-  for (let i = 0; i < count; i++) indexes.push(validatorCount++);
-
-  indexes.forEach(index => {
-    const publicKey = "0x" + crypto.randomBytes(48).toString("hex");
-    const transactionHash = "0x" + crypto.randomBytes(32).toString("hex");
-    const blockNumber = Math.ceil(100000 * Math.random());
-
-    validator.set(index, {
-      index,
-      publicKey,
-      depositEvents: [
-        {
-          transactionHash,
-          blockNumber,
-          pubkey: publicKey,
-          withdrawal_credentials:
-            "0x00b6589882996478845d4dd2ca85a57387d6a392217808c908add83b160a0fa7",
-          amount: "0x0040597307000000",
-          signature:
-            "0x9085a737a4490a403e9d0773abcb283b39270a97df7e6fc95c10ac6e6ade3698a88d00b0712fd95b3c2c519035b829160efa34962c92d1dd440db532c5b9bdabf91c7927c3ca1350eb2eb0b52700abd2e704bb547a2dd1ecfa0368a4d72da5e6",
-          index: "0x6200000000000000"
-        }
-      ],
-      status: "DEPOSITED",
-      balance: {
-        eth: 32,
-        isExpected: true
-      }
-    });
-  });
+export async function addValidators(count: number): Promise<void> {
+  for (let i = 0; i < count; i++) {
+    addValidatorToMockSet(validator.size + 1);
+  }
 }
 
 export async function getValidators(): Promise<ValidatorStats[]> {
@@ -86,6 +86,8 @@ export async function nodeStats(): Promise<NodeStats> {
 export async function importValidators(
   validators: ValidatorFiles[]
 ): Promise<void> {
+  await waitMs(5000);
+  // eslint-disable-next-line no-console
   console.log(`Importing validator files`, validators);
 }
 
@@ -100,6 +102,7 @@ export async function switchValidatorClient(
   nextClient: Eth2ClientName
 ): Promise<void> {
   await waitMs(10000);
+  // eslint-disable-next-line no-console
   console.log(`Switching nextClient ${nextClient}`);
 }
 

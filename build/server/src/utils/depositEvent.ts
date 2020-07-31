@@ -31,7 +31,7 @@ function parseDepositAmount(amount: string): number {
   );
 }
 
-function changeEndianness(string: string) {
+function changeEndianness(string: string): string {
   const result = [];
   let len = string.length - 2;
   while (len >= 0) {

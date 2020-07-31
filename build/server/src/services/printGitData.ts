@@ -2,7 +2,7 @@ import fs from "fs";
 import { gitDataPath } from "../params";
 import { logs } from "../logs";
 
-export function printGitData() {
+export function printGitData(): void {
   try {
     if (!gitDataPath) return logs.warn("gitDataPath not specified");
     const gitData = fs.readFileSync(gitDataPath, "utf8");

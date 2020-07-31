@@ -41,6 +41,7 @@ interface DbSlice<T> {
 /**
  * Curried function that bind a DB to a connector
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type DbSliceBuilder<T> = (db: DbSlice<any>) => T;
 
 /**
@@ -61,7 +62,7 @@ export function collection<T>(
   return function collectionBuilder(
     db: DbSlice<{ [id: string]: T }>
   ): CollectionConnector<T> {
-    const getState = () => db.get() || {};
+    const getState = (): { [id: string]: T } => db.get() || {};
     const get = (id: CollectionIndex): T | undefined => getState()[id];
     const set = (item: T): void => {
       db.set({ ...getState(), [selectId(item)]: item });
@@ -71,7 +72,7 @@ export function collection<T>(
       set,
       merge: (item: T): void => set(merge(get(selectId(item)) || {}, item)),
       getAll: (): T[] => Object.values(getState()),
-      mergeAll: (items: { [id: string]: T }) =>
+      mergeAll: (items: { [id: string]: T }): void =>
         db.set(merge(getState(), items)),
       clearAll: (): void => db.set({})
     };
@@ -106,6 +107,7 @@ export function regular<T = undefined>(
  * @param db
  * @param sliceBuilders
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function createDb<SBs extends { [K: string]: DbSliceBuilder<any> }>(
   db: Db,
   sliceBuilders: SBs

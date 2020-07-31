@@ -12,7 +12,8 @@ const requestApp = request(app);
  * @param code
  * @param body
  */
-function expect(res: request.Response, code: number, body: any) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function expect(res: request.Response, code: number, body: any): void {
   assert.deepEqual(
     { code: res.status, body: res.body },
     { code: code, body: body }

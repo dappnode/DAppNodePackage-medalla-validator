@@ -11,15 +11,15 @@ export function base64ToHex(s: string): string {
   return "0x" + Buffer.from(s, "base64").toString("hex");
 }
 
-export async function fetchGrpc(apiPath: string) {
-  return fetchJson(urlJoin(beaconGrpcGatewayUrl, apiPath));
+export async function fetchGrpc<R>(apiPath: string): Promise<R> {
+  return fetchJson<R>(urlJoin(beaconGrpcGatewayUrl, apiPath));
 }
 
 export function qsPubKeys(pubKeys: string[]): string {
   return querystring.stringify({ publicKeys: pubKeys.map(hexToBase64) });
 }
 
-async function fetchJson(url: string) {
+async function fetchJson<R>(url: string): Promise<R> {
   const res = await fetch(url);
   const body = await res.text();
   if (!res.ok) throw Error(`${res.status} ${res.statusText}\n${body}`);
