@@ -1,10 +1,10 @@
 import { Supervisor } from "../../utils/Supervisor";
 import {
-  keymanagerFile,
   verbosity,
   logFile,
   graffiti,
-  extraOpts
+  extraOpts,
+  PRYSM_WALLET_DIR
 } from "../../params";
 import { getLogger } from "../../logs";
 import { server } from "../../db";
@@ -17,8 +17,7 @@ export const prysmBinary = new Supervisor(
       medalla: true,
       "monitoring-host": "0.0.0.0",
       "beacon-rpc-provider": getBeaconProviderUrl(server.beaconProvider.get()),
-      keymanager: "wallet",
-      keymanageropts: keymanagerFile,
+      "wallet-dir": PRYSM_WALLET_DIR,
       verbosity: verbosity,
       "log-file": logFile,
       ...(graffiti ? { graffiti } : {}), // Ignore if empty

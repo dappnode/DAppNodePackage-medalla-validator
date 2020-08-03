@@ -2,7 +2,6 @@ export const dataPath = process.env.DATA_PATH || "data";
 export const logFile = "/var/log/validator.log";
 export const extraOpts = process.env.EXTRA_OPTS || "";
 export const verbosity = process.env.VERBOSITY || "info";
-export const keymanagerFile = dataPath + "/keymanager.json";
 export const eth1Web3Url =
   process.env.WEB3PROVIDER || "https://goerli.dappnode.net";
 export const graffiti = process.env.GRAFFITI || "";
