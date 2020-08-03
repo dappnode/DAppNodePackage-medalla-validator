@@ -139,7 +139,8 @@ export class Supervisor<T extends GenericOptions = {}> {
       this.child = child;
 
       // Pipe output
-      const onData = (data: Buffer): void => this.logger.info(data.toString());
+      const onData = (data: Buffer): void =>
+        this.logger.info(data.toString().trim());
       if (child.stdout) child.stdout.on("data", onData.bind(this));
       if (child.stderr) child.stderr.on("data", onData.bind(this));
 
