@@ -90,8 +90,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ADD build/ssl /app/ssl
 COPY --from=node:10.20.1-buster-slim /usr/local/bin/node /usr/local/bin
 # Get Lighthouse binary
-COPY --from=sigp/lighthouse /usr/local/bin/lighthouse /usr/local/bin/lighthouse
-COPY --from=sigp/lighthouse /usr/local/bin/lcli /usr/local/bin/lcli
+COPY --from=sigp/lighthouse:latest /usr/local/bin/lighthouse /usr/local/bin/lighthouse
+COPY --from=sigp/lighthouse:latest /usr/local/bin/lcli /usr/local/bin/lcli
 # Get Prysm binary
 COPY --from=ethdo-binary /go/bin/ethdo /usr/local/bin/ 
 COPY --from=validator-binary /usr/local/bin/validator /usr/local/bin/
