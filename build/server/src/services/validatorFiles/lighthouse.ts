@@ -8,6 +8,7 @@ import { ValidatorFiles, Eth2Keystore } from "../../../common";
 const rimrafAsync = promisify(rimraf);
 
 interface ValidatorPaths {
+  dir: string;
   keystore: string;
   secret: string;
 }
@@ -85,8 +86,10 @@ export class LighthouseValidatorFileManager extends BaseFileManager
    */
   async write(validatorsFiles: ValidatorFiles[]): Promise<void> {
     return this.ifNotLocked(async () => {
+      await fs.promises.mkdir(this.secretsDir, { recursive: true });
       for (const { pubkey, keystore, passphrase } of validatorsFiles) {
         const paths = this.getPaths({ pubkey });
+        await fs.promises.mkdir(paths.dir, { recursive: true });
         await fs.promises.writeFile(paths.keystore, JSON.stringify(keystore));
         await fs.promises.writeFile(paths.secret, passphrase);
       }
@@ -105,6 +108,7 @@ export class LighthouseValidatorFileManager extends BaseFileManager
 
   private getPaths({ pubkey }: { pubkey: string }): ValidatorPaths {
     return {
+      dir: path.join(this.keystoresDir, pubkey),
       keystore: path.join(this.keystoresDir, pubkey, "voting-keystore.json"),
       secret: path.join(this.secretsDir, pubkey)
     };
