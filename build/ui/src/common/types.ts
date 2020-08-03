@@ -1,9 +1,10 @@
 // Server types
 
-export type Eth2ClientName = "lighthouse" | "prysm";
+export type ValidatorClientName = "lighthouse" | "prysm";
+export type BeaconProvider = "lighthouse" | "prysm" | string;
 
 export interface ValidatorSettings {
-  validatorClient: Eth2ClientName;
+  validatorClient: ValidatorClientName;
   beaconProvider: "lighthouse" | "prysm" | string;
 }
 

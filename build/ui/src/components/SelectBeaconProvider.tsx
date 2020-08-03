@@ -7,26 +7,21 @@ import {
   Button,
   TextField,
 } from "@material-ui/core";
+import { api } from "api/rpc";
 import { RequestStatus } from "types";
 import { ValidatorSettings } from "common";
 import { ErrorView } from "./ErrorView";
 import { LoadingView } from "./LoadingView";
 
-type BeaconProvider = "lighthouse" | "prysm" | "custom";
+type BeaconProviderSelect = "lighthouse" | "prysm" | "custom";
 
-const providerSelectOptions: { value: BeaconProvider; label: string }[] = [
-  {
-    value: "lighthouse",
-    label: "Local DAppNode Lighthouse",
-  },
-  {
-    value: "prysm",
-    label: "Local DAppNode Prysm",
-  },
-  {
-    value: "custom",
-    label: "Custom",
-  },
+const providerSelectOptions: {
+  value: BeaconProviderSelect;
+  label: string;
+}[] = [
+  { value: "lighthouse", label: "Local DAppNode Lighthouse" },
+  { value: "prysm", label: "Local DAppNode Prysm" },
+  { value: "custom", label: "Custom" },
 ];
 
 const useStyles = makeStyles((theme) => ({
@@ -49,10 +44,12 @@ const useStyles = makeStyles((theme) => ({
 
 export function SelectBeaconProvider({
   validatorSettings,
+  revalidateSettings,
 }: {
   validatorSettings: ValidatorSettings;
+  revalidateSettings: () => void;
 }) {
-  const [providerSelect, setProviderSelect] = useState<BeaconProvider>(
+  const [providerSelect, setProviderSelect] = useState<BeaconProviderSelect>(
     providerSelectOptions[0].value
   );
   const [providerInput, setProviderInput] = useState<string>("");
@@ -79,7 +76,10 @@ export function SelectBeaconProvider({
     if (!hasChanged) return;
     try {
       setReqStatus({ loading: true });
-      throw Error("Not implemented");
+      await api.setBeaconProvider(
+        providerSelect === "custom" ? providerInput : providerSelect
+      );
+      revalidateSettings();
       setReqStatus({ result: "" });
     } catch (e) {
       console.log("Error on switchValidatorClient", e);
@@ -94,7 +94,9 @@ export function SelectBeaconProvider({
       <FormControl variant="outlined" className={classes.selectFormControl}>
         <Select
           value={providerSelect}
-          onChange={(e) => setProviderSelect(e.target.value as BeaconProvider)}
+          onChange={(e) =>
+            setProviderSelect(e.target.value as BeaconProviderSelect)
+          }
         >
           {providerSelectOptions.map(({ value, label }) => (
             <MenuItem value={value}>{label}</MenuItem>
@@ -128,7 +130,7 @@ export function SelectBeaconProvider({
           variant="contained"
           color="primary"
           onClick={changeBeaconProvider}
-          disabled={!hasChanged}
+          disabled={!hasChanged || reqStatus.loading}
         >
           Apply changes
         </Button>

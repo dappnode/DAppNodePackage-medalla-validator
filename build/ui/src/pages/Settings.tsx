@@ -32,7 +32,10 @@ export function Settings() {
               Beacon node provider that all validators connect to, to fetch
               duties and publish attestations and blocks
             </Typography>
-            <SelectBeaconProvider validatorSettings={validatorSettings.data} />
+            <SelectBeaconProvider
+              validatorSettings={validatorSettings.data}
+              revalidateSettings={validatorSettings.revalidate}
+            />
           </LayoutItem>
 
           <LayoutItem>
@@ -40,7 +43,10 @@ export function Settings() {
             <Typography className={classes.selectDescription}>
               Validator client used to validate with all provided keystores
             </Typography>
-            <SelectValidatorClient validatorSettings={validatorSettings.data} />
+            <SelectValidatorClient
+              validatorSettings={validatorSettings.data}
+              revalidateSettings={validatorSettings.revalidate}
+            />
           </LayoutItem>
         </>
       ) : validatorSettings.error ? (

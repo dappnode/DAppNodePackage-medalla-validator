@@ -1,7 +1,5 @@
-import dargs from "dargs";
 import { Supervisor } from "../../utils/Supervisor";
 import {
-  beaconRpcProvider,
   keymanagerFile,
   verbosity,
   logFile,
@@ -9,21 +7,28 @@ import {
   extraOpts
 } from "../../params";
 import { logs } from "../../logs";
+import { server } from "../../db";
+import { getBeaconProviderUrl } from "../../utils/beaconProvider";
 
 export const prysmBinary = new Supervisor(
-  "validator",
-  dargs({
-    // "tls-cert": tlsCert,
-    altona: true,
-    "monitoring-host": "0.0.0.0",
-    "beacon-rpc-provider": beaconRpcProvider,
-    keymanager: "wallet",
-    keymanageropts: keymanagerFile,
-    verbosity: verbosity,
-    "log-file": logFile,
-    ...(graffiti ? { graffiti } : {}), // Ignore if empty
-    _: [extraOpts]
-  }),
+  {
+    command: "validator",
+    options: {
+      altona: true,
+      "monitoring-host": "0.0.0.0",
+      "beacon-rpc-provider": getBeaconProviderUrl(server.beaconProvider.get()),
+      keymanager: "wallet",
+      keymanageropts: keymanagerFile,
+      verbosity: verbosity,
+      "log-file": logFile,
+      ...(graffiti ? { graffiti } : {}), // Ignore if empty
+      // dargs extra options
+      _: [extraOpts]
+    },
+    dynamicOptions: () => ({
+      "beacon-rpc-provider": getBeaconProviderUrl(server.beaconProvider.get())
+    })
+  },
   {
     timeoutKill: 10 * 1000,
     restartWait: 1000,

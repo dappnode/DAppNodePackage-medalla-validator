@@ -4,7 +4,7 @@ import {
   NodeStats,
   ValidatorFiles,
   ValidatorSettings,
-  Eth2ClientName
+  ValidatorClientName
 } from "../../common";
 
 // New state
@@ -99,7 +99,7 @@ export async function getValidatorSettings(): Promise<ValidatorSettings> {
 }
 
 export async function switchValidatorClient(
-  nextClient: Eth2ClientName
+  nextClient: ValidatorClientName
 ): Promise<void> {
   await waitMs(10000);
   // eslint-disable-next-line no-console

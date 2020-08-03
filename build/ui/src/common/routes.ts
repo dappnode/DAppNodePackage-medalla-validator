@@ -2,8 +2,9 @@ import {
   ValidatorStats,
   NodeStats,
   ValidatorFiles,
-  Eth2ClientName,
+  ValidatorClientName,
   ValidatorSettings,
+  BeaconProvider,
 } from "./types";
 
 export interface Routes {
@@ -27,7 +28,11 @@ export interface Routes {
   /**
    * Switch validator client. Kills current one and starts next after exit
    */
-  switchValidatorClient: (nextClient: Eth2ClientName) => Promise<void>;
+  switchValidatorClient: (newClient: ValidatorClientName) => Promise<void>;
+  /**
+   * Set the beaconProvider (name or URL) setting
+   */
+  setBeaconProvider: (newBeaconProvider: BeaconProvider) => Promise<void>;
 }
 
 export const routesData: { [P in keyof Routes]: {} } = {
@@ -36,6 +41,7 @@ export const routesData: { [P in keyof Routes]: {} } = {
   importValidators: {},
   getValidatorSettings: {},
   switchValidatorClient: {},
+  setBeaconProvider: {},
 };
 
 // DO NOT REMOVE

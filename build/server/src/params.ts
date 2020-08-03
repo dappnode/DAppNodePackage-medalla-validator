@@ -3,8 +3,6 @@ export const logFile = "/var/log/validator.log";
 export const extraOpts = process.env.EXTRA_OPTS || "";
 export const verbosity = process.env.VERBOSITY || "info";
 export const keymanagerFile = dataPath + "/keymanager.json";
-export const beaconRpcProvider =
-  process.env.BEACON_GRPC_URL || "prysm-beacon-chain.public.dappnode:4000";
 export const eth1Web3Url =
   process.env.WEB3PROVIDER || "https://goerli.dappnode.net";
 export const graffiti = process.env.GRAFFITI || "";

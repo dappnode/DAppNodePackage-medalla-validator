@@ -11,19 +11,14 @@ import { api } from "api/rpc";
 import { RequestStatus } from "types";
 import { LoadingView } from "./LoadingView";
 import { ErrorView } from "./ErrorView";
-import { ValidatorSettings } from "common";
+import { ValidatorSettings, ValidatorClientName } from "common";
 
-type ValidatorClient = "lighthouse" | "prysm";
-
-const validatorClientOptions: { value: ValidatorClient; label: string }[] = [
-  {
-    value: "lighthouse",
-    label: "Lighthouse",
-  },
-  {
-    value: "prysm",
-    label: "Prysm",
-  },
+const validatorClientOptions: {
+  value: ValidatorClientName;
+  label: string;
+}[] = [
+  { value: "lighthouse", label: "Lighthouse" },
+  { value: "prysm", label: "Prysm" },
 ];
 
 const useStyles = makeStyles((theme) => ({
@@ -37,10 +32,12 @@ const useStyles = makeStyles((theme) => ({
 
 export function SelectValidatorClient({
   validatorSettings,
+  revalidateSettings,
 }: {
   validatorSettings: ValidatorSettings;
+  revalidateSettings: () => void;
 }) {
-  const [validatorClient, setValidatorClient] = useState<ValidatorClient>(
+  const [validatorClient, setValidatorClient] = useState<ValidatorClientName>(
     validatorClientOptions[0].value
   );
   const [reqStatus, setReqStatus] = useState<RequestStatus>({});
@@ -53,6 +50,7 @@ export function SelectValidatorClient({
     try {
       setReqStatus({ loading: true });
       await api.switchValidatorClient(validatorClient);
+      revalidateSettings();
       setReqStatus({ result: "" });
     } catch (e) {
       console.log("Error on switchValidatorClient", e);
@@ -68,7 +66,7 @@ export function SelectValidatorClient({
         <Select
           value={validatorClient}
           onChange={(e) =>
-            setValidatorClient(e.target.value as ValidatorClient)
+            setValidatorClient(e.target.value as ValidatorClientName)
           }
         >
           {validatorClientOptions.map(({ value, label }) => (
@@ -93,7 +91,10 @@ export function SelectValidatorClient({
           variant="contained"
           color="primary"
           onClick={switchValidatorClient}
-          disabled={validatorSettings.validatorClient === validatorClient}
+          disabled={
+            validatorSettings.validatorClient === validatorClient ||
+            reqStatus.loading
+          }
         >
           Apply changes
         </Button>

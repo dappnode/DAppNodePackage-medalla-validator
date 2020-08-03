@@ -1,6 +1,6 @@
 import { server } from "../../db";
+import { ValidatorClientName } from "../../../common";
 import { Supervisor } from "../../utils/Supervisor";
-import { Eth2ClientName } from "../../../common";
 import { lighthouseBinary } from "./lighthouse";
 import { prysmBinary } from "./prysm";
 
@@ -17,7 +17,7 @@ export function getCurrentValidatorBinary(): Supervisor {
   return getValidatorBinary(client);
 }
 
-export function getValidatorBinary(client: Eth2ClientName): Supervisor {
+export function getValidatorBinary(client: ValidatorClientName): Supervisor {
   switch (client) {
     case "lighthouse":
       return lighthouseBinary;

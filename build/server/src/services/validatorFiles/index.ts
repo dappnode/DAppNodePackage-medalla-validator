@@ -1,7 +1,7 @@
 import { server } from "../../db";
 import { ValidatorFileManager } from "./abstractManager";
 import { LighthouseValidatorFileManager } from "./lighthouse";
-import { ValidatorFiles, Eth2ClientName } from "../../../common";
+import { ValidatorFiles, ValidatorClientName } from "../../../common";
 import { LIGHTHOUSE_KEYSTORES_DIR, LIGHTHOUSE_SECRETS_DIR } from "../../params";
 
 // Create unique instances to make sure files are not being written more than once
@@ -35,7 +35,7 @@ export function getCurrentValidatorFileManager(): ValidatorFileManager {
  * Return a client specific validator file manager
  */
 export function getValidatorFileManager(
-  client: Eth2ClientName
+  client: ValidatorClientName
 ): ValidatorFileManager {
   switch (client) {
     case "lighthouse":

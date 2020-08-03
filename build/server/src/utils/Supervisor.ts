@@ -1,4 +1,5 @@
 import { spawn, ChildProcess } from "child_process";
+import dargs from "dargs";
 import { logs } from "../logs";
 
 type ChildProcessWithExitCode = ChildProcess & {
@@ -9,6 +10,17 @@ type ChildProcessWithExitCode = ChildProcess & {
    */
   exitCode?: number | null;
 };
+
+type GenericOptions = {
+  [key: string]: string | number | boolean | readonly string[];
+};
+
+export interface CommandData<T extends GenericOptions = {}> {
+  command: string;
+  args?: string[];
+  options?: T;
+  dynamicOptions?: () => Partial<T>;
+}
 
 const signalsToPass: NodeJS.Signals[] = [
   "SIGTERM",
@@ -27,10 +39,9 @@ class TimeoutError extends Error {}
  * @param args
  * @param options
  */
-export class Supervisor {
+export class Supervisor<T extends GenericOptions = {}> {
   // Settings
-  private command: string;
-  private args: string[];
+  commandData: CommandData<T>;
   private timeoutKill: number = 10 * 1000;
   private restartWait = 1000;
   private resolveStartOnData = false;
@@ -41,8 +52,7 @@ export class Supervisor {
   private status: "killing" | "starting" | null = null;
 
   constructor(
-    command: string,
-    args: string[],
+    commandData: CommandData<T>,
     options: {
       timeoutKill?: number; // Timeout to kill process with "SIGKILL" after "SIGTERM"
       restartWait?: number; // Wait between restarts
@@ -50,8 +60,7 @@ export class Supervisor {
       log?: (message: string) => void;
     } = {}
   ) {
-    this.command = command;
-    this.args = args;
+    this.commandData = commandData;
     if (options) {
       if (options.timeoutKill) this.timeoutKill = options.timeoutKill;
       if (options.restartWait) this.restartWait = options.restartWait;
@@ -115,9 +124,9 @@ export class Supervisor {
     try {
       if (this.status !== null) throw Error(`status = ${this.status}`);
       this.status = "starting";
-
-      const child = spawn(this.command, this.args);
-      const cmdStr = `'${this.command} ${this.args.join(" ")}'`;
+      const { command, args } = this.buildCommand();
+      const child = spawn(command, args);
+      const cmdStr = `'${command} ${args.join(" ")}'`;
       this.log(`Starting child process with ${cmdStr} ${child.pid}`);
       this.child = child;
 
@@ -176,6 +185,23 @@ export class Supervisor {
         resolve(code);
       });
     });
+  }
+
+  /**
+   * Constructs a command for spawn() from this.commandData
+   */
+  private buildCommand(): { command: string; args: string[] } {
+    const args = this.commandData.args || [];
+    const options = {
+      ...(this.commandData.options || {}),
+      ...(this.commandData.dynamicOptions
+        ? this.commandData.dynamicOptions()
+        : {})
+    };
+    return {
+      command: this.commandData.command,
+      args: [...args, ...dargs(options)]
+    };
   }
 }
 

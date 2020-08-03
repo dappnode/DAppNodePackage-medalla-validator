@@ -1,4 +1,4 @@
-import { Eth2ClientName } from "../../common";
+import { ValidatorClientName } from "../../common";
 import { getValidatorBinary } from "../services/validatorBinary";
 import { getValidatorFileManager } from "../services/validatorFiles";
 import { server } from "../db";
@@ -9,7 +9,7 @@ import { logs } from "../logs";
  * Then, it start the `nextClient` binary resolving when data is emitted
  */
 export async function switchValidatorClient(
-  nextClient: Eth2ClientName
+  nextClient: ValidatorClientName
 ): Promise<void> {
   const prevClient = server.validatorClient.get();
   if (prevClient === nextClient) return;
@@ -26,6 +26,7 @@ export async function switchValidatorClient(
   const validatorFiles = await prevClientFileManager.read();
   try {
     await nextClientFileManager.write(validatorFiles);
+    await prevClientFileManager.delete();
   } catch (e) {
     // If there is an error writing files to the next client, write to previous
     try {
