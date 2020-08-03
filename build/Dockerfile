@@ -52,9 +52,9 @@ RUN GO111MODULE=on go get github.com/wealdtech/ethdo
 ################
 FROM debian:buster-slim as validator-binary
 
-ARG VERSION
+ARG UPSTREAM_VERSION
 ENV DOWNLOAD_URL https://github.com/prysmaticlabs/prysm/releases/download
-ENV BINARY_URL $DOWNLOAD_URL/$VERSION/validator-$VERSION-linux-amd64
+ENV BINARY_URL $DOWNLOAD_URL/$UPSTREAM_VERSION/validator-$UPSTREAM_VERSION-linux-amd64
 
 RUN DEBIAN_FRONTEND=noninteractive \
   apt update && apt install --assume-yes --no-install-recommends wget ca-certificates && \
