@@ -47,11 +47,16 @@ export class LighthouseValidatorFileManager extends BaseFileManager
   }
 
   hasKeys(): boolean {
-    return fs.readdirSync(this.keystoresDir).length > 0;
+    return this.readPubkeys().length > 0;
   }
 
   readPubkeys(): string[] {
-    return fs.readdirSync(this.keystoresDir);
+    try {
+      return fs.readdirSync(this.keystoresDir);
+    } catch (e) {
+      if (e.code === "ENOENT") return [];
+      else throw e;
+    }
   }
 
   /**
@@ -60,7 +65,7 @@ export class LighthouseValidatorFileManager extends BaseFileManager
   async read(): Promise<ValidatorFiles[]> {
     return this.ifNotLocked(async () => {
       const validatorsFiles: ValidatorFiles[] = [];
-      for (const validatorDirName of fs.readdirSync(this.keystoresDir)) {
+      for (const validatorDirName of this.readPubkeys()) {
         const paths = this.getPaths({ pubkey: validatorDirName });
         const keystoreStr = await fs.promises.readFile(paths.keystore, "utf8");
         const keystore: Eth2Keystore = JSON.parse(keystoreStr);
