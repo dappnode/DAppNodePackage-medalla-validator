@@ -25,15 +25,18 @@ export async function switchValidatorClient(
 
   const validatorFiles = await prevClientFileManager.read();
   try {
+    server.validatorClient.set(nextClient);
     await nextClientFileManager.write(validatorFiles);
     await prevClientFileManager.delete();
   } catch (e) {
     // If there is an error writing files to the next client, write to previous
     try {
+      server.validatorClient.set(prevClient);
       await nextClientFileManager.delete();
       await prevClientFileManager.write(validatorFiles);
+      await prevClientBinary.start();
     } catch (e) {
-      logs.error(`Error rolling back validator files mv`, e);
+      logs.error(`Error rolling back validator switch`, e);
     }
     throw e;
   }
