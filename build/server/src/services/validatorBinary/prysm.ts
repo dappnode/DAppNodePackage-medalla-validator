@@ -14,7 +14,7 @@ export const prysmBinary = new Supervisor(
   {
     command: "validator",
     options: {
-      altona: true,
+      medalla: true,
       "monitoring-host": "0.0.0.0",
       "beacon-rpc-provider": getBeaconProviderUrl(server.beaconProvider.get()),
       keymanager: "wallet",

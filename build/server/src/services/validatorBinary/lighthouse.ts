@@ -9,7 +9,6 @@ export const lighthouseBinary = new Supervisor(
     command: "lighthouse",
     args: ["validator_client"],
     options: {
-      altona: true,
       "auto-register": true,
       "strict-lockfiles": true,
       datadir: LIGHTHOUSE_DATA_DIR,
