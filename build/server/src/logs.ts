@@ -110,8 +110,8 @@ export function getLocation(error: Error, stackCount: number): string | null {
 
   const fileName = firstOutsideRow.getFileName();
   const lineNumber = firstOutsideRow.getLineNumber();
-  let relativePath = fileName.includes("webpack:")
-    ? fileName.replace("/usr/src/app/webpack:/src/", "")
+  let relativePath = fileName.includes("webpack:/src/")
+    ? fileName.split("webpack:/src/")[1] || fileName
     : path.relative(rootDir, fileName);
 
   // Don't show unnecessary file info
