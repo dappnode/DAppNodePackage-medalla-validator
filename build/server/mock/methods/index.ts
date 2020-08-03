@@ -4,21 +4,28 @@ import {
   NodeStats,
   ValidatorFiles,
   ValidatorSettings,
-  ValidatorClientName
+  ValidatorClientName,
+  BeaconProvider
 } from "../../common";
 
 // New state
-const validator = new Map<number, ValidatorStats>();
+const validators = new Map<number, ValidatorStats>();
+const settings: ValidatorSettings = {
+  validatorClient: "lighthouse",
+  beaconProvider: "lighthouse"
+};
 
 // Add some mock validators to start with
-addValidatorToMockSet(2);
+addValidatorToMockSet();
+addValidatorToMockSet();
 
-function addValidatorToMockSet(index: number): void {
+function addValidatorToMockSet(): void {
+  const index = validators.size;
   const publicKey = "0x" + crypto.randomBytes(48).toString("hex");
   const transactionHash = "0x" + crypto.randomBytes(32).toString("hex");
   const blockNumber = Math.ceil(100000 * Math.random());
 
-  validator.set(index, {
+  validators.set(index, {
     index,
     publicKey,
     depositEvents: [
@@ -46,12 +53,12 @@ function addValidatorToMockSet(index: number): void {
 
 export async function addValidators(count: number): Promise<void> {
   for (let i = 0; i < count; i++) {
-    addValidatorToMockSet(validator.size + 1);
+    addValidatorToMockSet();
   }
 }
 
 export async function getValidators(): Promise<ValidatorStats[]> {
-  return Array.from(validator.values());
+  return Array.from(validators.values());
 }
 
 // Node stats
@@ -92,18 +99,22 @@ export async function importValidators(
 }
 
 export async function getValidatorSettings(): Promise<ValidatorSettings> {
-  return {
-    validatorClient: "lighthouse",
-    beaconProvider: "lighthouse"
-  };
+  await waitMs(500);
+  return settings;
 }
 
 export async function switchValidatorClient(
   nextClient: ValidatorClientName
 ): Promise<void> {
   await waitMs(10000);
-  // eslint-disable-next-line no-console
-  console.log(`Switching nextClient ${nextClient}`);
+  settings.validatorClient = nextClient;
+}
+
+export async function setBeaconProvider(
+  beaconProvider: BeaconProvider
+): Promise<void> {
+  await waitMs(10000);
+  settings.beaconProvider = beaconProvider;
 }
 
 // Helpers
