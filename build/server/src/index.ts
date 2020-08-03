@@ -3,7 +3,10 @@ import app from "./app";
 import { listenToDepositEvents } from "./services/eth1";
 import { printGitData } from "./services/printGitData";
 import { startValidatorBinary } from "./services/validatorBinary";
-import { thereAreValidatorFiles } from "./services/validatorFiles";
+import {
+  thereAreValidatorFiles,
+  initializeValidatorDirectories
+} from "./services/validatorFiles";
 
 // Connect to a Eth1.x node
 listenToDepositEvents();
@@ -11,6 +14,7 @@ listenToDepositEvents();
 printGitData();
 
 // Start validator binary if ready
+initializeValidatorDirectories();
 if (thereAreValidatorFiles())
   startValidatorBinary().then(
     () => logs.info(`Started validator client`),

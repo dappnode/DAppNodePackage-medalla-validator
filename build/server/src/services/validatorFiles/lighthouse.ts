@@ -47,6 +47,11 @@ export class LighthouseValidatorFileManager extends BaseFileManager
     this.secretsDir = paths.secretsDir;
   }
 
+  init(): void {
+    fs.mkdirSync(this.keystoresDir, { recursive: true });
+    fs.mkdirSync(this.secretsDir, { recursive: true });
+  }
+
   hasKeys(): boolean {
     return this.readPubkeys().length > 0;
   }

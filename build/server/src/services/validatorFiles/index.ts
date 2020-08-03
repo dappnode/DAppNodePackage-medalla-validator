@@ -10,6 +10,10 @@ const lighthouseFileManager = new LighthouseValidatorFileManager({
   secretsDir: LIGHTHOUSE_SECRETS_DIR
 });
 
+export async function initializeValidatorDirectories() {
+  lighthouseFileManager.init();
+}
+
 export async function writeValidatorFiles(
   validatorsFiles: ValidatorFiles[]
 ): Promise<void> {
