@@ -15,6 +15,12 @@ export const LIGHTHOUSE_DATA_DIR = "/lighthouse";
 export const LIGHTHOUSE_KEYSTORES_DIR = "/lighthouse/keystores";
 export const LIGHTHOUSE_SECRETS_DIR = "/lighthouse/secrets";
 
+/**
+ * Prysm config and paths
+ */
+export const PRYSM_WALLET_DIR = "/prysm/.eth2validators/primary";
+export const PRYSM_SECRETS_DIR = "/prysm/.eth2validators/secrets";
+
 // Login password
 export const adminPassword = process.env.PASSWORD;
 export const disablePassword = process.env.DISABLE_PASSWORD;

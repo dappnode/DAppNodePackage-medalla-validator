@@ -6,6 +6,7 @@ import { ValidatorFileManager, BaseFileManager } from "./abstractManager";
 import { ValidatorFiles, Eth2Keystore } from "../../../common";
 
 const rimrafAsync = promisify(rimraf);
+const keymanageroptsFile = "keymanageropts.json";
 
 interface ValidatorPaths {
   dir: string;
@@ -14,37 +15,39 @@ interface ValidatorPaths {
 }
 
 /**
- * Lighthouse account paths
+ * Prysm account paths
  *
  * ```bash
- * $accountsRootDir
- * ├── secrets
- * |   ├── 0x8e41b969493454318c27ec6fac90645769331c07ebc8db5037...
- * |   └── 0xa329f988c16993768299643d918a2694892c012765d896a16f...
- * ├── keystores
- * |   ├── 0x8e41b969493454318c27ec6fac90645769331c07ebc8db5037...
- * |   |   ├── eth1-deposit-data.rlp
- * |   |   ├── eth1-deposit-gwei.txt
- * |   |   └── voting-keystore.json
- * |   └── 0xa329f988c16993768299643d918a2694892c012765d896a16f...
- * |       ├── eth1-deposit-data.rlp
- * |       ├── eth1-deposit-gwei.txt
- * |       └── voting-keystore.json
- * ├── wallet1.pass (arbitrary path)
- * └── wallets
- *     └── 96ae14b4-46d7-42dc-afd8-c782e9af87ef (dir)
- *         └── 96ae14b4-46d7-42dc-afd8-c782e9af87ef (json)
+ * $walletDir
+ * └── direct
+ *     ├── a9ca0e4fd5fbe6d097d2baced859b5fce1cbc4d2859606a5bcdbb4edf6a48a7c17e087b5ab0888e2fd0f4e4424fa77a3
+ *     |   ├── deposit_data.ssz
+ *     |   └── keystore-1596491667.json
+ *     └── keymanageropts.json
+ *
+ * $secretsDir
+ * └── a9ca0e4fd5fbe6d097d2baced859b5fce1cbc4d2859606a5bcdbb4edf6a48a7c17e087b5ab0888e2fd0f4e4424fa77a3.pass
+ * ```
+ *
+ * Where `$walletDir/direct/keymanageropts.json`
+ * ```json
+ * {
+ *   "direct_eip_version": "EIP-2335",
+ *   "direct_accounts_passwords_directory": absolutePath($secretsDir)
+ * }
  * ```
  */
-export class LighthouseValidatorFileManager extends BaseFileManager
+export class PrysmValidatorFileManager extends BaseFileManager
   implements ValidatorFileManager {
-  keystoresDir: string;
+  walletDir: string;
   secretsDir: string;
+  keystoresDir: string;
 
-  constructor(paths: { keystoresDir: string; secretsDir: string }) {
+  constructor(paths: { walletDir: string; secretsDir: string }) {
     super();
-    this.keystoresDir = paths.keystoresDir;
+    this.walletDir = paths.walletDir;
     this.secretsDir = paths.secretsDir;
+    this.keystoresDir = path.join(paths.walletDir, "direct");
   }
 
   init(): void {
@@ -58,7 +61,9 @@ export class LighthouseValidatorFileManager extends BaseFileManager
 
   readPubkeys(): string[] {
     try {
-      return fs.readdirSync(this.keystoresDir);
+      return fs
+        .readdirSync(this.keystoresDir)
+        .filter(filename => filename !== keymanageroptsFile);
     } catch (e) {
       if (e.code === "ENOENT") return [];
       else throw e;
@@ -91,6 +96,16 @@ export class LighthouseValidatorFileManager extends BaseFileManager
    */
   async write(validatorsFiles: ValidatorFiles[]): Promise<void> {
     return this.ifNotLocked(async () => {
+      fs.mkdirSync(this.keystoresDir, { recursive: true });
+      const keymgroptsPath = path.join(this.keystoresDir, keymanageroptsFile);
+      if (!fs.existsSync(keymgroptsPath)) {
+        const keymgropts = {
+          direct_eip_version: "EIP-2335",
+          direct_accounts_passwords_directory: path.resolve(this.secretsDir)
+        };
+        fs.writeFileSync(keymgroptsPath, JSON.stringify(keymgropts, null, 2));
+      }
+
       await fs.promises.mkdir(this.secretsDir, { recursive: true });
       for (const { pubkey, keystore, passphrase } of validatorsFiles) {
         const paths = this.getPaths({ pubkey });
@@ -115,7 +130,7 @@ export class LighthouseValidatorFileManager extends BaseFileManager
     if (!pubkey.startsWith("0x")) pubkey = `0x${pubkey}`;
     return {
       dir: path.join(this.keystoresDir, pubkey),
-      keystore: path.join(this.keystoresDir, pubkey, "voting-keystore.json"),
+      keystore: path.join(this.keystoresDir, pubkey, "keystore-voting.json"),
       secret: path.join(this.secretsDir, pubkey)
     };
   }

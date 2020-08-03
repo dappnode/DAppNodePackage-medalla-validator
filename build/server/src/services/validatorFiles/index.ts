@@ -1,8 +1,14 @@
 import { server } from "../../db";
 import { ValidatorFileManager } from "./abstractManager";
-import { LighthouseValidatorFileManager } from "./lighthouse";
 import { ValidatorFiles, ValidatorClientName } from "../../../common";
-import { LIGHTHOUSE_KEYSTORES_DIR, LIGHTHOUSE_SECRETS_DIR } from "../../params";
+import { LighthouseValidatorFileManager } from "./lighthouse";
+import { PrysmValidatorFileManager } from "./prysm";
+import {
+  LIGHTHOUSE_KEYSTORES_DIR,
+  LIGHTHOUSE_SECRETS_DIR,
+  PRYSM_WALLET_DIR,
+  PRYSM_SECRETS_DIR
+} from "../../params";
 
 // Create unique instances to make sure files are not being written more than once
 const lighthouseFileManager = new LighthouseValidatorFileManager({
@@ -10,8 +16,14 @@ const lighthouseFileManager = new LighthouseValidatorFileManager({
   secretsDir: LIGHTHOUSE_SECRETS_DIR
 });
 
+const prysmFileManager = new PrysmValidatorFileManager({
+  walletDir: PRYSM_WALLET_DIR,
+  secretsDir: PRYSM_SECRETS_DIR
+});
+
 export async function initializeValidatorDirectories() {
   lighthouseFileManager.init();
+  prysmFileManager.init();
 }
 
 export async function writeValidatorFiles(
@@ -46,6 +58,8 @@ export function getValidatorFileManager(
       return lighthouseFileManager;
 
     case "prysm":
+      return prysmFileManager;
+
     default:
       throw Error(`Unsupported client ${client}`);
   }
