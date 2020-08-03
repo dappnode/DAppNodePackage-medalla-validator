@@ -16,4 +16,3 @@ build/server/db-api/
 
 # DNP artifacts
 build_*/
-.env
