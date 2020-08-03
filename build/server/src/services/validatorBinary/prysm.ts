@@ -6,7 +6,7 @@ import {
   graffiti,
   extraOpts
 } from "../../params";
-import { logs } from "../../logs";
+import { getLogger } from "../../logs";
 import { server } from "../../db";
 import { getBeaconProviderUrl } from "../../utils/beaconProvider";
 
@@ -33,6 +33,6 @@ export const prysmBinary = new Supervisor(
     timeoutKill: 10 * 1000,
     restartWait: 1000,
     resolveStartOnData: true,
-    log: (data): void => logs.info("[prysm]", data)
+    logger: getLogger({ location: "prysm" })
   }
 );

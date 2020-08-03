@@ -1,6 +1,6 @@
 import { spawn, ChildProcess } from "child_process";
 import dargs from "dargs";
-import { logs } from "../logs";
+import { logs, Logger } from "../logs";
 
 type ChildProcessWithExitCode = ChildProcess & {
   /**
@@ -45,7 +45,7 @@ export class Supervisor<T extends GenericOptions = {}> {
   private timeoutKill: number = 10 * 1000;
   private restartWait = 1000;
   private resolveStartOnData = false;
-  private log: (msg: string) => void = logs.info;
+  private logger: Logger = logs;
 
   // State
   private child: ChildProcessWithExitCode | null = null;
@@ -57,20 +57,20 @@ export class Supervisor<T extends GenericOptions = {}> {
       timeoutKill?: number; // Timeout to kill process with "SIGKILL" after "SIGTERM"
       restartWait?: number; // Wait between restarts
       resolveStartOnData?: boolean; // Resolve the start call once 'data' event is received
-      log?: (message: string) => void;
+      logger?: Logger;
     } = {}
   ) {
     this.commandData = commandData;
     if (options) {
       if (options.timeoutKill) this.timeoutKill = options.timeoutKill;
       if (options.restartWait) this.restartWait = options.restartWait;
-      if (options.log) this.log = options.log;
+      if (options.logger) this.logger = options.logger;
     }
 
     // Pass kill signals through to child
     const onParentKill = (signal: NodeJS.Signals): void => {
       if (!this.child) return;
-      this.log(`Received ${signal}, killing child process...`);
+      this.logger.info(`Received ${signal}, killing child process...`);
       this.child.removeAllListeners();
       this.child.kill(signal);
       process.exit(); // MUST exit otherwise the stop sequence is aborted
@@ -128,20 +128,20 @@ export class Supervisor<T extends GenericOptions = {}> {
       const { command, args } = this.buildCommand();
       const child = spawn(command, args);
       const cmdStr = `'${command} ${args.join(" ")}'`;
-      this.log(`Starting child process with ${cmdStr} ${child.pid}`);
+      this.logger.info(`Starting child process with ${cmdStr} ${child.pid}`);
       this.child = child;
 
       // Pipe output
-      const onData = (data: Buffer): void => this.log(data.toString());
+      const onData = (data: Buffer): void => this.logger.info(data.toString());
       if (child.stdout) child.stdout.on("data", onData.bind(this));
       if (child.stderr) child.stderr.on("data", onData.bind(this));
 
       const that = this;
       child.addListener("exit", async code => {
-        that.log(`child process exited with code ${code} ${cmdStr}`);
+        that.logger.error(`child process exited with code ${code} ${cmdStr}`);
         await pause(that.restartWait);
         that.start().catch(e => {
-          that.log(`child process restart error after exit: ${e.message}`);
+          that.logger.error(`child process restart error: ${e.message}`);
         });
       });
 

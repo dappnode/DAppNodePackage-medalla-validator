@@ -4,6 +4,8 @@ import stackTrace from "stack-trace";
 import "source-map-support/register";
 import { inspect } from "util";
 
+/* eslint-disable no-console */
+
 // Make NodeJS inspect render deeply nested objects
 // Print { b: { d: { f: { h: { i: 'i' } } } } }
 // Instead of { b: { d: [ Object ] } }
@@ -20,90 +22,97 @@ const tags = {
   error: "ERROR"
 };
 
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-console */
-export const logs = {
-  /**
-   * Allows to log any type of data. Strings will be shown first.
-   * ```js
-   * logs.debug("some process", ["arg", "arg"], id);
-   * ```
-   */
-  debug: formatLogger(tags.debug, logDebug ? console.debug : (): void => {}),
-  /**
-   * Allows to log any type of data. Strings will be shown first.
-   * ```js
-   * logs.info(req.body, "first", [1, 2, 3], "second");
-   * ```
-   */
-  info: formatLogger(tags.info, console.log),
-  /**
-   * Allows to log any type of data. Strings will be shown first.
-   * Use `ErrorNoStack` to hide the stack
-   * ```js
-   * logs.warn("error fetching", new ErrorNoStack("DAMNN"));
-   * ```
-   */
-  warn: formatLogger(tags.warn, console.warn),
-  /**
-   * Allows to log any type of data. Strings will be shown first.
-   * Use `ErrorNoStack` to hide the stack
-   * ```js
-   * logs.error("error fetching", new Error("DAMNN"));
-   * ```
-   */
-  error: formatLogger(tags.error, console.error)
-};
-/* eslint-enable @typescript-eslint/no-empty-function */
-/* eslint-enable no-console */
+type LoggerArg = string | Error | { [key: string]: any };
+type LoggerFn = (...items: LoggerArg[]) => void;
+export interface Logger {
+  debug: LoggerFn;
+  info: LoggerFn;
+  warn: LoggerFn;
+  error: LoggerFn;
+}
 
-export class ErrorNoStack extends Error {}
+export function getLogger(options: { location?: string } = {}): Logger {
+  function formatLogger(tag: string, logger: LoggerFn): LoggerFn {
+    return function log(...items): void {
+      try {
+        const caller = options.location || getLocation(Error(), 1) || "??";
+        const data = items
+          // String first
+          .sort(function compare(a, b) {
+            const aIsString = typeof a === "string";
+            const bIsString = typeof b === "string";
+            if (aIsString && !bIsString) return -1;
+            if (!aIsString && bIsString) return 1;
+            return 0;
+          })
+          // Error last
+          .sort(function compare(a, b) {
+            const aIsError = a instanceof Error;
+            const bIsError = b instanceof Error;
+            if (aIsError && !bIsError) return 1;
+            if (!aIsError && bIsError) return -1;
+            return 0;
+          })
+          .map(item => {
+            if (item instanceof ErrorNoStack) return item.message;
+            if (item instanceof Error) return item;
+            if (typeof item === "string") return item;
+            if (typeof item === "object") return item;
+            return item;
+          });
+        logger(tag, `[${caller}]`, ...data);
+      } catch (e) {
+        /* eslint-disable-next-line no-console */
+        console.error("ERROR LOGGING ITEMS", e);
+        logger(items);
+      }
+    };
+  }
 
-function formatLogger(tag: string, logger: (...args: any[]) => void) {
-  return function log(
-    ...items: (string | Error | { [key: string]: any })[]
-  ): void {
-    try {
-      const caller = getLocation(Error(), 1) || "??";
-      const data = items
-        // String first
-        .sort(function compare(a, b) {
-          const aIsString = typeof a === "string";
-          const bIsString = typeof b === "string";
-          if (aIsString && !bIsString) return -1;
-          if (!aIsString && bIsString) return 1;
-          return 0;
-        })
-        // Error last
-        .sort(function compare(a, b) {
-          const aIsError = a instanceof Error;
-          const bIsError = b instanceof Error;
-          if (aIsError && !bIsError) return 1;
-          if (!aIsError && bIsError) return -1;
-          return 0;
-        })
-        .map(item => {
-          if (item instanceof ErrorNoStack) return item.message;
-          if (item instanceof Error) return item;
-          if (typeof item === "string") return item;
-          if (typeof item === "object") return item;
-          return item;
-        });
-      logger(tag, `[${caller}]`, ...data);
-    } catch (e) {
-      /* eslint-disable-next-line no-console */
-      console.error("ERROR LOGGING ITEMS", e);
-      logger(items);
-    }
+  return {
+    /**
+     * Allows to log any type of data. Strings will be shown first.
+     * ```js
+     * logs.debug("some process", ["arg", "arg"], id);
+     * ```
+     */
+    debug: formatLogger(tags.debug, logDebug ? console.debug : (): void => {}),
+    /**
+     * Allows to log any type of data. Strings will be shown first.
+     * ```js
+     * logs.info(req.body, "first", [1, 2, 3], "second");
+     * ```
+     */
+    info: formatLogger(tags.info, console.log),
+    /**
+     * Allows to log any type of data. Strings will be shown first.
+     * Use `ErrorNoStack` to hide the stack
+     * ```js
+     * logs.warn("error fetching", new ErrorNoStack("DAMNN"));
+     * ```
+     */
+    warn: formatLogger(tags.warn, console.warn),
+    /**
+     * Allows to log any type of data. Strings will be shown first.
+     * Use `ErrorNoStack` to hide the stack
+     * ```js
+     * logs.error("error fetching", new Error("DAMNN"));
+     * ```
+     */
+    error: formatLogger(tags.error, console.error)
   };
 }
+
+export const logs = getLogger();
+
+export class ErrorNoStack extends Error {}
 
 /**
  * Grab the Nth path of the call stack
  * Works well for transpiled, minified or regular code
  * REQUIRES import "source-map-support/register";
  */
-export function getLocation(error: Error, stackCount: number): string | null {
+function getLocation(error: Error, stackCount: number): string | null {
   const parsed = stackTrace.parse(error);
   const firstOutsideRow = parsed[stackCount];
   if (!firstOutsideRow) return null;

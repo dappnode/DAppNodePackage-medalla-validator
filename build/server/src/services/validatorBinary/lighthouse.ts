@@ -1,6 +1,6 @@
 import { Supervisor } from "../../utils/Supervisor";
 import { LIGHTHOUSE_SECRETS_DIR, LIGHTHOUSE_DATA_DIR } from "../../params";
-import { logs } from "../../logs";
+import { getLogger } from "../../logs";
 import { server } from "../../db";
 import { getBeaconProviderUrl } from "../../utils/beaconProvider";
 
@@ -23,6 +23,6 @@ export const lighthouseBinary = new Supervisor(
     timeoutKill: 10 * 1000,
     restartWait: 1000,
     resolveStartOnData: true,
-    log: (data): void => logs.info("[lighthouse]", data)
+    logger: getLogger({ location: "lighthouse" })
   }
 );
