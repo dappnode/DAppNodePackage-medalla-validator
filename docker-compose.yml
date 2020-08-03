@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: build/Dockerfile
       args:
-        - VERSION
+        - UPSTREAM_VERSION
     volumes:
       - 'logs:/var/log'
       - 'data:/root/.config/ethereum2/'
