@@ -20,13 +20,13 @@ interface ValidatorPaths {
  * ```bash
  * $walletDir
  * └── direct
- *     ├── a9ca0e4fd5fbe6d097d2baced859b5fce1cbc4d2859606a5bcdbb4edf6a48a7c17e087b5ab0888e2fd0f4e4424fa77a3
+ *     ├── 0xa9ca0e4fd5fbe6d097d2baced859b5fce1cbc4d2859606a5bcdbb4edf6a48a7c17e087b5ab0888e2fd0f4e4424fa77a3
  *     |   ├── deposit_data.ssz
  *     |   └── keystore-1596491667.json
  *     └── keymanageropts.json
  *
  * $secretsDir
- * └── a9ca0e4fd5fbe6d097d2baced859b5fce1cbc4d2859606a5bcdbb4edf6a48a7c17e087b5ab0888e2fd0f4e4424fa77a3.pass
+ * └── 0xa9ca0e4fd5fbe6d097d2baced859b5fce1cbc4d2859606a5bcdbb4edf6a48a7c17e087b5ab0888e2fd0f4e4424fa77a3.pass
  * ```
  *
  * Where `$walletDir/direct/keymanageropts.json`
@@ -131,7 +131,7 @@ export class PrysmValidatorFileManager extends BaseFileManager
     return {
       dir: path.join(this.keystoresDir, pubkey),
       keystore: path.join(this.keystoresDir, pubkey, "keystore-voting.json"),
-      secret: path.join(this.secretsDir, pubkey)
+      secret: path.join(this.secretsDir, `${pubkey}.pass`)
     };
   }
 }
