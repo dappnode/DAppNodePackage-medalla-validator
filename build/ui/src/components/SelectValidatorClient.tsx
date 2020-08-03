@@ -50,11 +50,12 @@ export function SelectValidatorClient({
     try {
       setReqStatus({ loading: true });
       await api.switchValidatorClient(validatorClient);
-      revalidateSettings();
       setReqStatus({ result: "" });
     } catch (e) {
       console.log("Error on switchValidatorClient", e);
       setReqStatus({ error: e });
+    } finally {
+      revalidateSettings();
     }
   }
 

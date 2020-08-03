@@ -79,11 +79,12 @@ export function SelectBeaconProvider({
       await api.setBeaconProvider(
         providerSelect === "custom" ? providerInput : providerSelect
       );
-      revalidateSettings();
       setReqStatus({ result: "" });
     } catch (e) {
       console.log("Error on switchValidatorClient", e);
       setReqStatus({ error: e });
+    } finally {
+      revalidateSettings();
     }
   }
 
