@@ -105,13 +105,20 @@ export class Supervisor<T extends GenericOptions = {}> {
         }
       }
 
-      // Make sure the process is exited
-      if (!isExited(this.child)) {
-        throw Error(`child process is not exited after SIGKILL`);
-      }
+      // Note: child.exitCode is NOT does not work to detect if a process is dead
+      // in the production environment of this app. Is is still null even after
+      // /proc/$pid/status is cleared and at the OS level the pid is clearly exited
+
       this.status = null;
     } catch (e) {
       this.status = null;
+
+      // child process is already killed, no process found for pid
+      if (e.code === "ESRCH") {
+        this.status = null;
+        return;
+      }
+
       throw e;
     }
   }
