@@ -109,6 +109,7 @@ export class Supervisor<T extends GenericOptions = {}> {
       if (!isExited(this.child)) {
         throw Error(`child process is not exited after SIGKILL`);
       }
+      this.status = null;
     } catch (e) {
       this.status = null;
       throw e;
@@ -150,6 +151,7 @@ export class Supervisor<T extends GenericOptions = {}> {
           child.once("error", reject);
           child.once("exit", code => reject(Error(`Exited ${code}`)));
         });
+      this.status = null;
     } catch (e) {
       this.status = null;
       throw e;
