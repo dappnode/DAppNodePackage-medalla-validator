@@ -1,12 +1,23 @@
-import { logDebug } from "./params";
+import path from "path";
+import stackTrace from "stack-trace";
+// "source-map-support" MUST be imported for stack traces to work properly after Typescript transpile
+import "source-map-support/register";
+import { inspect } from "util";
 
-const cwd = __dirname;
+// Make NodeJS inspect render deeply nested objects
+// Print { b: { d: { f: { h: { i: 'i' } } } } }
+// Instead of { b: { d: [ Object ] } }
+inspect.defaultOptions.depth = null;
 
+const rootDir = __dirname;
+const logDebug = /debug/i.test(process.env.LOG_LEVEL || "");
+
+// Not adding color codes since it makes it harder to read as plain text
 const tags = {
-  debug: "\x1b[35mdebug\x1b[0m", // magenta
-  info: "\x1b[32minfo \x1b[0m", // green
-  warn: "\x1b[33mwarn \x1b[0m", // yellow
-  error: "\x1b[31merror\x1b[0m" // red
+  debug: "DEBUG",
+  info: "INFO ",
+  warn: "WARN ",
+  error: "ERROR"
 };
 
 /* eslint-disable @typescript-eslint/no-empty-function */
@@ -48,14 +59,12 @@ export const logs = {
 
 export class ErrorNoStack extends Error {}
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function formatLogger(tag: string, logger: (...args: any[]) => void) {
   return function log(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...items: (string | Error | { [key: string]: any })[]
   ): void {
     try {
-      const caller = parseCallerFromStack(new Error().stack || "");
+      const caller = getLocation(Error(), 1) || "??";
       const data = items
         // String first
         .sort(function compare(a, b) {
@@ -75,45 +84,39 @@ function formatLogger(tag: string, logger: (...args: any[]) => void) {
         })
         .map(item => {
           if (item instanceof ErrorNoStack) return item.message;
-          if (item instanceof Error) return item.stack || item.message;
+          if (item instanceof Error) return item;
           if (typeof item === "string") return item;
-          if (typeof item === "object") return JSON.stringify(item, null, 2);
+          if (typeof item === "object") return item;
           return item;
         });
       logger(tag, `[${caller}]`, ...data);
     } catch (e) {
       /* eslint-disable-next-line no-console */
-      console.error(`ERROR LOGGING ITEMS: ${e.stack}`);
+      console.error("ERROR LOGGING ITEMS", e);
       logger(items);
     }
   };
 }
 
 /**
- * Grab the second relative path given a stack
- * Uses indexOf instead of split for efficiency
- * Does not error if the stack is faulty
- * The stack should be grabbed in the function called by the consumer
- * Error:
- *   at Object.logModule (~/dappnode/DAppNodePackage-prysm-validator/build/api/server/src/logs.ts:7:15)
- *   at ~/dappnode/DAppNodePackage-prysm-validator/build/api/server/src/routes/rpc.ts:12:3
- *   at Layer.handle [as handle_request] (~/dappnode/DAppNodePackage-prysm-validator/build/api/server/node_modules/express/lib/router/layer.js:95:5)
- * @param stack
- * @return "routes/rpc.ts:12:3"
+ * Grab the Nth path of the call stack
+ * Works well for transpiled, minified or regular code
+ * REQUIRES import "source-map-support/register";
  */
-function parseCallerFromStack(stack: string): string {
-  const fromFirstLine = stack.slice(stack.indexOf("\n") + 2);
-  const fromSecondLine = fromFirstLine.slice(fromFirstLine.indexOf("\n") + 2);
-  const thirdLine = fromSecondLine.slice(0, fromSecondLine.indexOf("\n"));
-  // Stack maybe prefixed by the function name
-  //    at Object.dbFactory (/home/lion/Code/dappnode/DAppNodePackage-prysm-validator/build/api/server/src/db/dbFactory.ts:19:10)
-  let relativePath = thirdLine.split(cwd)[1] || "";
-  // Remove the forward slash "/"
-  if (relativePath.startsWith("/")) relativePath = relativePath.slice(1);
-  // Remove the trailing ")"
-  if (relativePath.endsWith(")")) relativePath = relativePath.slice(0, -1);
-  // Remove the column location
-  relativePath = relativePath.slice(0, relativePath.lastIndexOf(":"));
+export function getLocation(error: Error, stackCount: number): string | null {
+  const parsed = stackTrace.parse(error);
+  const firstOutsideRow = parsed[stackCount];
+  if (!firstOutsideRow) return null;
 
-  return relativePath;
+  const fileName = firstOutsideRow.getFileName();
+  const lineNumber = firstOutsideRow.getLineNumber();
+  let relativePath = fileName.includes("webpack:")
+    ? fileName.replace("/usr/src/app/webpack:/src/", "")
+    : path.relative(rootDir, fileName);
+
+  // Don't show unnecessary file info
+  if (relativePath.endsWith(".ts")) relativePath = relativePath.slice(0, -3);
+  if (relativePath.endsWith("/index")) relativePath = relativePath.slice(0, -6);
+
+  return `${relativePath}:${lineNumber}`;
 }

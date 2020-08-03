@@ -50,7 +50,8 @@
     "node-fetch": "^2.6.0",
     "rimraf": "^3.0.2",
     "session-file-store": "^1.4.0",
-    "source-map-support": "^0.5.13"
+    "source-map-support": "^0.5.13",
+    "stack-trace": "^0.0.10"
   },
   "devDependencies": {
     "@types/assert": "^1.4.6",
@@ -74,6 +75,7 @@
     "@types/request-promise-native": "^1.0.17",
     "@types/rimraf": "^3.0.0",
     "@types/sinon": "^7.0.13",
+    "@types/stack-trace": "^0.0.29",
     "@types/supertest": "^2.0.9",
     "@typescript-eslint/eslint-plugin": "^2.9.0",
     "@typescript-eslint/parser": "^2.9.0",
