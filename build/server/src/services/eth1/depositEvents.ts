@@ -45,7 +45,7 @@ async function getDeposits(): Promise<void> {
   });
 
   if (depositLogs.length)
-    logs.info(`Fetched ${depositLogs.length} new deposit logs`);
+    logs.debug(`Fetched ${depositLogs.length} new deposit logs`);
 
   saveDepositEvents(
     depositLogs.map(log => {
