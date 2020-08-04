@@ -210,7 +210,8 @@ export class Supervisor<T extends GenericOptions = {}> {
     };
     return {
       command: this.commandData.command,
-      args: [...args, ...dargs(options)]
+      // Remove empty options which may crash lighthouse
+      args: [...args, ...dargs(options)].filter(arg => arg.trim())
     };
   }
 }
