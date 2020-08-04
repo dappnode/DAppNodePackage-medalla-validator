@@ -1,35 +1,28 @@
 import React from "react";
 import { Typography } from "@material-ui/core";
 import { Title } from "./Title";
-import { useApi } from "api/rpc";
+import { NodeStats } from "common";
 
-export function NodeStats() {
-  const nodeStats = useApi.nodeStats();
-
-  if (!nodeStats.data) return null;
-
+export function NodeStatsView({ nodeStats }: { nodeStats: NodeStats }) {
   return (
     <>
       <Title>Node stats</Title>
       <Typography>
         Current epoch:{" "}
         <strong>
-          {nodeStats.data.chainhead ? nodeStats.data.chainhead.headEpoch : "?"}
+          {nodeStats.chainhead ? nodeStats.chainhead.headEpoch : "?"}
         </strong>{" "}
-        {nodeStats.data.syncing
-          ? nodeStats.data.syncing.syncing
+        {nodeStats.syncing
+          ? nodeStats.syncing.syncing
             ? "(syncing)"
             : "(synced)"
           : ""}
       </Typography>
       <Typography>
-        Peers:{" "}
-        <strong>
-          {nodeStats.data.peers ? nodeStats.data.peers.length : "?"}
-        </strong>
+        Peers: <strong>{nodeStats.peers ? nodeStats.peers.length : "?"}</strong>
       </Typography>
       <Typography>
-        Network: <strong>{nodeStats.data.eth2NetworkName}</strong>
+        Network: <strong>{nodeStats.eth2NetworkName}</strong>
       </Typography>
     </>
   );

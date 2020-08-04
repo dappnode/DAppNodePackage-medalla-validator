@@ -71,7 +71,7 @@ export async function nodeStats(): Promise<NodeStats> {
         direction: "OUTBOUND"
       }
     ],
-    syncing: { syncing: false },
+    syncing: { syncing: true },
     chainhead: {
       headSlot: "177684",
       headEpoch: "5552",
