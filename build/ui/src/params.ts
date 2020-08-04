@@ -5,6 +5,16 @@ import {
   validatorCost,
 } from "common/params";
 
+// Static params
+
+export const PUBLIC_PACKAGES_APIURL = "http://my.dappnode/public-packages";
+export const DNP_NAME_DMS = "dms.dnp.dappnode.eth";
+export const DNP_NAME_LIGHTHOUSE_NODE =
+  "lighthouse-beacon-medalla.dnp.dappnode.eth";
+export const DNP_NAME_PRYSM_NODE = "prysm-beacon-medalla.dnp.dappnode.eth";
+
+// Modifiable params
+
 type Params = { [key: string]: string | number };
 const localStorageParams = "params";
 const defaultParams = {

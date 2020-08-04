@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import clsx from "clsx";
 import dappnodeLogo from "img/dappnode-logo.png";
 import { makeStyles } from "@material-ui/core/styles";
@@ -13,16 +14,83 @@ import {
   IconButton,
   Container,
   Grid,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
+  SvgIconTypeMap,
 } from "@material-ui/core";
+import { OverridableComponent } from "@material-ui/core/OverridableComponent";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import Brightness7Icon from "@material-ui/icons/Brightness7";
 import Brightness4Icon from "@material-ui/icons/Brightness4";
-import { mainListItems, secondaryListItems } from "./listItems";
+import HomeIcon from "@material-ui/icons/Home";
+import BackupIcon from "@material-ui/icons/Backup";
+import SettingsIcon from "@material-ui/icons/Settings";
+import PeopleIcon from "@material-ui/icons/People";
+import BarChartIcon from "@material-ui/icons/BarChart";
+import LayersIcon from "@material-ui/icons/Layers";
+import AssignmentIcon from "@material-ui/icons/Assignment";
 import { FooterNote } from "./components/FooterNote";
-import { Link } from "react-router-dom";
 import { paths } from "paths";
+import { newTabProps } from "utils";
+import { useInstalledPackages } from "utils/installedPackages";
+import { DNP_NAME_DMS } from "params";
+
+const sideNavMainItems = [
+  {
+    name: "Dashboard",
+    Icon: HomeIcon,
+    path: paths.home,
+  },
+  {
+    name: "Import",
+    Icon: BackupIcon,
+    path: paths.validatorsImport,
+  },
+  {
+    name: "Settings",
+    Icon: SettingsIcon,
+    path: paths.settings,
+  },
+];
+
+function getSideNameSecondaryItems({
+  isDmsInstalled,
+}: {
+  isDmsInstalled: boolean | null;
+}) {
+  return [
+    {
+      name: "Metrics",
+      Icon: BarChartIcon,
+      href:
+        "http://dms.dappnode/d/DNPE2PAD/dappnode-eth-2-0-prysm-altona-dashboard",
+      show: isDmsInstalled === true,
+    },
+    {
+      name: "Nodes",
+      Icon: LayersIcon,
+      href: "https://eth2stats.io/altona-testnet",
+      show: true,
+    },
+    {
+      name: "Logs",
+      Icon: AssignmentIcon,
+      href:
+        "http://my.dappnode/#/packages/prysm-altona-validator.public.dappnode.eth/logs",
+      show: true,
+    },
+    {
+      name: "Support",
+      Icon: PeopleIcon,
+      href: "https://riot.im/app/#/room/#DAppNode:matrix.org",
+      show: true,
+    },
+  ].filter((item) => item.show);
+}
 
 const drawerWidth = 240;
 
@@ -127,14 +195,22 @@ export const Layout: React.FC<{
   switchDark: () => void;
   logout: () => void;
 }> = ({ logout, darkMode, switchDark, children }) => {
-  const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const installedPackages = useInstalledPackages();
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const isDmsInstalled = installedPackages.data
+    ? installedPackages.data.find((dnp) => dnp.name === DNP_NAME_DMS)
+      ? true
+      : false
+    : null;
+
+  const classes = useStyles();
 
   return (
     <div className={classes.root}>
@@ -196,9 +272,16 @@ export const Layout: React.FC<{
           </IconButton>
         </div>
         <Divider />
-        <List>{mainListItems}</List>
+        <List>
+          <div>{ListItems(sideNavMainItems)}</div>
+        </List>
         <Divider />
-        <List>{secondaryListItems}</List>
+        <List>
+          <div>
+            <ListSubheader inset>Help</ListSubheader>
+            {ListItems(getSideNameSecondaryItems({ isDmsInstalled }))}
+          </div>
+        </List>
       </Drawer>
 
       {/* Main content */}
@@ -216,3 +299,36 @@ export const Layout: React.FC<{
     </div>
   );
 };
+
+function ListItems(
+  items: {
+    name: string;
+    Icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>;
+    href?: string;
+    path?: string;
+  }[]
+) {
+  return items.map(({ name, Icon, href, path }) =>
+    href ? (
+      <ListItem key={name} button component="a" href={href} {...newTabProps}>
+        <ListItemIcon>
+          <Icon />
+        </ListItemIcon>
+        <ListItemText primary={name} />
+      </ListItem>
+    ) : path ? (
+      <Link
+        key={name}
+        to={path}
+        style={{ color: "inherit", textDecoration: "none" }}
+      >
+        <ListItem button>
+          <ListItemIcon>
+            <Icon />
+          </ListItemIcon>
+          <ListItemText primary={name} />
+        </ListItem>
+      </Link>
+    ) : null
+  );
+}
