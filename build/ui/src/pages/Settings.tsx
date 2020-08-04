@@ -7,6 +7,7 @@ import { SelectBeaconProvider } from "components/SelectBeaconProvider";
 import { SelectValidatorClient } from "components/SelectValidatorClient";
 import { ErrorView } from "components/ErrorView";
 import { LoadingView } from "components/LoadingView";
+import { Alert } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
   selectDescription: {
@@ -26,6 +27,15 @@ export function Settings() {
 
       {appSettings.data ? (
         <>
+          {appSettings.data.beaconProvider &&
+            appSettings.data.validatorClient !==
+              appSettings.data.beaconProvider && (
+              <Alert severity="warning">
+                Validating with different Beacon and Validator client may cause
+                incompatibility issues
+              </Alert>
+            )}
+
           <LayoutItem>
             <Title>Beacon node provider</Title>
             <Typography className={classes.selectDescription}>
