@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   selectFormControl: {
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing(2),
   },
 }));
 
@@ -89,7 +89,7 @@ export function SelectValidatorClient({
         />
       )}
 
-      <Box mt={3}>
+      <Box mt={2}>
         <Button
           variant="contained"
           color="primary"

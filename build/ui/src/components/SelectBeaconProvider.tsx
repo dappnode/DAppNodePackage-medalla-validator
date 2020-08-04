@@ -5,23 +5,24 @@ import {
   FormControl,
   makeStyles,
   Button,
-  Chip,
+  Box,
 } from "@material-ui/core";
-import GetAppIcon from "@material-ui/icons/GetApp";
-import DoneIcon from "@material-ui/icons/Done";
 import { api } from "api/rpc";
 import { RequestStatus, InstalledPackage } from "types";
 import { ErrorView } from "./ErrorView";
 import { LoadingView } from "./LoadingView";
 import { useInstalledPackages } from "utils/installedPackages";
-import { newTabProps } from "utils";
+import { newTabProps, urlJoin, noAStyle } from "utils";
 import { shortNameCapitalized } from "utils/format";
+import { ValidatorSettings, BeaconProviderName } from "common";
 import {
-  ValidatorSettings,
-  BeaconProviderName,
-  BEACON_NODE_LIGHTHOUSE,
-  BEACON_NODE_PRYSM,
-} from "common";
+  LIGHTHOUSE_DNPNAME,
+  PRYSM_DNPNAME,
+  INSTALL_DNP_URL,
+  PACKAGE_DNP_URL,
+} from "params";
+import { Alert } from "@material-ui/lab";
+import { responseInterface } from "swr";
 
 const beaconProviderOptions: {
   value: BeaconProviderName;
@@ -31,24 +32,13 @@ const beaconProviderOptions: {
   {
     value: "lighthouse",
     label: "Local DAppNode Lighthouse",
-    dnpName: BEACON_NODE_LIGHTHOUSE.DNPNAME,
+    dnpName: LIGHTHOUSE_DNPNAME,
   },
   {
     value: "prysm",
     label: "Local DAppNode Prysm",
-    dnpName: BEACON_NODE_PRYSM.DNPNAME,
+    dnpName: PRYSM_DNPNAME,
   },
-];
-
-interface BeaconNodeDnp {
-  name: string;
-}
-
-const beaconNodeDnps: BeaconNodeDnp[] = [
-  { name: "ipfs.dnp.dappnode.eth" },
-  { name: "geth.dnp.dappnode.eth" },
-  { name: "prysm-beacon-node.dnp.dappnode.eth" },
-  { name: "lighthouse-beacon-node.dnp.dappnode.eth" },
 ];
 
 const useStyles = makeStyles((theme) => ({
@@ -66,13 +56,10 @@ const useStyles = makeStyles((theme) => ({
   selectFormControl: {
     marginTop: theme.spacing(2),
   },
-  providerInput: {
-    marginTop: theme.spacing(3),
-  },
   bottomContainer: {
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing(2),
     "& > div:not(:last-child)": {
-      marginBottom: theme.spacing(3),
+      marginBottom: theme.spacing(2),
     },
   },
 }));
@@ -105,6 +92,9 @@ export function SelectBeaconProvider({
     (dnp) => dnp.name === currentOption?.dnpName
   );
   const dnpNotReady = installedPackages.data && !currentDnp;
+  const currentOptionDnpname = currentOption
+    ? shortNameCapitalized(currentOption.dnpName)
+    : beaconProvider;
 
   async function changeBeaconProvider() {
     if (!hasChanged) return;
@@ -124,18 +114,6 @@ export function SelectBeaconProvider({
 
   return (
     <>
-      {installedPackages.data && (
-        <div className={classes.chipArray}>
-          {beaconNodeDnps.map((beaconNodeDnp) => (
-            <BeaconNodeDnpStatus
-              key={beaconNodeDnp.name}
-              beaconNodeDnp={beaconNodeDnp}
-              installedPackages={installedPackages.data || []}
-            />
-          ))}
-        </div>
-      )}
-
       <FormControl variant="outlined" className={classes.selectFormControl}>
         <Select
           value={beaconProvider}
@@ -150,6 +128,13 @@ export function SelectBeaconProvider({
           ))}
         </Select>
       </FormControl>
+
+      <Box mt={2}>
+        <BeaconNodeDnpStatus
+          beaconProvider={beaconProvider}
+          installedPackages={installedPackages}
+        />
+      </Box>
 
       <div className={classes.bottomContainer}>
         {reqStatus.error && <ErrorView error={reqStatus.error} />}
@@ -177,36 +162,70 @@ export function SelectBeaconProvider({
 }
 
 function BeaconNodeDnpStatus({
-  beaconNodeDnp,
+  beaconProvider,
   installedPackages,
 }: {
-  beaconNodeDnp: BeaconNodeDnp;
-  installedPackages: InstalledPackage[];
+  beaconProvider: BeaconProviderName;
+  installedPackages: responseInterface<InstalledPackage[], Error>;
 }) {
-  const name = beaconNodeDnp.name;
-  const label = shortNameCapitalized(name);
-  const dnp = installedPackages.find((d) => d.name === name);
+  const currentOption = beaconProviderOptions.find(
+    (option) => option.value === beaconProvider
+  );
 
-  if (dnp) {
-    if (dnp.state === "running")
-      return <Chip label={label} color="primary" deleteIcon={<DoneIcon />} />;
-    else {
-      return <Chip label={label} clickable deleteIcon={<GetAppIcon />} />;
+  if (installedPackages.data && currentOption) {
+    const dnpName = currentOption.dnpName;
+    const dnp = installedPackages.data.find(({ name }) => name === dnpName);
+    const dnpNamePretty = shortNameCapitalized(dnpName);
+
+    if (dnp) {
+      if (dnp.state === "running") {
+        return (
+          <Alert severity="success">
+            Package {dnpNamePretty} is installed and running
+          </Alert>
+        );
+      } else {
+        return (
+          <Alert
+            severity="error"
+            action={
+              <a
+                href={urlJoin(PACKAGE_DNP_URL, dnpName)}
+                {...newTabProps}
+                style={noAStyle}
+              >
+                <Button color="inherit">RESTART</Button>
+              </a>
+            }
+          >
+            Package {dnpNamePretty} is not running. Review its status and
+            restart it.
+          </Alert>
+        );
+      }
+    } else {
+      return (
+        <Alert
+          severity="warning"
+          action={
+            <a
+              href={urlJoin(INSTALL_DNP_URL, dnpName)}
+              {...newTabProps}
+              style={noAStyle}
+            >
+              <Button color="inherit">INSTALL</Button>
+            </a>
+          }
+        >
+          Package {dnpNamePretty} is not installed. Install it to continue.
+        </Alert>
+      );
     }
+  } else if (installedPackages.error) {
+    return <ErrorView error={installedPackages.error} />;
+  } else if (installedPackages.isValidating) {
+    return <LoadingView steps={["Loading installed packages"]} />;
   } else {
-    return (
-      <a
-        href="http://google.es"
-        style={{ color: "inherit", textDecoration: "none" }}
-        {...newTabProps}
-      >
-        <Chip
-          label={label}
-          clickable
-          onDelete={() => {}}
-          deleteIcon={<GetAppIcon />}
-        />
-      </a>
-    );
+    return null;
   }
 }
