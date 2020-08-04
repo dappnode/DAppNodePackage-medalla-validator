@@ -8,13 +8,9 @@ import { prysmBinary } from "./prysm";
  * Start `client` binary
  */
 export async function startValidatorBinary(): Promise<void> {
-  const validatorBinary = getCurrentValidatorBinary();
-  await validatorBinary.start();
-}
-
-export function getCurrentValidatorBinary(): Supervisor {
   const client = db.server.validatorClient.get();
-  return getValidatorBinary(client);
+  const validatorBinary = getValidatorBinary(client);
+  await validatorBinary.start();
 }
 
 export function getValidatorBinary(client: ValidatorClientName): Supervisor {
