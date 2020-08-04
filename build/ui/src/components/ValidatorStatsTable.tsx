@@ -133,8 +133,8 @@ export function ValidatorStatsTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {validatorsToShow.map((validator, i) => (
-              <TableRow key={validator.index || i}>
+            {validatorsToShow.map((validator) => (
+              <TableRow key={validator.index}>
                 <TableCell>{validator.index}</TableCell>
                 <TableCell>
                   <PublicKeyView publicKey={validator.publicKey} />
