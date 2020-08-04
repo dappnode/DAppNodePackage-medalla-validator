@@ -1,7 +1,7 @@
 {
-  "name": "dappnode-prysm-api-server",
+  "name": "dappnode-medalla-validator-api-server",
   "version": "1.0.0",
-  "description": "Prysm dashboard API server",
+  "description": "Validator dashboard API server",
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.js",

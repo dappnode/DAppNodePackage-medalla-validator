@@ -1,8 +1,8 @@
 {
-  "name": "prysm-altona-validator.dnp.dappnode.eth",
+  "name": "medalla-validator.dnp.dappnode.eth",
   "version": "1.0.2",
   "upstreamVersion": "v1.0.0-alpha.13",
-  "shortDescription": "ETH2.0 Altona Test Network Validator",
+  "shortDescription": "Eth2.0 Medalla testnet validator",
   "description": "A validator client which manages a staking user's private/public keys, connects to a beacon node, and acts as a validator in Ethereum 2.0 by staking 32 ETH and participating in proof of stake consensus by proposing and voting on blocks.",
   "type": "service",
   "author": "DAppNode Association <admin@dappnode.io> (https://github.com/dappnode)",
@@ -20,10 +20,7 @@
   "requirements": {
     "minimumDappnodeVersion": "0.2.22"
   },
-  "categories": [
-    "Blockchain",
-    "ETH2.0"
-  ],
+  "categories": ["Blockchain", "ETH2.0"],
   "backup": [
     {
       "name": "data",
@@ -32,9 +29,7 @@
   ],
   "links": {
     "homepage": "https://github.com/dappnode/DAppNodePackage-prysm-validator",
-    "ui": "http://prysm-altona-validator.dappnode/"
+    "ui": "http://medalla-validator.dappnode/"
   },
-  "dependencies": {
-    "prysm-altona-beacon-chain.dnp.dappnode.eth": "latest"
-  }
+  "dependencies": {}
 }

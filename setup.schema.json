@@ -1,11 +1,11 @@
 {
-  "description": "Want to try Ethereum 2.0 Topaz Testnet on DAppNode?\n\nGreat! That's probably why you are here.\n\nKeep in mind: this is a highly experimental test network with no uptime guarantees.\n\nThe Prysm team gladly offer support in their Discord channel, through Github issues, their Gitter channel, and Twitter @prylabs.\n\nKeep in mind that this is only a proof of concept about having an Eth2.0 validator running on DAppNode based on the work of Prysmatic labs.",
+  "description": "",
   "type": "object",
   "properties": {
     "password": {
       "type": "string",
       "title": "Password",
-      "description": "Password to protect access to the account manager dashboard. Use a strong password, which you can generate and store with a password manager. You can change this password anytime."
+      "description": "Password to protect access to the validator account manager dashboard. Use a strong password, which you can generate and store with a password manager. You can change this password anytime."
     },
     "graffiti": {
       "type": "string",

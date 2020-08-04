@@ -1,6 +1,6 @@
 Go to the accounts manager dashboard to get started
 
-[prysm-altona-validator.dappnode](http://prysm-altona-validator.dappnode/)
+[medalla-validator.dappnode](http://medalla-validator.dappnode/)
 
 ---
 

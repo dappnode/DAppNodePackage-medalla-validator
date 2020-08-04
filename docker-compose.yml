@@ -1,26 +1,23 @@
-version: '3.4'
+version: "3.4"
 services:
-  prysm-altona-validator.dnp.dappnode.eth:
-    image: 'prysm-altona-validator.dnp.dappnode.eth:1.0.2'
+  medalla-validator.dnp.dappnode.eth:
+    image: "medalla-validator.dnp.dappnode.eth:1.0.2"
     build:
       context: .
       dockerfile: build/Dockerfile
       args:
         - UPSTREAM_VERSION
     volumes:
-      - 'logs:/var/log'
-      - 'data:/root/.config/ethereum2/'
-      - 'db-api:/app/db-api'
+      - "logs:/var/log"
+      - "data:/root/.config/ethereum2/"
+      - "db-api:/app/db-api"
     restart: always
     environment:
       - PASSWORD=
-      - GRAFFITI=prylabs-validator-from-dappnode
+      - GRAFFITI=validating_from_DAppNode
       - VERBOSITY=info
       - LOG_LEVEL=
       - EXTRA_OPTS=
-      - 'BEACON_GRPC_URL=prysm-altona-beacon-chain.dappnode:4000'
-      - 'BEACON_GRPC_GATEWAY_URL=http://prysm-altona-beacon-chain.dappnode:3500'
-      - 'WEB3PROVIDER=https://goerli.dappnode.net'
 volumes:
   data: {}
   db-api: {}

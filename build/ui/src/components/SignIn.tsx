@@ -104,11 +104,11 @@ export function SignIn({
 
       {showForgotPassword ? (
         <Alert severity="info" className={classes.yMargin}>
-          If you are an admin go to the the{" "}
+          If you are an admin go to this{" "}
           <Link href={packageAdminConfigPage} {...newTabProps}>
-            prysm-altona-validator.public.dappnode.eth config page
+            package config page
           </Link>{" "}
-          and see or change the PASSWORD property.
+          to see or change its PASSWORD.
         </Alert>
       ) : (
         <Link onClick={() => setShowForgotPassword(true)} variant="body2">

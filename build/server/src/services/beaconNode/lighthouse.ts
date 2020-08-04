@@ -24,7 +24,7 @@ export class LighthouseNodeClient implements BeaconNodeClient {
   slotsPerEpoch = 32;
 
   /**
-   * @param grpcGatewayUrl "http://prysm-altona-beacon-chain.dappnode:3500"
+   * @param grpcGatewayUrl "http://lighthouse-medalla-beacon-chain.dappnode:5052"
    */
   constructor(grpcGatewayUrl: string) {
     this.grpcGatewayUrl = grpcGatewayUrl;

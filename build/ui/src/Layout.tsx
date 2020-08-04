@@ -35,7 +35,7 @@ import LayersIcon from "@material-ui/icons/Layers";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import { FooterNote } from "./components/FooterNote";
 import { paths } from "paths";
-import { newTabProps } from "utils";
+import { newTabProps, noAStyle } from "utils";
 import { useInstalledPackages } from "utils/installedPackages";
 import { DNP_NAME_DMS } from "params";
 
@@ -66,21 +66,20 @@ function getSideNameSecondaryItems({
     {
       name: "Metrics",
       Icon: BarChartIcon,
-      href:
-        "http://dms.dappnode/d/DNPE2PAD/dappnode-eth-2-0-prysm-altona-dashboard",
+      href: "http://dms.dappnode/d/DNPE2PAD/dappnode-eth-2-0-medalla-dashboard",
       show: isDmsInstalled === true,
     },
     {
       name: "Nodes",
       Icon: LayersIcon,
-      href: "https://eth2stats.io/altona-testnet",
+      href: "https://eth2stats.io/medalla-testnet",
       show: true,
     },
     {
       name: "Logs",
       Icon: AssignmentIcon,
       href:
-        "http://my.dappnode/#/packages/prysm-altona-validator.public.dappnode.eth/logs",
+        "http://my.dappnode/#/packages/medalla-validator.dnp.dappnode.eth/logs",
       show: true,
     },
     {
@@ -317,11 +316,7 @@ function ListItems(
         <ListItemText primary={name} />
       </ListItem>
     ) : path ? (
-      <Link
-        key={name}
-        to={path}
-        style={{ color: "inherit", textDecoration: "none" }}
-      >
+      <Link key={name} to={path} style={noAStyle}>
         <ListItem button>
           <ListItemIcon>
             <Icon />

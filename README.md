@@ -1,15 +1,17 @@
-# Prysm validator Ethereum2.0 DAppNode Package
+# Medalla validator Ethereum2.0 DAppNode Package
 
-[![DAppNode Available](https://img.shields.io/badge/DAppNode-Available-brightgreen.svg)](http://my.dappnode/#/installer/prysm-onyx-validator.public.dappnode.eth)
+[![DAppNode Available](https://img.shields.io/badge/DAppNode-Available-brightgreen.svg)](http://my.dappnode/#/installer/medalla-validator.dnp.dappnode.eth)
 
-[![Prysm github](https://img.shields.io/badge/Prysm-Github-blue.svg)](https://prylabs.net/)
-[![prysm participate](https://img.shields.io/badge/prysm-participate-753a88.svg)](https://prylabs.net/participate?node=dappnode)
+Includes the validator binaries:
+
+- [![Prysm github](https://img.shields.io/badge/Prysm-Github-blue.svg)](https://prylabs.net/)
+- Lighthouse
 
 # Installation Notes
 
-1. Install the DAppNodePackage: 
+1. Install the DAppNodePackage:
 
-   [![DAppNode Install](https://img.shields.io/badge/DAppNode-Install-blue.svg)](http://my.admin.dnp.dappnode.eth/#/installer/prysm-onyx-validator.public.dappnode.eth)
+   [![DAppNode Install](https://img.shields.io/badge/DAppNode-Install-blue.svg)](http://my.admin.dnp.dappnode.eth/#/installer/medalla-validator.dnp.dappnode.eth)
 
    **NOTE:** You can choose a password for your account or the package will auto generate a random one automatically at the first start
 
