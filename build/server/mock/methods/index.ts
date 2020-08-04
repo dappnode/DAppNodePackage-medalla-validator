@@ -3,16 +3,38 @@ import {
   ValidatorStats,
   NodeStats,
   ValidatorFiles,
-  ValidatorSettings,
+  AppSettings,
   ValidatorClientName,
   BeaconProviderName
 } from "../../common";
+import {
+  LIGHTHOUSE_DNPNAME,
+  PRYSM_DNPNAME,
+  DMS_DNPNAME
+} from "../../src/params";
 
 // New state
 const validators = new Map<number, ValidatorStats>();
-const settings: ValidatorSettings = {
+const settings: AppSettings = {
   validatorClient: "lighthouse",
-  beaconProvider: "lighthouse"
+  beaconProvider: "lighthouse",
+  beaconDnps: {
+    lighthouse: {
+      name: LIGHTHOUSE_DNPNAME,
+      status: "installed",
+      ip: "172.33.1.5",
+      state: "exited",
+      version: "0.2.10"
+    },
+    prysm: {
+      name: PRYSM_DNPNAME,
+      status: "not-installed"
+    }
+  },
+  dmsDnp: {
+    name: DMS_DNPNAME,
+    status: "not-installed"
+  }
 };
 
 // Add some mock validators to start with
@@ -86,7 +108,7 @@ export async function importValidators(
   console.log(`Importing validator files`, validators);
 }
 
-export async function getValidatorSettings(): Promise<ValidatorSettings> {
+export async function getSettings(): Promise<AppSettings> {
   await waitMs(500);
   return settings;
 }

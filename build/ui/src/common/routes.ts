@@ -3,7 +3,7 @@ import {
   NodeStats,
   ValidatorFiles,
   ValidatorClientName,
-  ValidatorSettings,
+  AppSettings,
   BeaconProviderName,
 } from "./types";
 
@@ -21,9 +21,9 @@ export interface Routes {
    */
   importValidators: (validators: ValidatorFiles[]) => Promise<void>;
   /**
-   * Returns configurable validator parameters
+   * Returns configurable app parameters
    */
-  getValidatorSettings: () => Promise<ValidatorSettings>;
+  getSettings: () => Promise<AppSettings>;
   /**
    * Switch validator client. Kills current one and starts next after exit
    */
@@ -38,7 +38,7 @@ export const routesData: { [P in keyof Routes]: {} } = {
   getValidators: {},
   nodeStats: {},
   importValidators: {},
-  getValidatorSettings: {},
+  getSettings: {},
   switchValidatorClient: {},
   setBeaconProvider: {},
 };

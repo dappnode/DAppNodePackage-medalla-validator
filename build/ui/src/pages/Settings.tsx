@@ -18,13 +18,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function Settings() {
-  const validatorSettings = useApi.getValidatorSettings();
+  const appSettings = useApi.getSettings();
   const classes = useStyles();
   return (
     <>
       <TitlePage>Settings</TitlePage>
 
-      {validatorSettings.data ? (
+      {appSettings.data ? (
         <>
           <LayoutItem>
             <Title>Beacon node provider</Title>
@@ -33,8 +33,8 @@ export function Settings() {
               duties and publish attestations and blocks
             </Typography>
             <SelectBeaconProvider
-              validatorSettings={validatorSettings.data}
-              revalidateSettings={validatorSettings.revalidate}
+              appSettings={appSettings.data}
+              revalidateSettings={appSettings.revalidate}
             />
           </LayoutItem>
 
@@ -44,14 +44,14 @@ export function Settings() {
               Validator client used to validate with all provided keystores
             </Typography>
             <SelectValidatorClient
-              validatorSettings={validatorSettings.data}
-              revalidateSettings={validatorSettings.revalidate}
+              appSettings={appSettings.data}
+              revalidateSettings={appSettings.revalidate}
             />
           </LayoutItem>
         </>
-      ) : validatorSettings.error ? (
-        <ErrorView error={validatorSettings.error} />
-      ) : validatorSettings.isValidating ? (
+      ) : appSettings.error ? (
+        <ErrorView error={appSettings.error} />
+      ) : appSettings.isValidating ? (
         <LoadingView steps={["Loading settings..."]} />
       ) : null}
     </>

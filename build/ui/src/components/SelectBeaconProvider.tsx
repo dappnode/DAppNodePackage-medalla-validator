@@ -8,13 +8,12 @@ import {
   Box,
 } from "@material-ui/core";
 import { api } from "api/rpc";
-import { RequestStatus, InstalledPackage } from "types";
+import { RequestStatus } from "types";
 import { ErrorView } from "./ErrorView";
 import { LoadingView } from "./LoadingView";
-import { useInstalledPackages } from "utils/installedPackages";
 import { newTabProps, urlJoin, noAStyle } from "utils";
 import { shortNameCapitalized } from "utils/format";
-import { ValidatorSettings, BeaconProviderName } from "common";
+import { DnpInstalledStatus, BeaconProviderName, AppSettings } from "common";
 import {
   LIGHTHOUSE_DNPNAME,
   PRYSM_DNPNAME,
@@ -22,7 +21,6 @@ import {
   PACKAGE_DNP_URL,
 } from "params";
 import { Alert } from "@material-ui/lab";
-import { responseInterface } from "swr";
 
 const beaconProviderOptions: {
   value: BeaconProviderName;
@@ -65,36 +63,27 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function SelectBeaconProvider({
-  validatorSettings,
+  appSettings,
   revalidateSettings,
 }: {
-  validatorSettings: ValidatorSettings;
+  appSettings: AppSettings;
   revalidateSettings: () => void;
 }) {
   const [beaconProvider, setBeaconProvider] = useState<BeaconProviderName>(
     beaconProviderOptions[0].value
   );
   const [reqStatus, setReqStatus] = useState<RequestStatus>({});
-  const installedPackages = useInstalledPackages();
 
   useEffect(() => {
     const serverOption = beaconProviderOptions.find(
-      (o) => o.value === validatorSettings.beaconProvider
+      (o) => o.value === appSettings.beaconProvider
     );
     if (serverOption) setBeaconProvider(serverOption.value);
-  }, [validatorSettings.beaconProvider]);
+  }, [appSettings.beaconProvider]);
 
-  const hasChanged = beaconProvider !== validatorSettings.beaconProvider;
-  const currentOption = beaconProviderOptions.find(
-    (option) => option.value === beaconProvider
-  );
-  const currentDnp = installedPackages.data?.find(
-    (dnp) => dnp.name === currentOption?.dnpName
-  );
-  const dnpNotReady = installedPackages.data && !currentDnp;
-  const currentOptionDnpname = currentOption
-    ? shortNameCapitalized(currentOption.dnpName)
-    : beaconProvider;
+  const hasChanged = beaconProvider !== appSettings.beaconProvider;
+  const currentDnp = appSettings.beaconDnps[beaconProvider];
+  const dnpNotReady = currentDnp.status !== "not-installed";
 
   async function changeBeaconProvider() {
     if (!hasChanged) return;
@@ -130,10 +119,7 @@ export function SelectBeaconProvider({
       </FormControl>
 
       <Box mt={2}>
-        <BeaconNodeDnpStatus
-          beaconProvider={beaconProvider}
-          installedPackages={installedPackages}
-        />
+        <BeaconNodeDnpStatus currentDnp={currentDnp} />
       </Box>
 
       <div className={classes.bottomContainer}>
@@ -162,23 +148,16 @@ export function SelectBeaconProvider({
 }
 
 function BeaconNodeDnpStatus({
-  beaconProvider,
-  installedPackages,
+  currentDnp,
 }: {
-  beaconProvider: BeaconProviderName;
-  installedPackages: responseInterface<InstalledPackage[], Error>;
+  currentDnp: DnpInstalledStatus;
 }) {
-  const currentOption = beaconProviderOptions.find(
-    (option) => option.value === beaconProvider
-  );
+  const dnpName = currentDnp.name;
+  const dnpNamePretty = shortNameCapitalized(currentDnp.name);
 
-  if (installedPackages.data && currentOption) {
-    const dnpName = currentOption.dnpName;
-    const dnp = installedPackages.data.find(({ name }) => name === dnpName);
-    const dnpNamePretty = shortNameCapitalized(dnpName);
-
-    if (dnp) {
-      if (dnp.state === "running") {
+  switch (currentDnp.status) {
+    case "installed":
+      if (currentDnp.state === "running") {
         return (
           <Alert severity="success">
             Package {dnpNamePretty} is installed and running
@@ -203,7 +182,8 @@ function BeaconNodeDnpStatus({
           </Alert>
         );
       }
-    } else {
+
+    case "not-installed":
       return (
         <Alert
           severity="warning"
@@ -220,12 +200,11 @@ function BeaconNodeDnpStatus({
           Package {dnpNamePretty} is not installed. Install it to continue.
         </Alert>
       );
-    }
-  } else if (installedPackages.error) {
-    return <ErrorView error={installedPackages.error} />;
-  } else if (installedPackages.isValidating) {
-    return <LoadingView steps={["Loading installed packages"]} />;
-  } else {
-    return null;
+
+    case "fetch-error":
+      return <ErrorView error={currentDnp.error} />;
+
+    default:
+      return null;
   }
 }

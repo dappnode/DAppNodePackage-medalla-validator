@@ -9,9 +9,9 @@ import {
 } from "@material-ui/core";
 import { api } from "api/rpc";
 import { RequestStatus } from "types";
+import { ValidatorClientName, AppSettings } from "common";
 import { LoadingView } from "./LoadingView";
 import { ErrorView } from "./ErrorView";
-import { ValidatorSettings, ValidatorClientName } from "common";
 
 const validatorClientOptions: {
   value: ValidatorClientName;
@@ -31,10 +31,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function SelectValidatorClient({
-  validatorSettings,
+  appSettings,
   revalidateSettings,
 }: {
-  validatorSettings: ValidatorSettings;
+  appSettings: AppSettings;
   revalidateSettings: () => void;
 }) {
   const [validatorClient, setValidatorClient] = useState<ValidatorClientName>(
@@ -43,8 +43,8 @@ export function SelectValidatorClient({
   const [reqStatus, setReqStatus] = useState<RequestStatus>({});
 
   useEffect(() => {
-    setValidatorClient(validatorSettings.validatorClient);
-  }, [validatorSettings.validatorClient]);
+    setValidatorClient(appSettings.validatorClient);
+  }, [appSettings.validatorClient]);
 
   async function switchValidatorClient() {
     try {
@@ -95,8 +95,7 @@ export function SelectValidatorClient({
           color="primary"
           onClick={switchValidatorClient}
           disabled={
-            validatorSettings.validatorClient === validatorClient ||
-            reqStatus.loading
+            appSettings.validatorClient === validatorClient || reqStatus.loading
           }
         >
           Apply changes

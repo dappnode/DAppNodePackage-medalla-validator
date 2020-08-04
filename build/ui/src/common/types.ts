@@ -3,9 +3,11 @@
 export type ValidatorClientName = "lighthouse" | "prysm";
 export type BeaconProviderName = "lighthouse" | "prysm";
 
-export interface ValidatorSettings {
+export interface AppSettings {
   validatorClient: ValidatorClientName;
-  beaconProvider: "lighthouse" | "prysm" | string;
+  beaconProvider: BeaconProviderName;
+  beaconDnps: { [key in BeaconProviderName]: DnpInstalledStatus };
+  dmsDnp: DnpInstalledStatus;
 }
 
 // Table type
@@ -139,3 +141,19 @@ export type SyncStatus = {
   currentSlot: number; // 100;
   highestSlot: number; // 200;
 } | null;
+
+/**
+ * DAPPMANAGER Type, from the public API
+ * Not accessible directly from the browser due to CORS
+ */
+export interface DnpInstalledPackage {
+  name: string; // "ipfs.dnp.dappnode.eth";
+  ip: string; // "172.33.1.5"; "" if not set
+  state: "running" | "exited" | string; // or other docker status
+  version: string; // "0.2.10";
+}
+
+export type DnpInstalledStatus =
+  | (DnpInstalledPackage & { status: "installed" })
+  | { name: string; status: "not-installed" }
+  | { name: string; status: "fetch-error"; error: string };

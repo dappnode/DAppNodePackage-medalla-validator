@@ -36,8 +36,8 @@ import AssignmentIcon from "@material-ui/icons/Assignment";
 import { FooterNote } from "./components/FooterNote";
 import { paths } from "paths";
 import { newTabProps, noAStyle } from "utils";
-import { useInstalledPackages } from "utils/installedPackages";
 import { DNP_NAME_DMS } from "params";
+import { useApi } from "api/rpc";
 
 const sideNavMainItems = [
   {
@@ -195,7 +195,7 @@ export const Layout: React.FC<{
   logout: () => void;
 }> = ({ logout, darkMode, switchDark, children }) => {
   const [open, setOpen] = useState(false);
-  const installedPackages = useInstalledPackages();
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -203,11 +203,10 @@ export const Layout: React.FC<{
     setOpen(false);
   };
 
-  const isDmsInstalled = installedPackages.data
-    ? installedPackages.data.find((dnp) => dnp.name === DNP_NAME_DMS)
-      ? true
-      : false
-    : null;
+  const appSettings = useApi.getSettings();
+  const isDmsInstalled = Boolean(
+    appSettings.data?.dmsDnp.status === "installed"
+  );
 
   const classes = useStyles();
 
