@@ -1,3 +1,5 @@
+import { BEACON_NODE_LIGHTHOUSE, BEACON_NODE_PRYSM } from "../common";
+
 export const dataPath = process.env.DATA_PATH || "data";
 export const logFile = "/var/log/validator.log";
 export const extraOpts = process.env.EXTRA_OPTS || "";
@@ -13,16 +15,14 @@ export const eth2NetworkName = process.env.ETH2_NETWORK_NAME || "";
 export const LIGHTHOUSE_DATA_DIR = "/lighthouse";
 export const LIGHTHOUSE_KEYSTORES_DIR = "/lighthouse/keystores";
 export const LIGHTHOUSE_SECRETS_DIR = "/lighthouse/secrets";
-export const LIGHTHOUSE_REST_APIURL =
-  "http://lighthouse-medalla-beacon-node.dappnode:5052";
+export const LIGHTHOUSE_REST_APIURL = BEACON_NODE_LIGHTHOUSE.REST_APIURL;
 
 /**
  * Prysm config and paths
  */
 export const PRYSM_WALLET_DIR = "/prysm/.eth2validators/primary";
 export const PRYSM_SECRETS_DIR = "/prysm/.eth2validators/secrets";
-export const PRYSM_REST_APIURL =
-  "http://prysm-medalla-beacon-node.dappnode:3500";
+export const PRYSM_REST_APIURL = BEACON_NODE_PRYSM.REST_APIURL;
 
 // Login password
 export const adminPassword = process.env.PASSWORD;

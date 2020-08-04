@@ -5,26 +5,39 @@ import {
   FormControl,
   makeStyles,
   Button,
-  TextField,
   Chip,
 } from "@material-ui/core";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import DoneIcon from "@material-ui/icons/Done";
 import { api } from "api/rpc";
 import { RequestStatus, InstalledPackage } from "types";
-import { ValidatorSettings, BeaconProviderName } from "common";
 import { ErrorView } from "./ErrorView";
 import { LoadingView } from "./LoadingView";
 import { useInstalledPackages } from "utils/installedPackages";
 import { newTabProps } from "utils";
 import { shortNameCapitalized } from "utils/format";
+import {
+  ValidatorSettings,
+  BeaconProviderName,
+  BEACON_NODE_LIGHTHOUSE,
+  BEACON_NODE_PRYSM,
+} from "common";
 
 const beaconProviderOptions: {
   value: BeaconProviderName;
   label: string;
+  dnpName: string;
 }[] = [
-  { value: "lighthouse", label: "Local DAppNode Lighthouse" },
-  { value: "prysm", label: "Local DAppNode Prysm" },
+  {
+    value: "lighthouse",
+    label: "Local DAppNode Lighthouse",
+    dnpName: BEACON_NODE_LIGHTHOUSE.DNPNAME,
+  },
+  {
+    value: "prysm",
+    label: "Local DAppNode Prysm",
+    dnpName: BEACON_NODE_PRYSM.DNPNAME,
+  },
 ];
 
 interface BeaconNodeDnp {
@@ -78,13 +91,20 @@ export function SelectBeaconProvider({
   const installedPackages = useInstalledPackages();
 
   useEffect(() => {
-    const currentOption = beaconProviderOptions.find(
+    const serverOption = beaconProviderOptions.find(
       (o) => o.value === validatorSettings.beaconProvider
     );
-    if (currentOption) setBeaconProvider(currentOption.value);
+    if (serverOption) setBeaconProvider(serverOption.value);
   }, [validatorSettings.beaconProvider]);
 
   const hasChanged = beaconProvider !== validatorSettings.beaconProvider;
+  const currentOption = beaconProviderOptions.find(
+    (option) => option.value === beaconProvider
+  );
+  const currentDnp = installedPackages.data?.find(
+    (dnp) => dnp.name === currentOption?.dnpName
+  );
+  const dnpNotReady = installedPackages.data && !currentDnp;
 
   async function changeBeaconProvider() {
     if (!hasChanged) return;
@@ -147,7 +167,7 @@ export function SelectBeaconProvider({
           variant="contained"
           color="primary"
           onClick={changeBeaconProvider}
-          disabled={!hasChanged || reqStatus.loading}
+          disabled={!hasChanged || dnpNotReady || reqStatus.loading}
         >
           Apply changes
         </Button>
