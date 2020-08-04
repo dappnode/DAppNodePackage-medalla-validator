@@ -1,6 +1,6 @@
 import * as db from "../../db";
 import { ValidatorFileManager } from "./abstractManager";
-import { ValidatorFiles, ValidatorClientName } from "../../../common";
+import { ValidatorClientName } from "../../../common";
 import { LighthouseValidatorFileManager } from "./lighthouse";
 import { PrysmValidatorFileManager } from "./prysm";
 import {
@@ -26,25 +26,14 @@ export async function initializeValidatorDirectories() {
   prysmFileManager.init();
 }
 
-export async function writeValidatorFiles(
-  validatorsFiles: ValidatorFiles[]
-): Promise<void> {
-  const validatorFileManager = getCurrentValidatorFileManager();
-  await validatorFileManager.write(validatorsFiles);
-}
-
 /**
  * Check if current selected validator client has validator files
  * Use on startup to start its associated binary
  */
 export function thereAreValidatorFiles(): boolean {
-  const validatorFileManager = getCurrentValidatorFileManager();
-  return validatorFileManager.hasKeys();
-}
-
-export function getCurrentValidatorFileManager(): ValidatorFileManager {
   const client = db.server.validatorClient.get();
-  return getValidatorFileManager(client);
+  const validatorFileManager = getValidatorFileManager(client);
+  return validatorFileManager.hasKeys();
 }
 
 /**

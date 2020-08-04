@@ -4,7 +4,7 @@ import * as db from "../db";
 import { ValidatorStats, DepositEvent, BeaconProviderName } from "../../common";
 import { computeExpectedBalance } from "../utils/depositEvent";
 import { requestPastDepositEvents } from "../services/eth1";
-import { getCurrentValidatorFileManager } from "../services/validatorFiles";
+import { getValidatorFileManager } from "../services/validatorFiles";
 import { getBeaconNodeClient } from "../services/beaconNode";
 import { logs } from "../logs";
 
@@ -28,14 +28,16 @@ const getValidatorStatusMem = memoizee(getValidatorStatus, {
  * Only show validators that have a confirmed deposit
  */
 export async function getValidators(): Promise<ValidatorStats[]> {
-  const validatorFileManager = getCurrentValidatorFileManager();
+  const beaconNode = db.server.beaconProvider.get();
+  const validatorClient = db.server.validatorClient.get();
+
+  const validatorFileManager = getValidatorFileManager(validatorClient);
   const pubkeys = validatorFileManager.readPubkeys();
   // Keep fetching logs in the background only when UI is connected
   requestPastDepositEvents().catch(e => {
     logs.error(`Error requesting past deposit events`, e);
   });
 
-  const beaconNode = db.server.beaconProvider.get();
   const statusByPubkey = await getValidatorStatusMem(
     beaconNode,
     pubkeys
