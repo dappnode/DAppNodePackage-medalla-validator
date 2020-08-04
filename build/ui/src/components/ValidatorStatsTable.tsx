@@ -97,7 +97,6 @@ export function ValidatorStatsTable({
     { text: "Deposit", option: "blockNumber" },
     { text: "Status", option: "status" },
     { text: "Balance", option: "balance", align: "right" },
-    { text: "Manage", align: "right" },
   ];
 
   return (
@@ -150,11 +149,11 @@ export function ValidatorStatsTable({
                     formatEth(validator.balance.eth)
                   )}
                 </TableCell>
-                <TableCell align="right">
+                {/* <TableCell align="right">
                   <Link to={paths.validatorByPubkey.to(validator.publicKey)}>
                     Manage
                   </Link>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>
