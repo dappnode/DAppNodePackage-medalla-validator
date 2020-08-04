@@ -5,7 +5,7 @@ import {
   ValidatorFiles,
   ValidatorSettings,
   ValidatorClientName,
-  BeaconProvider
+  BeaconProviderName
 } from "../../common";
 
 // New state
@@ -65,26 +65,14 @@ export async function getValidators(): Promise<ValidatorStats[]> {
 export async function nodeStats(): Promise<NodeStats> {
   return {
     peers: [
-      {
-        address:
-          "/ip4/104.36.201.234/tcp/13210/p2p/16Uiu2HAm5RX4gAQtwqArBmuuGugUXAViKaKBx6ugDJb1L1RFcpfK",
-        direction: "OUTBOUND"
-      }
+      "/ip4/104.36.201.234/tcp/13210/p2p/16Uiu2HAm5RX4gAQtwqArBmuuGugUXAViKaKBx6ugDJb1L1RFcpfK"
     ],
-    syncing: { syncing: true },
+    syncing: { startingSlot: 0, currentSlot: 100, highestSlot: 200 },
     chainhead: {
-      headSlot: "177684",
-      headEpoch: "5552",
+      headSlot: 177684,
       headBlockRoot: "y1GDABJ0iPgZhdcWBXTon4r2TgEnpS3XFISckLyqa+U=",
-      finalizedSlot: "177600",
-      finalizedEpoch: "5550",
-      finalizedBlockRoot: "Bb/6F2NfmtilyxQb+2tItGlD1WNwR17gMVd5kIxjgCQ=",
-      justifiedSlot: "177632",
-      justifiedEpoch: "5551",
-      justifiedBlockRoot: "e+1HeaYj+a/u9gPyUfyUhrGDyv/5BkpOXiF8KnXcItc=",
-      previousJustifiedSlot: "177600",
-      previousJustifiedEpoch: "5550",
-      previousJustifiedBlockRoot: "Bb/6F2NfmtilyxQb+2tItGlD1WNwR17gMVd5kIxjgCQ="
+      finalizedSlot: 177600,
+      slotsPerEpoch: 32
     },
     eth2NetworkName: "Topaz"
   };
@@ -111,7 +99,7 @@ export async function switchValidatorClient(
 }
 
 export async function setBeaconProvider(
-  beaconProvider: BeaconProvider
+  beaconProvider: BeaconProviderName
 ): Promise<void> {
   await waitMs(10000);
   settings.beaconProvider = beaconProvider;

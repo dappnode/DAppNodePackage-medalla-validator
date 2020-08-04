@@ -7,28 +7,24 @@ import {
   Button,
   TextField,
   Chip,
-  Avatar,
 } from "@material-ui/core";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import DoneIcon from "@material-ui/icons/Done";
 import { api } from "api/rpc";
 import { RequestStatus, InstalledPackage } from "types";
-import { ValidatorSettings } from "common";
+import { ValidatorSettings, BeaconProviderName } from "common";
 import { ErrorView } from "./ErrorView";
 import { LoadingView } from "./LoadingView";
 import { useInstalledPackages } from "utils/installedPackages";
 import { newTabProps } from "utils";
 import { shortNameCapitalized } from "utils/format";
 
-type BeaconProviderSelect = "lighthouse" | "prysm" | "custom";
-
-const providerSelectOptions: {
-  value: BeaconProviderSelect;
+const beaconProviderOptions: {
+  value: BeaconProviderName;
   label: string;
 }[] = [
   { value: "lighthouse", label: "Local DAppNode Lighthouse" },
   { value: "prysm", label: "Local DAppNode Prysm" },
-  { value: "custom", label: "Custom" },
 ];
 
 interface BeaconNodeDnp {
@@ -75,37 +71,26 @@ export function SelectBeaconProvider({
   validatorSettings: ValidatorSettings;
   revalidateSettings: () => void;
 }) {
-  const [providerSelect, setProviderSelect] = useState<BeaconProviderSelect>(
-    providerSelectOptions[0].value
+  const [beaconProvider, setBeaconProvider] = useState<BeaconProviderName>(
+    beaconProviderOptions[0].value
   );
-  const [providerInput, setProviderInput] = useState<string>("");
   const [reqStatus, setReqStatus] = useState<RequestStatus>({});
   const installedPackages = useInstalledPackages();
 
   useEffect(() => {
-    const currentOption = providerSelectOptions.find(
+    const currentOption = beaconProviderOptions.find(
       (o) => o.value === validatorSettings.beaconProvider
     );
-    if (currentOption) {
-      setProviderSelect(currentOption.value);
-    } else {
-      setProviderSelect("custom");
-      setProviderInput(validatorSettings.beaconProvider);
-    }
+    if (currentOption) setBeaconProvider(currentOption.value);
   }, [validatorSettings.beaconProvider]);
 
-  const hasChanged =
-    providerSelect === "custom"
-      ? providerInput && providerInput !== validatorSettings.beaconProvider
-      : providerSelect !== validatorSettings.beaconProvider;
+  const hasChanged = beaconProvider !== validatorSettings.beaconProvider;
 
   async function changeBeaconProvider() {
     if (!hasChanged) return;
     try {
       setReqStatus({ loading: true });
-      await api.setBeaconProvider(
-        providerSelect === "custom" ? providerInput : providerSelect
-      );
+      await api.setBeaconProvider(beaconProvider);
       setReqStatus({ result: "" });
     } catch (e) {
       console.log("Error on switchValidatorClient", e);
@@ -133,28 +118,18 @@ export function SelectBeaconProvider({
 
       <FormControl variant="outlined" className={classes.selectFormControl}>
         <Select
-          value={providerSelect}
+          value={beaconProvider}
           onChange={(e) =>
-            setProviderSelect(e.target.value as BeaconProviderSelect)
+            setBeaconProvider(e.target.value as BeaconProviderName)
           }
         >
-          {providerSelectOptions.map(({ value, label }) => (
+          {beaconProviderOptions.map(({ value, label }) => (
             <MenuItem key={value} value={value}>
               {label}
             </MenuItem>
           ))}
         </Select>
       </FormControl>
-
-      {providerSelect === "custom" && (
-        <TextField
-          className={classes.providerInput}
-          label="Beacon provider URL"
-          variant="outlined"
-          value={providerInput}
-          onChange={(e) => setProviderInput(e.target.value)}
-        />
-      )}
 
       <div className={classes.bottomContainer}>
         {reqStatus.error && <ErrorView error={reqStatus.error} />}

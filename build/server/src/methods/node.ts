@@ -1,41 +1,27 @@
 import memoizee from "memoizee";
-import { NodeStats } from "../../common";
+import { NodeStats, BeaconProviderName } from "../../common";
 import { eth2NetworkName } from "../params";
-import {
-  ethNodePeers,
-  ethNodeSyncing,
-  ethBeaconChainhead
-} from "../services/metrics";
-import { logs } from "../logs";
+import { server } from "../db";
+import { getBeaconNodeClient } from "../services/beaconNode";
 
-const ethNodePeersMem = memoizee(ethNodePeers, {
-  maxAge: 12 * 1000,
-  promise: true
-});
-const ethNodeSyncingMem = memoizee(ethNodeSyncing, {
-  maxAge: 12 * 1000,
-  promise: true
-});
-const ethBeaconChainheadMem = memoizee(ethBeaconChainhead, {
+async function getNodeStats(
+  beaconNode: BeaconProviderName
+): Promise<NodeStats> {
+  const beaconNodeClient = getBeaconNodeClient(beaconNode);
+  return {
+    chainhead: await beaconNodeClient.chainhead(),
+    syncing: await beaconNodeClient.syncing(),
+    peers: await beaconNodeClient.peers(),
+    eth2NetworkName
+  };
+}
+
+const getNodeStatsMem = memoizee(getNodeStats, {
   maxAge: 12 * 1000,
   promise: true
 });
 
 export async function nodeStats(): Promise<NodeStats> {
-  const peers = await ethNodePeersMem().catch(e =>
-    logs.error(`Error fetching node peers`, e)
-  );
-  const syncing = await ethNodeSyncingMem().catch(e =>
-    logs.error(`Error fetching node syncing status`, e)
-  );
-  const chainhead = await ethBeaconChainheadMem().catch(e =>
-    logs.error(`Error fetching node chainhead`, e)
-  );
-
-  return {
-    peers: peers || null,
-    syncing: syncing || null,
-    chainhead: chainhead || null,
-    eth2NetworkName
-  };
+  const beaconNode = server.beaconProvider.get();
+  return await getNodeStatsMem(beaconNode);
 }

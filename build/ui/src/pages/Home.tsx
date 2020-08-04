@@ -12,7 +12,7 @@ export function Home() {
 
   return (
     <>
-      {nodeStats.data?.syncing?.syncing && (
+      {nodeStats.data?.syncing && (
         <LayoutItem noPaper>
           <Alert severity="warning">
             Eth2 beacon node is still syncing. The validator can not perform its

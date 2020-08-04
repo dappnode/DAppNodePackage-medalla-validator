@@ -4,7 +4,7 @@ import {
   ValidatorFiles,
   ValidatorClientName,
   ValidatorSettings,
-  BeaconProvider,
+  BeaconProviderName,
 } from "./types";
 
 export interface Routes {
@@ -20,7 +20,6 @@ export interface Routes {
    * Import validator keystores and passphrases
    */
   importValidators: (validators: ValidatorFiles[]) => Promise<void>;
-
   /**
    * Returns configurable validator parameters
    */
@@ -32,7 +31,7 @@ export interface Routes {
   /**
    * Set the beaconProvider (name or URL) setting
    */
-  setBeaconProvider: (newBeaconProvider: BeaconProvider) => Promise<void>;
+  setBeaconProvider: (newBeaconProvider: BeaconProviderName) => Promise<void>;
 }
 
 export const routesData: { [P in keyof Routes]: {} } = {

@@ -13,21 +13,20 @@ export const eth2NetworkName = process.env.ETH2_NETWORK_NAME || "";
 export const LIGHTHOUSE_DATA_DIR = "/lighthouse";
 export const LIGHTHOUSE_KEYSTORES_DIR = "/lighthouse/keystores";
 export const LIGHTHOUSE_SECRETS_DIR = "/lighthouse/secrets";
+export const LIGHTHOUSE_REST_APIURL =
+  "http://lighthouse-medalla-beacon-node.dappnode:5052";
 
 /**
  * Prysm config and paths
  */
 export const PRYSM_WALLET_DIR = "/prysm/.eth2validators/primary";
 export const PRYSM_SECRETS_DIR = "/prysm/.eth2validators/secrets";
+export const PRYSM_REST_APIURL =
+  "http://prysm-medalla-beacon-node.dappnode:3500";
 
 // Login password
 export const adminPassword = process.env.PASSWORD;
 export const disablePassword = process.env.DISABLE_PASSWORD;
-
-// To collect metrics
-export const beaconGrpcGatewayUrl =
-  process.env.BEACON_GRPC_GATEWAY_URL ||
-  "http://prysm-altona-beacon-chain.dappnode:3500";
 
 // Server config
 const logLevel = process.env.LOG_LEVEL;

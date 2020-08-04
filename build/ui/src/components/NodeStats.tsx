@@ -10,13 +10,11 @@ export function NodeStatsView({ nodeStats }: { nodeStats: NodeStats }) {
       <Typography>
         Current epoch:{" "}
         <strong>
-          {nodeStats.chainhead ? nodeStats.chainhead.headEpoch : "?"}
+          {nodeStats.chainhead
+            ? nodeStats.chainhead.headSlot % nodeStats.chainhead.slotsPerEpoch
+            : "?"}
         </strong>{" "}
-        {nodeStats.syncing
-          ? nodeStats.syncing.syncing
-            ? "(syncing)"
-            : "(synced)"
-          : ""}
+        {nodeStats.syncing ? "(syncing)" : "(synced)"}
       </Typography>
       <Typography>
         Peers: <strong>{nodeStats.peers ? nodeStats.peers.length : "?"}</strong>

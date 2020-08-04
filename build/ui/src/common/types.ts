@@ -1,7 +1,7 @@
 // Server types
 
 export type ValidatorClientName = "lighthouse" | "prysm";
-export type BeaconProvider = "lighthouse" | "prysm" | string;
+export type BeaconProviderName = "lighthouse" | "prysm";
 
 export interface ValidatorSettings {
   validatorClient: ValidatorClientName;
@@ -66,8 +66,8 @@ export interface DepositEvent extends DepositEventArgs {
 }
 
 export interface NodeStats {
-  peers: BeaconNodePeer[] | null;
-  syncing: { syncing: boolean } | null;
+  peers: string[] | null;
+  syncing: SyncStatus | null;
   chainhead: BeaconNodeChainhead | null;
   /**
    * e.g. Topaz
@@ -101,8 +101,7 @@ export const depositEventAbi = {
 // Metrics from Node's gRPC gateway
 
 export type ValidatorMetrics = Partial<ValidatorStatus> &
-  Partial<ValidatorData> &
-  Partial<ValidatorBalance> & { publicKey: string };
+  Partial<ValidatorData> & { publicKey: string };
 
 export interface ValidatorStatus {
   /**
@@ -114,11 +113,8 @@ export interface ValidatorStatus {
    * SLASHING - validator has been kicked out due to meeting a slashing condition.
    * UNKNOWN_STATUS - validator does not have a known status in the network.
    */
-  status: string; // "UNKNOWN_STATUS";
-  eth1DepositBlockNumber: string;
-  depositInclusionSlot: string;
-  activationEpoch: string; // "213"
-  positionInActivationQueue: string; // "0"
+  status: string;
+  balance: number | null;
 }
 
 export interface ValidatorData {
@@ -131,27 +127,15 @@ export interface ValidatorData {
   exitEpoch: string; // "18446744073709551615"
   withdrawableEpoch: string; // "18446744073709551615"
 }
-
-export interface ValidatorBalance {
-  balance: string;
-}
-
-export interface BeaconNodePeer {
-  address: string; // '/ip4/104.36.201.234/tcp/13210/p2p/16Uiu2HAm5RX4gAQtwqArBmuuGugUXAViKaKBx6ugDJb1L1RFcpfK',
-  direction: string; // 'OUTBOUND'
-}
-
 export interface BeaconNodeChainhead {
-  headSlot: string; // '177684',
-  headEpoch: string; // '5552',
+  headSlot: number; // 177684,
   headBlockRoot: string; // 'y1GDABJ0iPgZhdcWBXTon4r2TgEnpS3XFISckLyqa+U=',
-  finalizedSlot: string; // '177600',
-  finalizedEpoch: string; // '5550',
-  finalizedBlockRoot: string; // 'Bb/6F2NfmtilyxQb+2tItGlD1WNwR17gMVd5kIxjgCQ=',
-  justifiedSlot: string; // '177632',
-  justifiedEpoch: string; // '5551',
-  justifiedBlockRoot: string; // 'e+1HeaYj+a/u9gPyUfyUhrGDyv/5BkpOXiF8KnXcItc=',
-  previousJustifiedSlot: string; // '177600',
-  previousJustifiedEpoch: string; // '5550',
-  previousJustifiedBlockRoot: string; // 'Bb/6F2NfmtilyxQb+2tItGlD1WNwR17gMVd5kIxjgCQ=' }
+  finalizedSlot: number; // 177600,
+  slotsPerEpoch: number; // 32
 }
+
+export type SyncStatus = {
+  startingSlot: number; // 0;
+  currentSlot: number; // 100;
+  highestSlot: number; // 200;
+} | null;
