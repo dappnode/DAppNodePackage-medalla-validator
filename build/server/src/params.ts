@@ -18,11 +18,11 @@ export const LIGHTHOUSE_DATA_DIR = "/lighthouse";
 export const LIGHTHOUSE_KEYSTORES_DIR = "/lighthouse/keystores";
 export const LIGHTHOUSE_SECRETS_DIR = "/lighthouse/secrets";
 export const LIGHTHOUSE_DNPNAME =
-  "lighthouse-medalla-beacon-node.dnp.dappnode.eth";
+  "lighthouse-medalla-beacon-chain.dnp.dappnode.eth";
 export const LIGHTHOUSE_REST_APIURL =
-  "http://lighthouse-medalla-beacon-node.dappnode:5052";
+  "http://lighthouse-medalla-beacon-chain.dappnode:5052";
 export const LIGHTHOUSE_VALIDATOR_APIURL =
-  "http://lighthouse-medalla-beacon-node.dappnode:4000";
+  "http://lighthouse-medalla-beacon-chain.dappnode:4000";
 export const LIGHTHOUSE_EXTRA_OPTS = process.env.LIGHTHOUSE_EXTRA_OPTS || "";
 export const LIGHTHOUSE_VERBOSITY = process.env.LIGHTHOUSE_VERBOSITY || "info";
 
