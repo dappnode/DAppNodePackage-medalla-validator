@@ -14,29 +14,15 @@ import { LoadingView } from "./LoadingView";
 import { newTabProps, urlJoin, noAStyle } from "utils";
 import { shortNameCapitalized } from "utils/format";
 import { DnpInstalledStatus, BeaconProviderName, AppSettings } from "common";
-import {
-  LIGHTHOUSE_DNPNAME,
-  PRYSM_DNPNAME,
-  INSTALL_DNP_URL,
-  PACKAGE_DNP_URL,
-} from "params";
+import { INSTALL_DNP_URL, PACKAGE_DNP_URL } from "params";
 import { Alert } from "@material-ui/lab";
 
 const beaconProviderOptions: {
   value: BeaconProviderName;
   label: string;
-  dnpName: string;
 }[] = [
-  {
-    value: "lighthouse",
-    label: "Local DAppNode Lighthouse",
-    dnpName: LIGHTHOUSE_DNPNAME,
-  },
-  {
-    value: "prysm",
-    label: "Local DAppNode Prysm",
-    dnpName: PRYSM_DNPNAME,
-  },
+  { value: "lighthouse", label: "Local DAppNode Lighthouse" },
+  { value: "prysm", label: "Local DAppNode Prysm" },
 ];
 
 const useStyles = makeStyles((theme) => ({
