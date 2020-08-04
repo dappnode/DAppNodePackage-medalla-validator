@@ -22,14 +22,20 @@ export const LIGHTHOUSE_KEYSTORES_DIR = "/lighthouse/keystores";
 export const LIGHTHOUSE_SECRETS_DIR = "/lighthouse/secrets";
 export const LIGHTHOUSE_REST_APIURL =
   "http://lighthouse-medalla-beacon-node.dappnode:5052";
+export const LIGHTHOUSE_VALIDATOR_APIURL =
+  "http://lighthouse-medalla-beacon-node.dappnode:4000";
 
 /**
  * Prysm config and paths
  */
+export const PRYSM_DATA_DIR = "/prysm";
 export const PRYSM_WALLET_DIR = "/prysm/.eth2validators/primary";
 export const PRYSM_SECRETS_DIR = "/prysm/.eth2validators/secrets";
+export const PRYSM_LOG_FILE = "/var/log/validator.log";
 export const PRYSM_REST_APIURL =
   "http://prysm-medalla-beacon-chain.dappnode:3500";
+export const PRYSM_VALIDATOR_APIRUL =
+  "http://prysm-medalla-beacon-chain.dappnode:4000";
 
 // Login password
 export const adminPassword = process.env.PASSWORD;

@@ -4,6 +4,7 @@ import {
   logFile,
   graffiti,
   extraOpts,
+  PRYSM_DATA_DIR,
   PRYSM_WALLET_DIR
 } from "../../params";
 import { getLogger } from "../../logs";
@@ -19,6 +20,7 @@ export const prysmBinary = new Supervisor(
       "beacon-rpc-provider": getBeaconProviderUrl(
         db.server.beaconProvider.get()
       ),
+      datadir: PRYSM_DATA_DIR,
       "wallet-dir": PRYSM_WALLET_DIR,
       verbosity: verbosity,
       "log-file": logFile,

@@ -1,13 +1,14 @@
 import { BeaconProviderName } from "../../common";
+import { LIGHTHOUSE_VALIDATOR_APIURL, PRYSM_VALIDATOR_APIRUL } from "../params";
 
 export function getBeaconProviderUrl(
   beaconProvider: BeaconProviderName
 ): string {
   switch (beaconProvider) {
     case "lighthouse":
-      return "http://beacon-chain-lighthouse.dappnode:4000";
+      return LIGHTHOUSE_VALIDATOR_APIURL;
     case "prysm":
-      return "http://beacon-chain-prysm.dappnode:4000";
+      return PRYSM_VALIDATOR_APIRUL;
     default:
       return beaconProvider;
   }

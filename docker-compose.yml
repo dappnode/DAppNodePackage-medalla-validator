@@ -8,8 +8,9 @@ services:
       args:
         - UPSTREAM_VERSION
     volumes:
+      - "lighthouse:/lighthouse"
+      - "prysm:/prysm"
       - "logs:/var/log"
-      - "data:/root/.config/ethereum2/"
       - "db-api:/app/db-api"
     restart: always
     environment:
@@ -20,6 +21,7 @@ services:
       - EXTRA_OPTS=
       - WEB3PROVIDER=https://goerli.dappnode.net
 volumes:
-  data: {}
-  db-api: {}
+  lighthouse: {}
+  prysm: {}
   logs: {}
+  db-api: {}
