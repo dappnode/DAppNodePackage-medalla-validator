@@ -1,10 +1,7 @@
 export const dataPath = process.env.DATA_PATH || "data";
-export const logFile = "/var/log/validator.log";
-export const extraOpts = process.env.EXTRA_OPTS || "";
-export const verbosity = process.env.VERBOSITY || "info";
 export const eth1Web3Url =
   process.env.WEB3PROVIDER || "https://goerli.dappnode.net";
-export const graffiti = process.env.GRAFFITI || "";
+export const GRAFFITI = process.env.GRAFFITI || "";
 export const eth2NetworkName = process.env.ETH2_NETWORK_NAME || "";
 
 /**
@@ -24,6 +21,8 @@ export const LIGHTHOUSE_REST_APIURL =
   "http://lighthouse-medalla-beacon-node.dappnode:5052";
 export const LIGHTHOUSE_VALIDATOR_APIURL =
   "http://lighthouse-medalla-beacon-node.dappnode:4000";
+export const LIGHTHOUSE_EXTRA_OPTS = process.env.LIGHTHOUSE_EXTRA_OPTS || "";
+export const LIGHTHOUSE_VERBOSITY = process.env.LIGHTHOUSE_VERBOSITY || "info";
 
 /**
  * Prysm config and paths
@@ -36,6 +35,8 @@ export const PRYSM_REST_APIURL =
   "http://prysm-medalla-beacon-chain.dappnode:3500";
 export const PRYSM_VALIDATOR_APIRUL =
   "http://prysm-medalla-beacon-chain.dappnode:4000";
+export const PRYSM_EXTRA_OPTS = process.env.PRYSM_EXTRA_OPTS || "";
+export const PRYSM_VERBOSITY = process.env.PRYSM_VERBOSITY || "info";
 
 // Login password
 export const adminPassword = process.env.PASSWORD;

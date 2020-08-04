@@ -15,11 +15,13 @@ services:
     restart: always
     environment:
       - PASSWORD=
-      - GRAFFITI=validating_from_DAppNode
-      - VERBOSITY=info
       - LOG_LEVEL=
-      - EXTRA_OPTS=
+      - GRAFFITI=validating_from_DAppNode
       - WEB3PROVIDER=https://goerli.dappnode.net
+      - LIGHTHOUSE_EXTRA_OPTS=
+      - LIGHTHOUSE_VERBOSITY=
+      - PRYSM_EXTRA_OPTS=
+      - PRYSM_VERBOSITY=
 volumes:
   lighthouse: {}
   prysm: {}

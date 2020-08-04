@@ -1,9 +1,9 @@
 import { Supervisor } from "../../utils/Supervisor";
 import {
-  verbosity,
-  logFile,
-  graffiti,
-  extraOpts,
+  GRAFFITI,
+  PRYSM_VERBOSITY,
+  PRYSM_EXTRA_OPTS,
+  PRYSM_LOG_FILE,
   PRYSM_DATA_DIR,
   PRYSM_WALLET_DIR
 } from "../../params";
@@ -22,11 +22,11 @@ export const prysmBinary = new Supervisor(
       ),
       datadir: PRYSM_DATA_DIR,
       "wallet-dir": PRYSM_WALLET_DIR,
-      verbosity: verbosity,
-      "log-file": logFile,
-      ...(graffiti ? { graffiti } : {}), // Ignore if empty
+      verbosity: PRYSM_VERBOSITY,
+      "log-file": PRYSM_LOG_FILE,
+      ...(GRAFFITI ? { graffiti: GRAFFITI } : {}), // Ignore if empty
       // dargs extra options
-      _: [extraOpts]
+      _: [PRYSM_EXTRA_OPTS]
     },
     dynamicOptions: () => ({
       "beacon-rpc-provider": getBeaconProviderUrl(
