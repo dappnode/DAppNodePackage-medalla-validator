@@ -1,27 +1,26 @@
 import memoizee from "memoizee";
 import { ethers } from "ethers";
-import { ValidatorStats, DepositEvent } from "../../common";
 import * as db from "../db";
+import { ValidatorStats, DepositEvent, BeaconProviderName } from "../../common";
 import { computeExpectedBalance } from "../utils/depositEvent";
 import { requestPastDepositEvents } from "../services/eth1";
 import { getCurrentValidatorFileManager } from "../services/validatorFiles";
-import {
-  ethValidatorsBalances,
-  ethValidatorStatuses
-} from "../services/metrics";
+import { getBeaconNodeClient } from "../services/beaconNode";
 import { logs } from "../logs";
 
-const ethValidatorsBalancesMem = memoizee(ethValidatorsBalances, {
+async function getValidatorStatus(
+  beaconNode: BeaconProviderName,
+  pubkeys: string[]
+) {
+  const beaconNodeClient = getBeaconNodeClient(beaconNode);
+  return await beaconNodeClient.validators(pubkeys);
+}
+
+const getValidatorStatusMem = memoizee(getValidatorStatus, {
   maxAge: 12 * 1000,
   promise: true,
   // Cache by contents of pubKeys not by the array containing it
-  normalizer: args => JSON.stringify(args[0])
-});
-const ethValidatorStatusesMem = memoizee(ethValidatorStatuses, {
-  maxAge: 12 * 1000,
-  promise: true,
-  // Cache by contents of pubKeys not by the array containing it
-  normalizer: args => JSON.stringify(args[0])
+  normalizer: ([beaconNode, pubkeys]) => beaconNode + pubkeys.sort().join("")
 });
 
 /**
@@ -36,20 +35,18 @@ export async function getValidators(): Promise<ValidatorStats[]> {
     logs.error(`Error requesting past deposit events`, e);
   });
 
-  const balancesByPubkey = await ethValidatorsBalancesMem(pubkeys).catch(e =>
-    logs.error(`Error fetching validators balances`, e)
-  );
-  const statusByPubkey = await ethValidatorStatusesMem(pubkeys).catch(e =>
-    logs.error(`Error fetching validators status`, e)
-  );
+  const beaconNode = db.server.beaconProvider.get();
+  const statusByPubkey = await getValidatorStatusMem(
+    beaconNode,
+    pubkeys
+  ).catch(e => logs.error(`Error fetching validators balances`, e));
 
   return pubkeys
     .map(
       (publicKey, index): ValidatorStats => {
         const depositEventsObj = db.deposits.depositEvents.get(publicKey);
         const depositEvents = Object.values(depositEventsObj?.events || {});
-        const { balance } = (balancesByPubkey || {})[publicKey] || {};
-        const { status } = (statusByPubkey || {})[publicKey] || {};
+        const { status, balance } = (statusByPubkey || {})[publicKey] || {};
 
         return {
           index,
@@ -68,7 +65,7 @@ function computeBalance(
     balance,
     status
   }: {
-    balance?: string;
+    balance?: number | null;
     status?: string;
   },
   depositEvents: DepositEvent[]
@@ -88,7 +85,7 @@ function computeBalance(
 
   return {
     eth:
-      typeof balance === "string" || typeof balance === "number"
+      typeof balance === "number"
         ? // API returns the balance in 9 decimals
           parseFloat(ethers.utils.formatUnits(balance, 9)) || null
         : null,
