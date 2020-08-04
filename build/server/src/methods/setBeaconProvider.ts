@@ -1,4 +1,4 @@
-import { BeaconProvider } from "../../common";
+import { BeaconProviderName } from "../../common";
 import { getValidatorBinary } from "../services/validatorBinary";
 import { server } from "../db";
 
@@ -6,7 +6,7 @@ import { server } from "../db";
  * Set beacon provider URL or name to which validator clients connect to
  */
 export async function setBeaconProvider(
-  beaconProvider: BeaconProvider
+  beaconProvider: BeaconProviderName
 ): Promise<void> {
   const prevBeaconProvider = server.beaconProvider.get();
   if (prevBeaconProvider === beaconProvider) return;

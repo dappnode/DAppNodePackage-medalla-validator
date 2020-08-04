@@ -1,6 +1,8 @@
-import { BeaconProvider } from "../../common";
+import { BeaconProviderName } from "../../common";
 
-export function getBeaconProviderUrl(beaconProvider: BeaconProvider): string {
+export function getBeaconProviderUrl(
+  beaconProvider: BeaconProviderName
+): string {
   switch (beaconProvider) {
     case "lighthouse":
       return "http://beacon-chain-lighthouse.dappnode:4000";
