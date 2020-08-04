@@ -15,7 +15,7 @@ export const lighthouseBinary = new Supervisor(
     args: ["validator_client"],
     options: {
       "auto-register": true,
-      "strict-lockfiles": true,
+      // "strict-lockfiles": true,
       "debug-level": LIGHTHOUSE_VERBOSITY,
       datadir: LIGHTHOUSE_DATA_DIR,
       "secrets-dir": LIGHTHOUSE_SECRETS_DIR,
