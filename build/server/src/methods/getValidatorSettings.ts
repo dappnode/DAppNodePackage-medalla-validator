@@ -1,9 +1,9 @@
 import { ValidatorSettings } from "../../common";
-import { server } from "../db";
+import * as db from "../db";
 
 export async function getValidatorSettings(): Promise<ValidatorSettings> {
   return {
-    validatorClient: server.validatorClient.get(),
-    beaconProvider: server.beaconProvider.get()
+    validatorClient: db.server.validatorClient.get(),
+    beaconProvider: db.server.beaconProvider.get()
   };
 }

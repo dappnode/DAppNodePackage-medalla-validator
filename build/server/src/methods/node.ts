@@ -1,7 +1,7 @@
 import memoizee from "memoizee";
 import { NodeStats, BeaconProviderName } from "../../common";
 import { eth2NetworkName } from "../params";
-import { server } from "../db";
+import * as db from "../db";
 import { getBeaconNodeClient } from "../services/beaconNode";
 
 async function getNodeStats(
@@ -22,6 +22,6 @@ const getNodeStatsMem = memoizee(getNodeStats, {
 });
 
 export async function nodeStats(): Promise<NodeStats> {
-  const beaconNode = server.beaconProvider.get();
+  const beaconNode = db.server.beaconProvider.get();
   return await getNodeStatsMem(beaconNode);
 }

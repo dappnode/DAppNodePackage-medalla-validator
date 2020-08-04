@@ -1,4 +1,4 @@
-import { server } from "../../db";
+import * as db from "../../db";
 import { ValidatorFileManager } from "./abstractManager";
 import { ValidatorFiles, ValidatorClientName } from "../../../common";
 import { LighthouseValidatorFileManager } from "./lighthouse";
@@ -43,7 +43,7 @@ export function thereAreValidatorFiles(): boolean {
 }
 
 export function getCurrentValidatorFileManager(): ValidatorFileManager {
-  const client = server.validatorClient.get();
+  const client = db.server.validatorClient.get();
   return getValidatorFileManager(client);
 }
 

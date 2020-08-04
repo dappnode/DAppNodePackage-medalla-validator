@@ -1,7 +1,7 @@
 import { Supervisor } from "../../utils/Supervisor";
 import { LIGHTHOUSE_SECRETS_DIR, LIGHTHOUSE_DATA_DIR } from "../../params";
 import { getLogger } from "../../logs";
-import { server } from "../../db";
+import * as db from "../../db";
 import { getBeaconProviderUrl } from "../../utils/beaconProvider";
 
 export const lighthouseBinary = new Supervisor(
@@ -13,10 +13,10 @@ export const lighthouseBinary = new Supervisor(
       "strict-lockfiles": true,
       datadir: LIGHTHOUSE_DATA_DIR,
       "secrets-dir": LIGHTHOUSE_SECRETS_DIR,
-      server: getBeaconProviderUrl(server.beaconProvider.get())
+      server: getBeaconProviderUrl(db.server.beaconProvider.get())
     },
     dynamicOptions: () => ({
-      server: getBeaconProviderUrl(server.beaconProvider.get())
+      server: getBeaconProviderUrl(db.server.beaconProvider.get())
     })
   },
   {

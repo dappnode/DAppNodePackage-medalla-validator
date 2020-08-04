@@ -1,7 +1,7 @@
 import { ValidatorClientName } from "../../common";
 import { getValidatorBinary } from "../services/validatorBinary";
 import { getValidatorFileManager } from "../services/validatorFiles";
-import { server } from "../db";
+import * as db from "../db";
 import { logs } from "../logs";
 
 /**
@@ -11,7 +11,7 @@ import { logs } from "../logs";
 export async function switchValidatorClient(
   nextClient: ValidatorClientName
 ): Promise<void> {
-  const prevClient = server.validatorClient.get();
+  const prevClient = db.server.validatorClient.get();
   if (prevClient === nextClient) return;
 
   const prevClientBinary = getValidatorBinary(prevClient);
@@ -25,13 +25,13 @@ export async function switchValidatorClient(
 
   const validatorFiles = await prevClientFileManager.read();
   try {
-    server.validatorClient.set(nextClient);
+    db.server.validatorClient.set(nextClient);
     await nextClientFileManager.write(validatorFiles);
     await prevClientFileManager.delete();
   } catch (e) {
     // If there is an error writing files to the next client, write to previous
     try {
-      server.validatorClient.set(prevClient);
+      db.server.validatorClient.set(prevClient);
       await nextClientFileManager.delete();
       await prevClientFileManager.write(validatorFiles);
       await prevClientBinary.start();

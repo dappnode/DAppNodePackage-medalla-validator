@@ -1,4 +1,4 @@
-import { server } from "../../db";
+import * as db from "../../db";
 import { ValidatorClientName } from "../../../common";
 import { Supervisor } from "../../utils/Supervisor";
 import { lighthouseBinary } from "./lighthouse";
@@ -13,7 +13,7 @@ export async function startValidatorBinary(): Promise<void> {
 }
 
 export function getCurrentValidatorBinary(): Supervisor {
-  const client = server.validatorClient.get();
+  const client = db.server.validatorClient.get();
   return getValidatorBinary(client);
 }
 

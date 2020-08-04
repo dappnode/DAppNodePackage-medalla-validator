@@ -1,7 +1,7 @@
 import { ValidatorFiles } from "../../common";
 import { getValidatorFileManager } from "../services/validatorFiles";
 import { getValidatorBinary } from "../services/validatorBinary";
-import { server } from "../db";
+import * as db from "../db";
 
 /**
  * Import validator keystores and passphrases, store them locally
@@ -10,10 +10,10 @@ import { server } from "../db";
 export async function importValidators(
   validatorsFiles: ValidatorFiles[]
 ): Promise<void> {
-  const fileManager = getValidatorFileManager(server.validatorClient.get());
+  const fileManager = getValidatorFileManager(db.server.validatorClient.get());
   await fileManager.write(validatorsFiles);
 
   // Re-fetch current validatorClient in case it has changed
-  const binary = getValidatorBinary(server.validatorClient.get());
+  const binary = getValidatorBinary(db.server.validatorClient.get());
   await binary.restart();
 }

@@ -7,7 +7,7 @@ import {
   PRYSM_WALLET_DIR
 } from "../../params";
 import { getLogger } from "../../logs";
-import { server } from "../../db";
+import * as db from "../../db";
 import { getBeaconProviderUrl } from "../../utils/beaconProvider";
 
 export const prysmBinary = new Supervisor(
@@ -16,7 +16,9 @@ export const prysmBinary = new Supervisor(
     options: {
       medalla: true,
       "monitoring-host": "0.0.0.0",
-      "beacon-rpc-provider": getBeaconProviderUrl(server.beaconProvider.get()),
+      "beacon-rpc-provider": getBeaconProviderUrl(
+        db.server.beaconProvider.get()
+      ),
       "wallet-dir": PRYSM_WALLET_DIR,
       verbosity: verbosity,
       "log-file": logFile,
@@ -25,7 +27,9 @@ export const prysmBinary = new Supervisor(
       _: [extraOpts]
     },
     dynamicOptions: () => ({
-      "beacon-rpc-provider": getBeaconProviderUrl(server.beaconProvider.get())
+      "beacon-rpc-provider": getBeaconProviderUrl(
+        db.server.beaconProvider.get()
+      )
     })
   },
   {
