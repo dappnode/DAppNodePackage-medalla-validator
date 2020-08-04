@@ -100,7 +100,9 @@ export function SelectBeaconProvider({
           }
         >
           {providerSelectOptions.map(({ value, label }) => (
-            <MenuItem value={value}>{label}</MenuItem>
+            <MenuItem key={value} value={value}>
+              {label}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>

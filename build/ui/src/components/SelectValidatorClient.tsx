@@ -71,7 +71,9 @@ export function SelectValidatorClient({
           }
         >
           {validatorClientOptions.map(({ value, label }) => (
-            <MenuItem value={value}>{label}</MenuItem>
+            <MenuItem key={value} value={value}>
+              {label}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>
