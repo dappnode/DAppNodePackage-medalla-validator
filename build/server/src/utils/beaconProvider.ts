@@ -10,6 +10,6 @@ export function getBeaconProviderUrl(
     case "prysm":
       return PRYSM_VALIDATOR_APIRUL;
     default:
-      return beaconProvider;
+      throw Error(`Not supported beacon provider ${beaconProvider}`);
   }
 }

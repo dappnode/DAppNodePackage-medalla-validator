@@ -11,15 +11,21 @@ import { getLogger } from "../../logs";
 import * as db from "../../db";
 import { getBeaconProviderUrl } from "../../utils/beaconProvider";
 
+/**
+ * Prysm does not want the protocol in the beacon URL
+ */
+function getBeaconProviderUrlPrysm() {
+  const url = getBeaconProviderUrl(db.server.beaconProvider.get());
+  return url.replace(/^https?:\/\//, "");
+}
+
 export const prysmBinary = new Supervisor(
   {
     command: "validator",
     options: {
       medalla: true,
       "monitoring-host": "0.0.0.0",
-      "beacon-rpc-provider": getBeaconProviderUrl(
-        db.server.beaconProvider.get()
-      ),
+      "beacon-rpc-provider": getBeaconProviderUrlPrysm(),
       datadir: PRYSM_DATA_DIR,
       "wallet-dir": PRYSM_WALLET_DIR,
       verbosity: PRYSM_VERBOSITY,
@@ -29,9 +35,7 @@ export const prysmBinary = new Supervisor(
       _: [PRYSM_EXTRA_OPTS]
     },
     dynamicOptions: () => ({
-      "beacon-rpc-provider": getBeaconProviderUrl(
-        db.server.beaconProvider.get()
-      )
+      "beacon-rpc-provider": getBeaconProviderUrlPrysm()
     })
   },
   {
