@@ -6,12 +6,19 @@ import {
   makeStyles,
   Button,
   TextField,
+  Chip,
+  Avatar,
 } from "@material-ui/core";
+import GetAppIcon from "@material-ui/icons/GetApp";
+import DoneIcon from "@material-ui/icons/Done";
 import { api } from "api/rpc";
-import { RequestStatus } from "types";
+import { RequestStatus, InstalledPackage } from "types";
 import { ValidatorSettings } from "common";
 import { ErrorView } from "./ErrorView";
 import { LoadingView } from "./LoadingView";
+import { useInstalledPackages } from "utils/installedPackages";
+import { newTabProps } from "utils";
+import { shortNameCapitalized } from "utils/format";
 
 type BeaconProviderSelect = "lighthouse" | "prysm" | "custom";
 
@@ -24,12 +31,31 @@ const providerSelectOptions: {
   { value: "custom", label: "Custom" },
 ];
 
+interface BeaconNodeDnp {
+  name: string;
+}
+
+const beaconNodeDnps: BeaconNodeDnp[] = [
+  { name: "ipfs.dnp.dappnode.eth" },
+  { name: "geth.dnp.dappnode.eth" },
+  { name: "prysm-beacon-node.dnp.dappnode.eth" },
+  { name: "lighthouse-beacon-node.dnp.dappnode.eth" },
+];
+
 const useStyles = makeStyles((theme) => ({
+  chipArray: {
+    display: "flex",
+    flexWrap: "wrap",
+    marginTop: theme.spacing(1),
+    "& > *": {
+      margin: theme.spacing(0.5),
+    },
+  },
   selectDescription: {
     flexGrow: 1,
   },
   selectFormControl: {
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing(2),
   },
   providerInput: {
     marginTop: theme.spacing(3),
@@ -54,6 +80,7 @@ export function SelectBeaconProvider({
   );
   const [providerInput, setProviderInput] = useState<string>("");
   const [reqStatus, setReqStatus] = useState<RequestStatus>({});
+  const installedPackages = useInstalledPackages();
 
   useEffect(() => {
     const currentOption = providerSelectOptions.find(
@@ -92,6 +119,18 @@ export function SelectBeaconProvider({
 
   return (
     <>
+      {installedPackages.data && (
+        <div className={classes.chipArray}>
+          {beaconNodeDnps.map((beaconNodeDnp) => (
+            <BeaconNodeDnpStatus
+              key={beaconNodeDnp.name}
+              beaconNodeDnp={beaconNodeDnp}
+              installedPackages={installedPackages.data || []}
+            />
+          ))}
+        </div>
+      )}
+
       <FormControl variant="outlined" className={classes.selectFormControl}>
         <Select
           value={providerSelect}
@@ -140,4 +179,39 @@ export function SelectBeaconProvider({
       </div>
     </>
   );
+}
+
+function BeaconNodeDnpStatus({
+  beaconNodeDnp,
+  installedPackages,
+}: {
+  beaconNodeDnp: BeaconNodeDnp;
+  installedPackages: InstalledPackage[];
+}) {
+  const name = beaconNodeDnp.name;
+  const label = shortNameCapitalized(name);
+  const dnp = installedPackages.find((d) => d.name === name);
+
+  if (dnp) {
+    if (dnp.state === "running")
+      return <Chip label={label} color="primary" deleteIcon={<DoneIcon />} />;
+    else {
+      return <Chip label={label} clickable deleteIcon={<GetAppIcon />} />;
+    }
+  } else {
+    return (
+      <a
+        href="http://google.es"
+        style={{ color: "inherit", textDecoration: "none" }}
+        {...newTabProps}
+      >
+        <Chip
+          label={label}
+          clickable
+          onDelete={() => {}}
+          deleteIcon={<GetAppIcon />}
+        />
+      </a>
+    );
+  }
 }
