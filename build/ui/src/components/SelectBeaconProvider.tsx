@@ -69,7 +69,7 @@ export function SelectBeaconProvider({
 
   const hasChanged = beaconProvider !== appSettings.beaconProvider;
   const currentDnp = appSettings.beaconDnps[beaconProvider];
-  const dnpNotReady = currentDnp.status !== "not-installed";
+  const dnpNotReady = currentDnp.status === "not-installed";
 
   async function changeBeaconProvider() {
     if (!hasChanged) return;
