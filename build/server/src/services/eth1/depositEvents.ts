@@ -1,15 +1,15 @@
 import { ethers } from "ethers";
 import retry from "async-retry";
+import memoizee from "memoizee";
 import * as db from "../../db";
+import { getEth1Provider } from "./provider";
+import { logs } from "../../logs";
+import { DEPOSIT_CONTRACT_ADDRESS, DEPOSIT_CONTRACT_BLOCK } from "../../params";
 import {
   DepositEventArgs,
   depositEventAbi,
   DepositEvents
 } from "../../../common";
-import { getEth1Provider } from "./provider";
-import { logs } from "../../logs";
-import memoizee from "memoizee";
-import { getDepositContractAddress } from "./getDepositContractAddress";
 
 export function listenToDepositEvents(): void {
   requestPastDepositEvents().catch(e => {
@@ -35,12 +35,11 @@ async function getDeposits(): Promise<void> {
   const depositInt = new ethers.utils.Interface([depositEventAbi]);
   const provider = getEth1Provider();
   const highestSeenBlock = getHighestSeenBlock();
-  const depositContractAddress = await getDepositContractAddress();
   const depositLogs = await provider.getLogs({
-    address: depositContractAddress, // or contractEnsName,
+    address: DEPOSIT_CONTRACT_ADDRESS, // or contractEnsName,
     fromBlock: highestSeenBlock
       ? highestSeenBlock - 100 // Consider re-orgs, fetch some past blocks
-      : 0,
+      : DEPOSIT_CONTRACT_BLOCK,
     toBlock: "latest",
     topics: [depositInt.events[depositEventAbi.name].topic]
   });
@@ -62,9 +61,8 @@ async function getDeposits(): Promise<void> {
  */
 async function subscribeToEvents(): Promise<void> {
   const provider = getEth1Provider();
-  const depositContractAddress = await getDepositContractAddress();
   const depositContract = new ethers.Contract(
-    depositContractAddress,
+    DEPOSIT_CONTRACT_ADDRESS,
     [depositEventAbi],
     provider
   );

@@ -8,6 +8,13 @@ export const graffiti = process.env.GRAFFITI || "";
 export const eth2NetworkName = process.env.ETH2_NETWORK_NAME || "";
 
 /**
+ * Medalla settings
+ */
+export const DEPOSIT_CONTRACT_ADDRESS =
+  "0x07b39F4fDE4A38bACe212b546dAc87C58DfE3fDC";
+export const DEPOSIT_CONTRACT_BLOCK = 3085928;
+
+/**
  * Lighthouse config and paths
  */
 export const LIGHTHOUSE_DATA_DIR = "/lighthouse";

@@ -18,6 +18,7 @@ services:
       - VERBOSITY=info
       - LOG_LEVEL=
       - EXTRA_OPTS=
+      - WEB3PROVIDER=https://goerli.dappnode.net
 volumes:
   data: {}
   db-api: {}
