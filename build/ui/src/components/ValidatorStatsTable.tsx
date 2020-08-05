@@ -19,7 +19,7 @@ import { HelpText } from "components/HelpText";
 import { prysmStatusDescription } from "text";
 import { PublicKeyView } from "./PublicKeyView";
 import { DepositEventsView } from "./Eth1TransactionView";
-import { formatEth } from "utils";
+import { formatEth, noAStyle } from "utils";
 import { LoadingView } from "./LoadingView";
 import { Link } from "react-router-dom";
 import { paths } from "paths";
@@ -47,6 +47,10 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(0.5),
     display: "flex",
     fontSize: "1.2rem",
+  },
+  noValidatorsContainer: {
+    textAlign: "center",
+    margin: theme.spacing(6),
   },
   noValidators: {
     fontSize: "0.85rem",
@@ -171,7 +175,7 @@ export function ValidatorStatsTable({
             />
           </Box>
         ) : (
-          <Box m={6} textAlign="center">
+          <Box className={classes.noValidatorsContainer}>
             <Typography
               variant="caption"
               className={classes.noValidators}
@@ -179,6 +183,13 @@ export function ValidatorStatsTable({
             >
               No validators
             </Typography>
+            <Box mt={2} textAlign="center">
+              <Link to={paths.validatorsImport} style={noAStyle}>
+                <Button variant="contained" color="primary">
+                  Import validators
+                </Button>
+              </Link>
+            </Box>
           </Box>
         )
       ) : null}
