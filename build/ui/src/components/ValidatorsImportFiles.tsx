@@ -11,16 +11,18 @@ import {
   TableContainer,
   makeStyles,
 } from "@material-ui/core";
+import { api } from "api/rpc";
+import { ValidatorFiles } from "common";
 import { RequestStatus } from "types";
 import { ErrorView } from "components/ErrorView";
 import { Alert } from "@material-ui/lab";
 import BackupIcon from "@material-ui/icons/Backup";
 import CloseIcon from "@material-ui/icons/Close";
+import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import { useDropzone } from "react-dropzone";
 import { processEth2File } from "../utils/eth2FileParser";
 import { PublicKeyView } from "components/PublicKeyView";
-import { ValidatorFiles } from "common";
-import { api } from "api/rpc";
+import { ValidatorPasswordInput } from "components/ValidatorPasswordInput";
 import { Title } from "components/Title";
 import { LoadingView } from "components/LoadingView";
 
@@ -40,6 +42,10 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
     fontSize: theme.spacing(6),
   },
+  successIcon: {
+    color: theme.palette.success.main,
+    display: "flex",
+  },
   deleteValidator: {
     display: "flex",
     opacity: 0.5,
@@ -58,9 +64,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function ValidatorsImportFiles() {
-  const [validators, setValidators] = useState(
-    new Map<string, ValidatorFilesPartial>()
-  );
+  const [validators, setValidators] = useState<
+    Record<string, ValidatorFilesPartial>
+  >({});
   const [loadingFiles, setLoadingFiles] = useState<string>();
   const [importStatus, setImportStatus] = useState<RequestStatus<string>>({});
 
@@ -75,12 +81,14 @@ export function ValidatorsImportFiles() {
           setValidators((_validators) => {
             switch (eth2File.type) {
               case "keystore": {
-                let validator = _validators.get(eth2File.keystore.pubkey);
-                if (!validator)
-                  validator = { pubkey: eth2File.keystore.pubkey };
-                validator.keystore = eth2File.keystore;
-                _validators.set(validator.pubkey, validator);
-                break;
+                const pubkey = eth2File.keystore.pubkey;
+                return {
+                  [pubkey]: {
+                    ...(_validators[pubkey] || {}),
+                    pubkey,
+                    keystore: eth2File.keystore,
+                  },
+                };
               }
 
               // case "deposit": {
@@ -94,11 +102,14 @@ export function ValidatorsImportFiles() {
               // }
 
               case "passphrase": {
-                let validator = _validators.get(eth2File.pubkey);
-                if (!validator) validator = { pubkey: eth2File.pubkey };
-                validator.passphrase = eth2File.passphrase;
-                _validators.set(validator.pubkey, validator);
-                break;
+                const pubkey = eth2File.pubkey;
+                return {
+                  [pubkey]: {
+                    ...(_validators[pubkey] || {}),
+                    pubkey,
+                    passphrase: eth2File.passphrase,
+                  },
+                };
               }
             }
 
@@ -117,12 +128,35 @@ export function ValidatorsImportFiles() {
     [setValidators]
   );
 
+  // Curried callback to first bind `pubkey` and let the child component provide the passphrase
+  const onAddPassword = useCallback(
+    (pubkey: string, passphrase: string) => {
+      console.log(`Adding passowrd ${passphrase} for ${pubkey}`);
+      setValidators((_validators) => {
+        const validator = _validators[pubkey];
+        if (!validator) throw Error(`No validator for pubkey ${pubkey}`);
+        if (!validator.keystore) throw Error(`Validator has no keystore`);
+        return {
+          [pubkey]: { ...validator, pubkey, passphrase },
+        };
+      });
+    },
+    [setValidators]
+  );
+
+  function removeValidatorFiles(pubkey: string) {
+    setValidators((_validators) => {
+      const { [pubkey]: _deleted, ..._validatorsRest } = _validators;
+      return _validatorsRest;
+    });
+  }
+
   async function importValidators() {
     try {
       if (importStatus.loading) return;
 
       const validatorsReady: ValidatorFiles[] = [];
-      for (const validator of Array.from(validators.values()))
+      for (const validator of Object.values(validators))
         if (validator.pubkey && validator.keystore && validator.passphrase)
           validatorsReady.push(validator as ValidatorFiles);
 
@@ -131,7 +165,7 @@ export function ValidatorsImportFiles() {
       setImportStatus({ loading: true });
       await api.importValidators(validatorsReady);
       setImportStatus({ result: "success" });
-      setValidators(new Map());
+      setValidators({});
     } catch (e) {
       console.error(`Error importing validators`, e);
       setImportStatus({ error: e });
@@ -175,7 +209,7 @@ export function ValidatorsImportFiles() {
         <LoadingView steps={["Uploading files...", "Parsing files..."]} />
       )}
 
-      {validators.size > 0 && (
+      {Object.values(validators).length > 0 && (
         <TableContainer>
           <Table size="small">
             <TableHead>
@@ -188,21 +222,35 @@ export function ValidatorsImportFiles() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {Array.from(validators.values()).map((validator, i) => (
+              {Object.values(validators).map((validator) => (
                 <TableRow key={validator.pubkey}>
                   <TableCell>
                     <PublicKeyView publicKey={validator.pubkey} />
                   </TableCell>
-                  <TableCell>{validator.keystore ? "OK" : "missing"}</TableCell>
                   <TableCell>
-                    {validator.passphrase ? "OK" : "missing"}
+                    {validator.keystore ? (
+                      <CheckCircleOutlineIcon className={classes.successIcon} />
+                    ) : (
+                      "missing"
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {validator.passphrase ? (
+                      <CheckCircleOutlineIcon className={classes.successIcon} />
+                    ) : (
+                      <ValidatorPasswordInput
+                        pubkey={validator.pubkey}
+                        onAddPassword={onAddPassword}
+                      />
+                    )}
                   </TableCell>
                   {/* <TableCell>
                     {validator.depositData ? "OK" : "missing"}
                   </TableCell> */}
                   <TableCell
                     className={classes.deleteValidator}
-                    onClick={() => validators.delete(validator.pubkey)}
+                    onClick={() => removeValidatorFiles(validator.pubkey)}
+                    align="right"
                   >
                     <CloseIcon />
                   </TableCell>
@@ -230,7 +278,7 @@ export function ValidatorsImportFiles() {
         onClick={importValidators}
         disabled={
           importStatus.loading ||
-          !Array.from(validators.values()).some(isValidatorReady)
+          !Object.values(validators).some(isValidatorReady)
         }
       >
         Import validators
