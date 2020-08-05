@@ -105,7 +105,7 @@ export function ValidatorsImportFiles() {
         }))
       );
     },
-    [validators, setValidators]
+    [setValidators]
   );
 
   const onDrop = useCallback(
