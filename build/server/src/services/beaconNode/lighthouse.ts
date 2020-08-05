@@ -3,8 +3,9 @@ import {
   BeaconNodeChainhead,
   SyncStatus
 } from "../../../common";
-import fetch, { Response } from "node-fetch";
+import fetch from "node-fetch";
 import { urlJoin } from "../../utils/url";
+import { parseFetchJson } from "../../utils/fetch";
 import { BeaconNodeClient } from "./interface";
 
 interface LighthouseValidatorStatus {
@@ -123,20 +124,6 @@ export class LighthouseNodeClient implements BeaconNodeClient {
       headers: { "Content-Type": "application/json" }
     });
     return parseFetchJson(res);
-  }
-}
-
-/**
- * Parse a node-fetch response providing more meaningful messages
- * if the body of an error response does not contain JSON
- */
-async function parseFetchJson<R>(res: Response): Promise<R> {
-  const body = await res.text();
-  if (!res.ok) throw Error(`${res.status} ${res.statusText}\n${body}`);
-  try {
-    return JSON.parse(body);
-  } catch (e) {
-    throw Error(`Error parsing request body: ${e.message}\n${body}`);
   }
 }
 
