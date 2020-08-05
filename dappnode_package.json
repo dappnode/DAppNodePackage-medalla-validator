@@ -1,6 +1,6 @@
 {
   "name": "medalla-validator.dnp.dappnode.eth",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "upstreamVersion": "v1.0.0-alpha.13",
   "shortDescription": "Eth2.0 Medalla testnet validator",
   "description": "A validator client which manages a staking user's private/public keys, connects to a beacon node, and acts as a validator in Ethereum 2.0 by staking 32 ETH and participating in proof of stake consensus by proposing and voting on blocks.",
@@ -12,23 +12,20 @@
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dappnode/DAppNodePackage-prysm-validator.git"
+    "url": "git+https://github.com/dappnode/DAppNodePackage-medalla-validator.git"
   },
   "bugs": {
-    "url": "https://github.com/dappnode/DAppNodePackage-prysm-validator/issues"
+    "url": "https://github.com/dappnode/DAppNodePackage-medalla-validator/issues"
   },
   "requirements": {
     "minimumDappnodeVersion": "0.2.37"
   },
-  "categories": ["Blockchain", "ETH2.0"],
-  "backup": [
-    {
-      "name": "data",
-      "path": "/root/.config/ethereum2"
-    }
+  "categories": [
+    "Blockchain",
+    "ETH2.0"
   ],
   "links": {
-    "homepage": "https://github.com/dappnode/DAppNodePackage-prysm-validator",
+    "homepage": "https://github.com/dappnode/DAppNodePackage-medalla-validator",
     "ui": "http://medalla-validator.dappnode/"
   },
   "dependencies": {}
