@@ -14,9 +14,9 @@ export function getBeaconProviderUrlPrysm() {
 
 export function getBeaconProviderUrl() {
   const beaconProvider =
-    db.server.beaconProvider.get() || db.server.validatorClient.get();
-  if (!beaconProvider)
-    throw Error("validatorClient and beaconProvider not set");
+    db.server.beaconProvider.get() ||
+    db.server.validatorClient.get() ||
+    "lighthouse";
 
   switch (beaconProvider) {
     case "lighthouse":
