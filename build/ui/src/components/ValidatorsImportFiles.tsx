@@ -131,7 +131,6 @@ export function ValidatorsImportFiles() {
   // Curried callback to first bind `pubkey` and let the child component provide the passphrase
   const onAddPassword = useCallback(
     (pubkey: string, passphrase: string) => {
-      console.log(`Adding passowrd ${passphrase} for ${pubkey}`);
       setValidators((_validators) => {
         const validator = _validators[pubkey];
         if (!validator) throw Error(`No validator for pubkey ${pubkey}`);
