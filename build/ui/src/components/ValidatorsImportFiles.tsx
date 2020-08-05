@@ -12,7 +12,8 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { api } from "api/rpc";
-import { ValidatorFiles } from "common";
+import { verifyPassword } from "@chainsafe/bls-keystore";
+import { ValidatorFiles, Eth2Keystore } from "common";
 import { RequestStatus } from "types";
 import { ErrorView } from "components/ErrorView";
 import { Alert } from "@material-ui/lab";
@@ -70,6 +71,34 @@ export function ValidatorsImportFiles() {
   const [loadingFiles, setLoadingFiles] = useState<string>();
   const [importStatus, setImportStatus] = useState<RequestStatus<string>>({});
 
+  const addKeystore = useCallback(
+    (pubkey: string, keystore: Eth2Keystore) => {
+      setValidators({
+        [pubkey]: { ...(validators[pubkey] || {}), pubkey, keystore },
+      });
+    },
+    [validators, setValidators]
+  );
+
+  const addPassphrase = useCallback(
+    (pubkey: string, passphrase: string) => {
+      setValidators({
+        [pubkey]: { ...(validators[pubkey] || {}), pubkey, passphrase },
+      });
+    },
+    [validators, setValidators]
+  );
+
+  const addPassphraseAndValidate = useCallback(
+    (pubkey: string) => async (passphrase: string) => {
+      const validator = validators[pubkey];
+      if (validator && validator.keystore)
+        await assertKeystorePassword(validator.keystore, passphrase);
+      addPassphrase(pubkey, passphrase);
+    },
+    [validators, addPassphrase]
+  );
+
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       // Set loading=true associated to a random ID. There can be multiple onDrop events at once
@@ -78,43 +107,15 @@ export function ValidatorsImportFiles() {
       for (const file of acceptedFiles) {
         try {
           const eth2File = await processEth2File(file);
-          setValidators((_validators) => {
-            switch (eth2File.type) {
-              case "keystore": {
-                const pubkey = eth2File.keystore.pubkey;
-                return {
-                  [pubkey]: {
-                    ...(_validators[pubkey] || {}),
-                    pubkey,
-                    keystore: eth2File.keystore,
-                  },
-                };
-              }
+          switch (eth2File.type) {
+            case "keystore":
+              addKeystore(eth2File.keystore.pubkey, eth2File.keystore);
+              break;
 
-              // case "deposit": {
-              //   for (const deposit of eth2File.data) {
-              //     let validator = validators.get(deposit.pubkey);
-              //     if (!validator) validator = { pubkey: deposit.pubkey };
-              //     validator.depositData = deposit;
-              //     validators.set(validator.pubkey, validator);
-              //   }
-              //   break;
-              // }
-
-              case "passphrase": {
-                const pubkey = eth2File.pubkey;
-                return {
-                  [pubkey]: {
-                    ...(_validators[pubkey] || {}),
-                    pubkey,
-                    passphrase: eth2File.passphrase,
-                  },
-                };
-              }
-            }
-
-            return _validators;
-          });
+            case "passphrase":
+              addPassphrase(eth2File.pubkey, eth2File.passphrase);
+              break;
+          }
         } catch (e) {
           console.error(`Error processing ${file.name}`, e);
         }
@@ -125,22 +126,7 @@ export function ValidatorsImportFiles() {
         else return currentLoadingId;
       });
     },
-    [setValidators]
-  );
-
-  // Curried callback to first bind `pubkey` and let the child component provide the passphrase
-  const onAddPassword = useCallback(
-    (pubkey: string, passphrase: string) => {
-      setValidators((_validators) => {
-        const validator = _validators[pubkey];
-        if (!validator) throw Error(`No validator for pubkey ${pubkey}`);
-        if (!validator.keystore) throw Error(`Validator has no keystore`);
-        return {
-          [pubkey]: { ...validator, pubkey, passphrase },
-        };
-      });
-    },
-    [setValidators]
+    [addKeystore, addPassphrase]
   );
 
   function removeValidatorFiles(pubkey: string) {
@@ -239,7 +225,9 @@ export function ValidatorsImportFiles() {
                     ) : (
                       <ValidatorPasswordInput
                         pubkey={validator.pubkey}
-                        onAddPassword={onAddPassword}
+                        onAddPassword={addPassphraseAndValidate(
+                          validator.pubkey
+                        )}
                       />
                     )}
                   </TableCell>
@@ -290,4 +278,12 @@ function isValidatorReady(validator: ValidatorFilesPartial): boolean {
   return Boolean(
     validator.keystore && validator.passphrase && validator.pubkey
   );
+}
+
+async function assertKeystorePassword(
+  keystore: Eth2Keystore,
+  password: string
+): Promise<void> {
+  const valid = await verifyPassword(keystore as any, password);
+  if (!valid) throw Error("Invalid keystore password");
 }

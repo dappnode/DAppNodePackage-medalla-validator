@@ -11,31 +11,33 @@ import {
 import { InputPassword } from "./InputPassword";
 import { ErrorView } from "./ErrorView";
 import { PublicKeyView } from "./PublicKeyView";
+import { RequestStatus } from "types";
+import { LoadingView } from "./LoadingView";
 
 export function ValidatorPasswordInput({
   pubkey,
   onAddPassword,
 }: {
   pubkey: string;
-  onAddPassword: (pubkey: string, passphrase: string) => void;
+  onAddPassword: (passphrase: string) => Promise<void>;
 }) {
   const [open, setOpen] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [validationError, setValidationError] = useState<Error>();
+  const [validateStatus, setValidateStatus] = useState<RequestStatus<true>>({});
 
   const errors: string[] = [];
   if (password && passwordConfirm && password !== passwordConfirm)
     errors.push("Password do not match");
   const hasErrors = errors.length > 0;
 
-  function onValidate() {
+  async function onValidate() {
     try {
-      setValidationError(undefined);
-      onAddPassword(pubkey, password);
-      setOpen(false);
+      setValidateStatus({ loading: true });
+      await onAddPassword(password);
+      setValidateStatus({ result: true });
     } catch (e) {
-      setValidationError(e);
+      setValidateStatus({ error: e });
     }
   }
 
@@ -80,13 +82,18 @@ export function ValidatorPasswordInput({
               ))}
             </Box>
 
-            {validationError && <ErrorView error={validationError} />}
+            {validateStatus.loading && (
+              <LoadingView
+                steps={["Validating keystore password"]}
+              ></LoadingView>
+            )}
+            {validateStatus.error && <ErrorView error={validateStatus.error} />}
 
             <Box mt={3} mb={1}>
               <Button
                 variant="contained"
                 color="primary"
-                disabled={hasErrors}
+                disabled={hasErrors || validateStatus.loading}
                 onClick={onValidate}
               >
                 Validate
