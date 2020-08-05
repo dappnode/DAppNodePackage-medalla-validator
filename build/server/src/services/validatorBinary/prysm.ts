@@ -20,7 +20,7 @@ export const prysmBinary = new Supervisor(
       datadir: PRYSM_DATA_DIR,
       "wallet-dir": PRYSM_WALLET_DIR,
       "passwords-dir": PRYSM_SECRETS_DIR,
-      "disable-accounts-v2": true,
+      // "disable-accounts-v2": true,
       verbosity: PRYSM_VERBOSITY,
       "log-file": PRYSM_LOG_FILE,
       ...(GRAFFITI ? { graffiti: GRAFFITI } : {}), // Ignore if empty
