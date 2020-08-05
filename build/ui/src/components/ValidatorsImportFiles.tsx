@@ -12,7 +12,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { api } from "api/rpc";
-import { verifyPassword } from "@chainsafe/bls-keystore";
+import mapValues from "lodash/mapValues";
 import { ValidatorFiles, Eth2Keystore } from "common";
 import { RequestStatus } from "types";
 import { ErrorView } from "components/ErrorView";
@@ -59,6 +59,11 @@ const useStyles = makeStyles((theme) => ({
       marginBottom: theme.spacing(2),
     },
   },
+  bottomButtons: {
+    "& > *:not(:last-child)": {
+      marginRight: theme.spacing(2),
+    },
+  },
   importValidators: {
     alignSelf: "flex-start",
   },
@@ -73,30 +78,34 @@ export function ValidatorsImportFiles() {
 
   const addKeystore = useCallback(
     (pubkey: string, keystore: Eth2Keystore) => {
-      setValidators({
-        [pubkey]: { ...(validators[pubkey] || {}), pubkey, keystore },
-      });
+      setValidators((_validators) => ({
+        ..._validators,
+        [pubkey]: { ...(_validators[pubkey] || {}), pubkey, keystore },
+      }));
     },
-    [validators, setValidators]
+    [setValidators]
   );
 
   const addPassphrase = useCallback(
     (pubkey: string, passphrase: string) => {
-      setValidators({
-        [pubkey]: { ...(validators[pubkey] || {}), pubkey, passphrase },
-      });
+      setValidators((_validators) => ({
+        ..._validators,
+        [pubkey]: { ...(_validators[pubkey] || {}), pubkey, passphrase },
+      }));
     },
-    [validators, setValidators]
+    [setValidators]
   );
 
-  const addPassphraseAndValidate = useCallback(
-    (pubkey: string) => async (passphrase: string) => {
-      const validator = validators[pubkey];
-      if (validator && validator.keystore)
-        await assertKeystorePassword(validator.keystore, passphrase);
-      addPassphrase(pubkey, passphrase);
+  const addPassphraseToAll = useCallback(
+    (passphrase: string) => {
+      setValidators((_validators) =>
+        mapValues(_validators, (validator) => ({
+          ...validator,
+          passphrase: validator.passphrase || passphrase,
+        }))
+      );
     },
-    [validators, addPassphrase]
+    [validators, setValidators]
   );
 
   const onDrop = useCallback(
@@ -158,6 +167,11 @@ export function ValidatorsImportFiles() {
   }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const validatorsReady = Object.values(validators).filter(isValidatorReady);
+  const validatorsWithoutPassword = Object.values(validators).filter(
+    (v) => !v.passphrase && v.keystore
+  );
+  const firstValidatorWithoutPassword = validatorsWithoutPassword[0];
 
   const classes = useStyles();
 
@@ -222,13 +236,15 @@ export function ValidatorsImportFiles() {
                   <TableCell>
                     {validator.passphrase ? (
                       <CheckCircleOutlineIcon className={classes.successIcon} />
-                    ) : (
+                    ) : validator.keystore ? (
                       <ValidatorPasswordInput
-                        pubkey={validator.pubkey}
-                        onAddPassword={addPassphraseAndValidate(
-                          validator.pubkey
-                        )}
+                        keystore={validator.keystore}
+                        onValidPassword={(passphrase) =>
+                          addPassphrase(validator.pubkey, passphrase)
+                        }
                       />
+                    ) : (
+                      "missing"
                     )}
                   </TableCell>
                   {/* <TableCell>
@@ -258,18 +274,30 @@ export function ValidatorsImportFiles() {
         />
       )}
 
-      <Button
-        variant="contained"
-        color="primary"
-        className={classes.importValidators}
-        onClick={importValidators}
-        disabled={
-          importStatus.loading ||
-          !Object.values(validators).some(isValidatorReady)
-        }
-      >
-        Import validators
-      </Button>
+      <div className={classes.bottomButtons}>
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.importValidators}
+          onClick={importValidators}
+          disabled={importStatus.loading || validatorsReady.length === 0}
+        >
+          {validatorsReady.length === 1
+            ? "Import validator"
+            : `Import ${validatorsReady.length} validators`}
+        </Button>
+
+        {/* Password input to validate against only one and input for all */}
+        {validatorsWithoutPassword.length > 1 &&
+          firstValidatorWithoutPassword &&
+          firstValidatorWithoutPassword.keystore && (
+            <ValidatorPasswordInput
+              keystore={firstValidatorWithoutPassword.keystore}
+              onValidPassword={addPassphraseToAll}
+              buttonLabel="Input password for all"
+            />
+          )}
+      </div>
     </div>
   );
 }
@@ -278,12 +306,4 @@ function isValidatorReady(validator: ValidatorFilesPartial): boolean {
   return Boolean(
     validator.keystore && validator.passphrase && validator.pubkey
   );
-}
-
-async function assertKeystorePassword(
-  keystore: Eth2Keystore,
-  password: string
-): Promise<void> {
-  const valid = await verifyPassword(keystore as any, password);
-  if (!valid) throw Error("Invalid keystore password");
 }

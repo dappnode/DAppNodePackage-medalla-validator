@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { verifyPassword } from "@chainsafe/bls-keystore";
 import {
   Button,
   Dialog,
@@ -10,16 +11,18 @@ import {
 } from "@material-ui/core";
 import { InputPassword } from "./InputPassword";
 import { ErrorView } from "./ErrorView";
-import { PublicKeyView } from "./PublicKeyView";
 import { RequestStatus } from "types";
 import { LoadingView } from "./LoadingView";
+import { Eth2Keystore } from "common";
 
 export function ValidatorPasswordInput({
-  pubkey,
-  onAddPassword,
+  keystore,
+  onValidPassword,
+  buttonLabel,
 }: {
-  pubkey: string;
-  onAddPassword: (passphrase: string) => Promise<void>;
+  keystore: Eth2Keystore;
+  onValidPassword: (passphrase: string) => void;
+  buttonLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [password, setPassword] = useState("");
@@ -34,8 +37,10 @@ export function ValidatorPasswordInput({
   async function onValidate() {
     try {
       setValidateStatus({ loading: true });
-      await onAddPassword(password);
+      const valid = await verifyPassword(keystore as any, password);
+      if (!valid) throw Error("Invalid keystore password");
       setValidateStatus({ result: true });
+      onValidPassword(password);
     } catch (e) {
       setValidateStatus({ error: e });
     }
@@ -43,13 +48,8 @@ export function ValidatorPasswordInput({
 
   return (
     <>
-      <Button
-        variant="outlined"
-        color="primary"
-        size="small"
-        onClick={() => setOpen(true)}
-      >
-        Input password
+      <Button variant="outlined" color="primary" onClick={() => setOpen(true)}>
+        {buttonLabel || "Input password"}
       </Button>
 
       {open && (
@@ -60,7 +60,6 @@ export function ValidatorPasswordInput({
               Provide this validator's keystore password to perform its duties
               in the validator client
             </DialogContentText>
-            <PublicKeyView publicKey={pubkey} />
 
             <Box my={1}>
               <InputPassword
