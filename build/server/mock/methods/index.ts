@@ -117,14 +117,14 @@ export async function getSettings(): Promise<AppSettings> {
 export async function switchValidatorClient(
   nextClient: ValidatorClientName
 ): Promise<void> {
-  await waitMs(10000);
+  await waitMs(1000);
   settings.validatorClient = nextClient;
 }
 
 export async function setBeaconProvider(
   beaconProvider: BeaconProviderName
 ): Promise<void> {
-  await waitMs(10000);
+  await waitMs(1000);
   settings.beaconProvider = beaconProvider;
 }
 
@@ -141,14 +141,12 @@ export async function getBinaryStatus(): Promise<ChildProcessStatus | null> {
         "Aug 05 12:39:14.002 INFO Awaiting activation                     slot: 7095, epoch: 221, validators: 10, service: notifier",
         "Aug 05 12:39:26.002 INFO Awaiting activation                     slot: 7096, epoch: 221, validators: 10, service: notifier"
       ],
-      recentCrashes: [
-        {
-          code: 1,
-          command: "ligthhouse",
-          args: ["--testnet medalla"],
-          timestamp: Date.now() - 30 * 1000
-        }
-      ],
+      recentCrashes: Array(8).fill({
+        code: 1,
+        command: "ligthhouse",
+        args: ["--testnet medalla"],
+        timestamp: Date.now() - 30 * 1000
+      }),
       status: null,
       pid: 153,
       runningSince: Date.now() - 5 * 60 * 1000

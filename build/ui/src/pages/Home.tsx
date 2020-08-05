@@ -6,6 +6,7 @@ import { ValidatorStatsTable } from "components/ValidatorStatsTable";
 import { NodeStatsView } from "components/NodeStats";
 import { TotalBalance } from "components/TotalBalance";
 import { OnboardingDialog } from "components/OnboardingDialog";
+import { ValidatorClientView } from "components/ValidatorClientView";
 
 export function Home() {
   const [onboardingOpen, setOnboardingOpen] = useState(false);
@@ -41,6 +42,10 @@ export function Home() {
           <NodeStatsView nodeStats={nodeStats.data} />
         </LayoutItem>
       )}
+
+      <LayoutItem>
+        <ValidatorClientView appSettings={appSettings} />
+      </LayoutItem>
 
       <LayoutItem>
         <ValidatorStatsTable
