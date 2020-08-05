@@ -147,7 +147,6 @@ export async function getBinaryStatus(): Promise<ChildProcessStatus | null> {
         args: ["--testnet medalla"],
         timestamp: Date.now() - 30 * 1000
       }),
-      status: null,
       pid: 153,
       runningSince: Date.now() - 5 * 60 * 1000
     };

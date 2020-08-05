@@ -50,7 +50,8 @@ export class Supervisor<T extends GenericOptions = {}> {
 
   // State
   private child: ChildProcessWithExitCode | null = null;
-  private status: ChildProcessStatus["status"] = null;
+  private activeStatus: "exiting" | "starting" | null = null;
+  private targetStatus: "running" | "killed" = "killed";
 
   // Informative ephemeral state
   private maxLogs: number = 20;
@@ -92,10 +93,13 @@ export class Supervisor<T extends GenericOptions = {}> {
    * Can only be called once at a time, otherwise will error
    */
   async kill(): Promise<void> {
+    this.targetStatus = "killed";
+
     try {
       if (!this.child) return;
-      if (this.status !== null) throw Error(`status = ${this.status}`);
-      this.status = "killing";
+      if (this.activeStatus === "exiting") return;
+      if (this.activeStatus === "starting") throw Error(`Process is starting`);
+      this.activeStatus = "exiting";
 
       // Remove crash listeners, to prevent triggering an automatic restart
       this.child.removeAllListeners();
@@ -116,17 +120,13 @@ export class Supervisor<T extends GenericOptions = {}> {
       // in the production environment of this app. Is is still null even after
       // /proc/$pid/status is cleared and at the OS level the pid is clearly exited
 
-      this.status = null;
+      this.activeStatus = null;
     } catch (e) {
-      this.status = null;
+      this.activeStatus = null;
 
-      // child process is already killed, no process found for pid
-      if (e.code === "ESRCH") {
-        this.status = null;
-        return;
-      }
-
-      throw e;
+      // child process is already killed, ESRCH = no process found for pid
+      if (e.code === "ESRCH") return;
+      else throw e;
     }
   }
 
@@ -136,9 +136,13 @@ export class Supervisor<T extends GenericOptions = {}> {
    * Can only be called once at a time, otherwise will error
    */
   async start(): Promise<void> {
+    this.targetStatus = "running";
+
     try {
-      if (this.status !== null) throw Error(`status = ${this.status}`);
-      this.status = "starting";
+      if (this.activeStatus === "starting") return;
+      if (this.activeStatus === "exiting") throw Error(`Process is exiting`);
+      this.activeStatus = "starting";
+
       const { command, args } = this.buildCommand();
       const child = spawn(command, args);
       const cmdStr = `'${command} ${args.join(" ")}'`;
@@ -163,9 +167,11 @@ export class Supervisor<T extends GenericOptions = {}> {
           { code, command, args, timestamp: Date.now() }
         ];
         await pause(that.restartWait);
-        that.start().catch(e => {
-          that.logger.error(`child process restart error: ${e.message}`);
-        });
+        // Only restart the process if it should still be running
+        if (that.targetStatus === "running")
+          that.start().catch(e => {
+            that.logger.error(`child process restart error: ${e.message}`);
+          });
       });
 
       if (this.resolveStartOnData && child.stdout)
@@ -174,9 +180,10 @@ export class Supervisor<T extends GenericOptions = {}> {
           child.once("error", reject);
           child.once("exit", code => reject(Error(`Exited ${code}`)));
         });
-      this.status = null;
+
+      this.activeStatus = null;
     } catch (e) {
-      this.status = null;
+      this.activeStatus = null;
       throw e;
     }
   }
@@ -187,6 +194,7 @@ export class Supervisor<T extends GenericOptions = {}> {
    * @see start
    */
   async restart(): Promise<void> {
+    this.targetStatus = "running";
     await this.kill();
     await this.start();
   }
@@ -198,7 +206,6 @@ export class Supervisor<T extends GenericOptions = {}> {
     return {
       recentLogs: this.recentLogs,
       recentCrashes: this.recentCrashes,
-      status: this.status,
       pid: this.child ? this.child.pid : null,
       runningSince: this.runningSince
     };

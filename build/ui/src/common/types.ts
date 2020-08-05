@@ -165,7 +165,6 @@ export type DnpInstalledStatus =
 export interface ChildProcessStatus {
   recentLogs: string[];
   recentCrashes: ChildProcessCrashData[];
-  status: "killing" | "starting" | null;
   pid: number | null;
   runningSince: number | null;
 }

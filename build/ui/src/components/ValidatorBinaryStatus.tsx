@@ -53,8 +53,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function ValidatorBinaryStatus() {
-  const [showLogs, setShowLogs] = useState(false);
-  const [showCrashed, setShowCrashed] = useState(false);
+  const [showCrashData, setShowCrashData] = useState(false);
   const binaryStatus = useApi.getBinaryStatus();
   const classes = useStyles();
 
@@ -70,11 +69,13 @@ export function ValidatorBinaryStatus() {
           {runningSince ? parseDateDiff(Date.now() - runningSince) : "???"} (
           {crashesInLastHour.length} recent crashes){" "}
           {crashesInLastHour.length > 0 && (
-            <Link onClick={() => setShowLogs((x) => !x)}>Show crash data</Link>
+            <Link onClick={() => setShowCrashData((x) => !x)}>
+              Show crash data
+            </Link>
           )}
         </Typography>
 
-        {showLogs ? (
+        {showCrashData ? (
           <>
             <Divider className={classes.divider} />
 
@@ -98,7 +99,7 @@ export function ValidatorBinaryStatus() {
           <Alert
             severity="error"
             action={
-              <Button color="inherit" onClick={() => setShowLogs(true)}>
+              <Button color="inherit" onClick={() => setShowCrashData(true)}>
                 Show crash data
               </Button>
             }
