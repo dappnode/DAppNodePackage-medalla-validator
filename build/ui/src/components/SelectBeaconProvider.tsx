@@ -17,6 +17,7 @@ import { DnpInstalledStatus, BeaconProviderName, AppSettings } from "common";
 import { INSTALL_DNP_URL, PACKAGE_DNP_URL } from "params";
 import { Alert } from "@material-ui/lab";
 
+const runningState = "running";
 const beaconProviderOptions: {
   value: BeaconProviderName;
   label: string;
@@ -55,9 +56,7 @@ export function SelectBeaconProvider({
   appSettings: AppSettings;
   revalidateSettings: () => void;
 }) {
-  const [beaconProvider, setBeaconProvider] = useState<BeaconProviderName>(
-    beaconProviderOptions[0].value
-  );
+  const [beaconProvider, setBeaconProvider] = useState<BeaconProviderName>();
   const [reqStatus, setReqStatus] = useState<RequestStatus>({});
 
   useEffect(() => {
@@ -68,17 +67,20 @@ export function SelectBeaconProvider({
   }, [appSettings.beaconProvider]);
 
   const hasChanged = beaconProvider !== appSettings.beaconProvider;
-  const currentDnp = appSettings.beaconDnps[beaconProvider];
-  const dnpNotReady = currentDnp.status === "not-installed";
+  const currentDnp = beaconProvider && appSettings.beaconDnps[beaconProvider];
+  const dnpNotReady =
+    currentDnp?.status === "not-installed" ||
+    (currentDnp?.status === "installed" && currentDnp.state !== runningState);
 
   async function changeBeaconProvider() {
     if (!hasChanged) return;
     try {
       setReqStatus({ loading: true });
+      if (!beaconProvider) throw Error("no beaconProvider");
       await api.setBeaconProvider(beaconProvider);
       setReqStatus({ result: "" });
     } catch (e) {
-      console.log("Error on switchValidatorClient", e);
+      console.error("Error on switchValidatorClient", e);
       setReqStatus({ error: e });
     } finally {
       revalidateSettings();
@@ -91,7 +93,7 @@ export function SelectBeaconProvider({
     <>
       <FormControl variant="outlined" className={classes.selectFormControl}>
         <Select
-          value={beaconProvider}
+          value={beaconProvider || ""}
           onChange={(e) =>
             setBeaconProvider(e.target.value as BeaconProviderName)
           }
@@ -104,9 +106,11 @@ export function SelectBeaconProvider({
         </Select>
       </FormControl>
 
-      <Box mt={2}>
-        <BeaconNodeDnpStatus currentDnp={currentDnp} />
-      </Box>
+      {currentDnp && (
+        <Box mt={2}>
+          <BeaconNodeDnpStatus currentDnp={currentDnp} />
+        </Box>
+      )}
 
       <div className={classes.bottomContainer}>
         {reqStatus.error && <ErrorView error={reqStatus.error} />}
@@ -124,7 +128,9 @@ export function SelectBeaconProvider({
           variant="contained"
           color="primary"
           onClick={changeBeaconProvider}
-          disabled={!hasChanged || dnpNotReady || reqStatus.loading}
+          disabled={
+            !beaconProvider || !hasChanged || dnpNotReady || reqStatus.loading
+          }
         >
           Apply changes
         </Button>
@@ -143,7 +149,7 @@ function BeaconNodeDnpStatus({
 
   switch (currentDnp.status) {
     case "installed":
-      if (currentDnp.state === "running") {
+      if (currentDnp.state === runningState) {
         return (
           <Alert severity="success">
             Package {dnpNamePretty} is installed and running

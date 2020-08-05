@@ -37,9 +37,7 @@ export function SelectValidatorClient({
   appSettings: AppSettings;
   revalidateSettings: () => void;
 }) {
-  const [validatorClient, setValidatorClient] = useState<ValidatorClientName>(
-    validatorClientOptions[0].value
-  );
+  const [validatorClient, setValidatorClient] = useState<ValidatorClientName>();
   const [reqStatus, setReqStatus] = useState<RequestStatus>({});
 
   useEffect(() => {
@@ -49,10 +47,11 @@ export function SelectValidatorClient({
   async function switchValidatorClient() {
     try {
       setReqStatus({ loading: true });
+      if (!validatorClient) throw Error("no validatorClient");
       await api.switchValidatorClient(validatorClient);
       setReqStatus({ result: "" });
     } catch (e) {
-      console.log("Error on switchValidatorClient", e);
+      console.error("Error on switchValidatorClient", e);
       setReqStatus({ error: e });
     } finally {
       revalidateSettings();
@@ -65,7 +64,7 @@ export function SelectValidatorClient({
     <>
       <FormControl variant="outlined" className={classes.selectFormControl}>
         <Select
-          value={validatorClient}
+          value={validatorClient || ""}
           onChange={(e) =>
             setValidatorClient(e.target.value as ValidatorClientName)
           }
@@ -95,7 +94,9 @@ export function SelectValidatorClient({
           color="primary"
           onClick={switchValidatorClient}
           disabled={
-            appSettings.validatorClient === validatorClient || reqStatus.loading
+            !validatorClient ||
+            appSettings.validatorClient === validatorClient ||
+            reqStatus.loading
           }
         >
           Apply changes

@@ -16,8 +16,8 @@ import {
 // New state
 const validators = new Map<number, ValidatorStats>();
 const settings: AppSettings = {
-  validatorClient: "lighthouse",
-  beaconProvider: "lighthouse",
+  validatorClient: undefined,
+  beaconProvider: undefined,
   beaconDnps: {
     lighthouse: {
       name: LIGHTHOUSE_DNPNAME,
@@ -38,8 +38,8 @@ const settings: AppSettings = {
 };
 
 // Add some mock validators to start with
-addValidatorToMockSet();
-addValidatorToMockSet();
+// addValidatorToMockSet();
+// addValidatorToMockSet();
 
 function addValidatorToMockSet(): void {
   const index = validators.size;

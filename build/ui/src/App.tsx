@@ -44,7 +44,7 @@ export default function App() {
         setIsOffline(false);
       })
       .catch((e) => {
-        console.log(`Login check error`, e);
+        console.error(`Login check error`, e);
         setLoginStatus("logout");
         fetch(apiPaths.ping).then(
           (res) => setIsOffline(!res.ok),

@@ -12,6 +12,7 @@ export const DNP_NAME_DMS = "dms.dnp.dappnode.eth";
 // http://my.dappnode/#/installer/prysm-medalla-beacon-chain.dnp.dappnode.eth
 export const INSTALL_DNP_URL = "http://my.dappnode/#/installer/";
 export const PACKAGE_DNP_URL = "http://my.dappnode/#/packages/";
+export const EF_LAUNCHPAD_URL = "https://medalla.launchpad.ethereum.org/";
 
 // Modifiable params
 
