@@ -27,12 +27,13 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
   },
   instructions: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(3),
   },
   dialogContent: {
     display: "flex",
     flexDirection: "column",
+    marginBottom: theme.spacing(2),
   },
   importWarning: {
     marginTop: theme.spacing(2),
@@ -42,12 +43,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-around",
     alignItems: "center",
     padding: theme.spacing(4),
-  },
-  bottomButtons: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -79,14 +74,6 @@ export function OnboardingDialog({
     else setActiveStep((prevStep) => prevStep + 1);
   };
 
-  const handleBack = () => {
-    setActiveStep((prevStep) => (prevStep < 1 ? 0 : prevStep - 1));
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
-  };
-
   function getStepContent(stepIndex: number) {
     switch (stepIndex) {
       case 0:
@@ -99,7 +86,10 @@ export function OnboardingDialog({
             </Typography>
             <SelectBeaconProvider
               appSettings={appSettings}
-              revalidateSettings={revalidateSettings}
+              onSuccess={() => {
+                revalidateSettings();
+                handleNext();
+              }}
             />
           </>
         );
@@ -112,7 +102,10 @@ export function OnboardingDialog({
             </Typography>
             <SelectValidatorClient
               appSettings={appSettings}
-              revalidateSettings={revalidateSettings}
+              onSuccess={() => {
+                revalidateSettings();
+                handleNext();
+              }}
             />
           </>
         );
@@ -165,8 +158,8 @@ export function OnboardingDialog({
       </DialogTitle>
 
       <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map((label) => (
-          <Step key={label}>
+        {steps.map((label, i) => (
+          <Step key={label} onClick={() => setActiveStep(i)}>
             <StepLabel>{label}</StepLabel>
           </Step>
         ))}
@@ -176,27 +169,12 @@ export function OnboardingDialog({
         {activeStep === steps.length ? (
           <div>
             <Typography className={classes.instructions}>
-              All steps completed
+              All steps completed, ready to start validating!
             </Typography>
-            <Button onClick={handleReset}>Reset</Button>
           </div>
         ) : (
           getStepContent(activeStep)
         )}
-
-        <div className={classes.bottomButtons}>
-          <Button
-            color="primary"
-            disabled={activeStep === 0}
-            onClick={handleBack}
-            className={classes.backButton}
-          >
-            Back
-          </Button>
-          <Button variant="contained" color="primary" onClick={handleNext}>
-            {activeStep === steps.length - 1 ? "Finish" : "Next"}
-          </Button>
-        </div>
       </DialogContent>
     </Dialog>
   );

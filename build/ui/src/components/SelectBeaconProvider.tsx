@@ -51,10 +51,10 @@ const useStyles = makeStyles((theme) => ({
 
 export function SelectBeaconProvider({
   appSettings,
-  revalidateSettings,
+  onSuccess,
 }: {
   appSettings: AppSettings;
-  revalidateSettings: () => void;
+  onSuccess: () => void;
 }) {
   const [beaconProvider, setBeaconProvider] = useState<BeaconProviderName>();
   const [reqStatus, setReqStatus] = useState<RequestStatus>({});
@@ -79,11 +79,10 @@ export function SelectBeaconProvider({
       if (!beaconProvider) throw Error("no beaconProvider");
       await api.setBeaconProvider(beaconProvider);
       setReqStatus({ result: "" });
+      onSuccess();
     } catch (e) {
       console.error("Error on switchValidatorClient", e);
       setReqStatus({ error: e });
-    } finally {
-      revalidateSettings();
     }
   }
 

@@ -44,7 +44,7 @@ export function Settings() {
             </Typography>
             <SelectBeaconProvider
               appSettings={appSettings.data}
-              revalidateSettings={appSettings.revalidate}
+              onSuccess={appSettings.revalidate}
             />
           </LayoutItem>
 
@@ -55,7 +55,7 @@ export function Settings() {
             </Typography>
             <SelectValidatorClient
               appSettings={appSettings.data}
-              revalidateSettings={appSettings.revalidate}
+              onSuccess={appSettings.revalidate}
             />
           </LayoutItem>
         </>

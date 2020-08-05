@@ -32,10 +32,10 @@ const useStyles = makeStyles((theme) => ({
 
 export function SelectValidatorClient({
   appSettings,
-  revalidateSettings,
+  onSuccess,
 }: {
   appSettings: AppSettings;
-  revalidateSettings: () => void;
+  onSuccess: () => void;
 }) {
   const [validatorClient, setValidatorClient] = useState<ValidatorClientName>();
   const [reqStatus, setReqStatus] = useState<RequestStatus>({});
@@ -50,11 +50,10 @@ export function SelectValidatorClient({
       if (!validatorClient) throw Error("no validatorClient");
       await api.switchValidatorClient(validatorClient);
       setReqStatus({ result: "" });
+      onSuccess();
     } catch (e) {
       console.error("Error on switchValidatorClient", e);
       setReqStatus({ error: e });
-    } finally {
-      revalidateSettings();
     }
   }
 
