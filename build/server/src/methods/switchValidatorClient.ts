@@ -16,7 +16,7 @@ export async function switchValidatorClient(
 
   if (!prevClient) {
     db.server.validatorClient.set(nextClient);
-    return await getValidatorBinary(nextClient).start();
+    return await getValidatorBinary(nextClient).restart();
   }
 
   const prevClientBinary = getValidatorBinary(prevClient);
@@ -39,12 +39,12 @@ export async function switchValidatorClient(
       db.server.validatorClient.set(prevClient);
       await nextClientFileManager.delete();
       await prevClientFileManager.write(validatorFiles);
-      await prevClientBinary.start();
+      await prevClientBinary.restart();
     } catch (e) {
       logs.error(`Error rolling back validator switch`, e);
     }
     throw e;
   }
 
-  await nextClientBinary.start();
+  await nextClientBinary.restart();
 }

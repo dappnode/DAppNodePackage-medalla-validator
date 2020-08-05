@@ -135,7 +135,7 @@ export class Supervisor<T extends GenericOptions = {}> {
    * If resolveStartOnData = true, will wait for first 'data' event
    * Can only be called once at a time, otherwise will error
    */
-  async start(): Promise<void> {
+  private async start(): Promise<void> {
     this.targetStatus = "running";
 
     try {
