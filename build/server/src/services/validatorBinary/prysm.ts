@@ -15,7 +15,6 @@ export const prysmBinary = new Supervisor(
   {
     command: "validator",
     options: {
-      medalla: true,
       "monitoring-host": "0.0.0.0",
       "beacon-rpc-provider": getBeaconProviderUrlPrysm(),
       datadir: PRYSM_DATA_DIR,
