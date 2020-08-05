@@ -70,7 +70,7 @@ export class PrysmBeaconNodeClient implements BeaconNodeClient {
     }>("/eth/v1alpha1/validator/statuses", qsPubKeys(pubKeys));
 
     const balanceData = await this.fetch<{
-      balances: { publicKey: string }[];
+      balances: { publicKey: string; index: string; balance: string }[];
     }>("/eth/v1alpha1/validators/balances", qsPubKeys(pubKeys));
 
     statusData.statuses.forEach((status, i) => {
@@ -79,7 +79,11 @@ export class PrysmBeaconNodeClient implements BeaconNodeClient {
       const balance = balanceData.balances.find(
         v => v.publicKey === pubkeyBase64
       );
-      if (balance) dataByPubkey[pubkey] = { ...status, ...balance };
+      dataByPubkey[pubkey] = {
+        ...status,
+        index: balance ? parseInt(balance.index) : null,
+        balance: balance ? parseInt(balance.balance) : null
+      };
     });
 
     return dataByPubkey;

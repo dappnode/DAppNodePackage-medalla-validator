@@ -116,6 +116,7 @@ export interface ValidatorStatus {
    * UNKNOWN_STATUS - validator does not have a known status in the network.
    */
   status: string;
+  index: number | null;
   balance: number | null;
 }
 

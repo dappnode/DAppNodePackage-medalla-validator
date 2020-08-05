@@ -99,6 +99,7 @@ export class LighthouseNodeClient implements BeaconNodeClient {
     for (const validator of validators) {
       dataByPubkey[validator.pubkey] = {
         status: computeValidatorStatus(validator.validator, currentEpoch),
+        index: validator.validator_index,
         balance: validator.balance
       };
     }
