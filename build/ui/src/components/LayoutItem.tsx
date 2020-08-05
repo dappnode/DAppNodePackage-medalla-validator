@@ -1,4 +1,5 @@
 import React from "react";
+import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Paper, GridSize } from "@material-ui/core";
 
@@ -10,6 +11,11 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     height: "100%",
   },
+  spacing: {
+    "& > *:not(:last-child)": {
+      marginBottom: theme.spacing(2),
+    },
+  },
 }));
 
 export const LayoutItem: React.FC<{
@@ -19,18 +25,26 @@ export const LayoutItem: React.FC<{
   lg?: GridSize;
   xl?: GridSize;
   noPaper?: boolean;
-}> = function LayoutItem({ noPaper, children, ...props }) {
+  spacing?: boolean;
+}> = function LayoutItem({ noPaper, spacing, children, ...props }) {
   const classes = useStyles();
   if (noPaper)
     return (
-      <Grid item xs={12} {...props}>
+      <Grid
+        item
+        xs={12}
+        className={clsx(spacing && classes.spacing)}
+        {...props}
+      >
         {children}
       </Grid>
     );
   else
     return (
       <Grid item xs={12} {...props}>
-        <Paper className={classes.paper}>{children}</Paper>
+        <Paper className={clsx(classes.paper, spacing && classes.spacing)}>
+          {children}
+        </Paper>
       </Grid>
     );
 };
