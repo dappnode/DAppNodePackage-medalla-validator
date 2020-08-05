@@ -22,6 +22,15 @@ export interface CommandData<T extends GenericOptions = {}> {
   dynamicOptions?: () => Partial<T>;
 }
 
+export interface CrashStatus {
+  code: number | null;
+  command: string;
+  args: string[];
+  timestamp: number;
+}
+
+type ChildProcessStatus = "killing" | "starting" | null;
+
 const signalsToPass: NodeJS.Signals[] = [
   "SIGTERM",
   "SIGINT",
@@ -49,7 +58,12 @@ export class Supervisor<T extends GenericOptions = {}> {
 
   // State
   private child: ChildProcessWithExitCode | null = null;
-  private status: "killing" | "starting" | null = null;
+  private status: ChildProcessStatus = null;
+
+  // Ephemeral state
+  private maxLogs: number = 20;
+  private recentLogs: string[] = [];
+  private recentCrashes: CrashStatus[] = [];
 
   constructor(
     commandData: CommandData<T>,
@@ -139,14 +153,21 @@ export class Supervisor<T extends GenericOptions = {}> {
       this.child = child;
 
       // Pipe output
-      const onData = (data: Buffer): void =>
-        this.logger.info(data.toString().trim());
+      const onData = (chunk: Buffer): void => {
+        const data = chunk.toString().trim();
+        this.logger.info(data);
+        this.recentLogs = [...this.recentLogs.slice(0, this.maxLogs - 1), data];
+      };
       if (child.stdout) child.stdout.on("data", onData.bind(this));
       if (child.stderr) child.stderr.on("data", onData.bind(this));
 
       const that = this;
       child.addListener("exit", async code => {
         that.logger.error(`child process exited with code ${code} ${cmdStr}`);
+        that.recentCrashes = [
+          ...that.recentCrashes.slice(0, this.maxLogs - 1),
+          { code, command, args, timestamp: Date.now() }
+        ];
         await pause(that.restartWait);
         that.start().catch(e => {
           that.logger.error(`child process restart error: ${e.message}`);
@@ -174,6 +195,23 @@ export class Supervisor<T extends GenericOptions = {}> {
   async restart(): Promise<void> {
     await this.kill();
     await this.start();
+  }
+
+  /**
+   * Get informative status about the internal child_process
+   */
+  getStatus(): {
+    recentLogs: string[];
+    recentCrashes: CrashStatus[];
+    status: ChildProcessStatus;
+    pid: number | null;
+  } {
+    return {
+      recentLogs: this.recentLogs,
+      recentCrashes: this.recentCrashes,
+      status: this.status,
+      pid: this.child ? this.child.pid : null
+    };
   }
 
   /**
