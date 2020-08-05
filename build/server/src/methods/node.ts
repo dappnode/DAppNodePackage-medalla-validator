@@ -1,6 +1,6 @@
 import memoizee from "memoizee";
 import { NodeStats, BeaconProviderName } from "../../common";
-import { eth2NetworkName } from "../params";
+import { ETH2_NETWORK_NAME } from "../params";
 import * as db from "../db";
 import { getBeaconNodeClient } from "../services/beaconNode";
 
@@ -12,7 +12,7 @@ async function getNodeStats(
     chainhead: await beaconNodeClient.chainhead(),
     syncing: await beaconNodeClient.syncing(),
     peers: await beaconNodeClient.peers(),
-    eth2NetworkName
+    eth2NetworkName: ETH2_NETWORK_NAME
   };
 }
 
@@ -28,7 +28,7 @@ export async function nodeStats(): Promise<NodeStats> {
       chainhead: null,
       syncing: null,
       peers: null,
-      eth2NetworkName
+      eth2NetworkName: ETH2_NETWORK_NAME
     };
 
   return await getNodeStatsMem(beaconNode);

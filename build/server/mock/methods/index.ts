@@ -96,7 +96,7 @@ export async function nodeStats(): Promise<NodeStats> {
       finalizedSlot: 177600,
       slotsPerEpoch: 32
     },
-    eth2NetworkName: "Topaz"
+    eth2NetworkName: "Medalla testnet"
   };
 }
 

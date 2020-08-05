@@ -2,7 +2,7 @@ export const dataPath = process.env.DATA_PATH || "data";
 export const eth1Web3Url =
   process.env.WEB3PROVIDER || "https://goerli.dappnode.net";
 export const GRAFFITI = process.env.GRAFFITI || "";
-export const eth2NetworkName = process.env.ETH2_NETWORK_NAME || "";
+export const ETH2_NETWORK_NAME = "Medalla testnet";
 
 /**
  * Medalla settings
