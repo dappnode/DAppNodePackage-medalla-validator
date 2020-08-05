@@ -36,7 +36,6 @@ import AssignmentIcon from "@material-ui/icons/Assignment";
 import { FooterNote } from "./components/FooterNote";
 import { paths } from "paths";
 import { newTabProps, noAStyle } from "utils";
-import { DNP_NAME_DMS } from "params";
 import { useApi } from "api/rpc";
 
 const sideNavMainItems = [

@@ -66,7 +66,6 @@ export function ValidatorsImportFiles() {
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      console.log({ acceptedFiles });
       // Set loading=true associated to a random ID. There can be multiple onDrop events at once
       const loadingId = String(Math.random());
       setLoadingFiles(loadingId);
@@ -76,11 +75,11 @@ export function ValidatorsImportFiles() {
           setValidators((_validators) => {
             switch (eth2File.type) {
               case "keystore": {
-                let validator = validators.get(eth2File.keystore.pubkey);
+                let validator = _validators.get(eth2File.keystore.pubkey);
                 if (!validator)
                   validator = { pubkey: eth2File.keystore.pubkey };
                 validator.keystore = eth2File.keystore;
-                validators.set(validator.pubkey, validator);
+                _validators.set(validator.pubkey, validator);
                 break;
               }
 
@@ -95,10 +94,10 @@ export function ValidatorsImportFiles() {
               // }
 
               case "passphrase": {
-                let validator = validators.get(eth2File.pubkey);
+                let validator = _validators.get(eth2File.pubkey);
                 if (!validator) validator = { pubkey: eth2File.pubkey };
                 validator.passphrase = eth2File.passphrase;
-                validators.set(validator.pubkey, validator);
+                _validators.set(validator.pubkey, validator);
                 break;
               }
             }
