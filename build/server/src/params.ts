@@ -22,7 +22,7 @@ export const LIGHTHOUSE_DNPNAME =
 export const LIGHTHOUSE_REST_APIURL =
   "http://lighthouse-medalla-beacon-chain.dappnode:5052";
 export const LIGHTHOUSE_VALIDATOR_APIURL =
-  "http://lighthouse-medalla-beacon-chain.dappnode:4000";
+  "http://lighthouse-medalla-beacon-chain.dappnode:5052";
 export const LIGHTHOUSE_EXTRA_OPTS = process.env.LIGHTHOUSE_EXTRA_OPTS || "";
 export const LIGHTHOUSE_VERBOSITY = process.env.LIGHTHOUSE_VERBOSITY || "info";
 
