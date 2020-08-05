@@ -1,11 +1,16 @@
 # Medalla validator Ethereum2.0 DAppNode Package
 
 [![DAppNode Available](https://img.shields.io/badge/DAppNode-Available-brightgreen.svg)](http://my.dappnode/#/installer/medalla-validator.dnp.dappnode.eth)
+[![Prysm github](https://img.shields.io/badge/Prysm-Github-blue.svg)](https://prylabs.net/)
 
-Includes the validator binaries:
+Integrated multi client validator. Includes the validator binaries:
 
-- [![Prysm github](https://img.shields.io/badge/Prysm-Github-blue.svg)](https://prylabs.net/)
+- Prysm
 - Lighthouse
+
+---
+
+![avatar](avatar-medalla-validator.png)
 
 # Installation Notes
 
