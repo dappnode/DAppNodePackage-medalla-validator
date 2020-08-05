@@ -1,7 +1,7 @@
 version: "3.4"
 services:
   medalla-validator.dnp.dappnode.eth:
-    image: "medalla-validator.dnp.dappnode.eth:1.0.2"
+    image: "medalla-validator.dnp.dappnode.eth:1.0.0"
     build:
       context: .
       dockerfile: build/Dockerfile

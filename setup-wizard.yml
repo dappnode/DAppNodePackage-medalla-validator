@@ -1,0 +1,18 @@
+version: "2"
+fields:
+  - title: Password
+    id: password
+    description: Password to protect access to the validator account manager dashboard. Use a strong password, which you can generate and store with a password manager. You can change this password anytime.
+    target:
+      type: environment
+      name: PASSWORD
+    required: true
+    secret: true
+  - title: Alias
+    id: graffiti
+    description: You can use the graffiti validator parameter to add a string to your proposed blocks, which will be seen on the block explorer. This can be your name, your loved one’s name, an important hash of some real world data, or memes. Leave empty to not add any data.
+    target:
+      type: environment
+      name: GRAFFITI
+      pattern: "^[\x20-\x7E]{0,32}$"
+      patternErrorMessage: Must be 32 characters long max (32 ASCII bytes)
