@@ -1,5 +1,6 @@
 import { spawn, ChildProcess } from "child_process";
 import dargs from "dargs";
+import { ChildProcessStatus, ChildProcessCrashData } from "../../common";
 import { logs, Logger } from "../logs";
 
 type ChildProcessWithExitCode = ChildProcess & {
@@ -21,15 +22,6 @@ export interface CommandData<T extends GenericOptions = {}> {
   options?: T;
   dynamicOptions?: () => Partial<T>;
 }
-
-export interface CrashStatus {
-  code: number | null;
-  command: string;
-  args: string[];
-  timestamp: number;
-}
-
-type ChildProcessStatus = "killing" | "starting" | null;
 
 const signalsToPass: NodeJS.Signals[] = [
   "SIGTERM",
@@ -58,12 +50,13 @@ export class Supervisor<T extends GenericOptions = {}> {
 
   // State
   private child: ChildProcessWithExitCode | null = null;
-  private status: ChildProcessStatus = null;
+  private status: ChildProcessStatus["status"] = null;
 
-  // Ephemeral state
+  // Informative ephemeral state
   private maxLogs: number = 20;
   private recentLogs: string[] = [];
-  private recentCrashes: CrashStatus[] = [];
+  private recentCrashes: ChildProcessCrashData[] = [];
+  private runningSince: number | null = null;
 
   constructor(
     commandData: CommandData<T>,
@@ -151,6 +144,7 @@ export class Supervisor<T extends GenericOptions = {}> {
       const cmdStr = `'${command} ${args.join(" ")}'`;
       this.logger.info(`Starting child process with ${cmdStr} ${child.pid}`);
       this.child = child;
+      this.runningSince = Date.now();
 
       // Pipe output
       const onData = (chunk: Buffer): void => {
@@ -200,17 +194,13 @@ export class Supervisor<T extends GenericOptions = {}> {
   /**
    * Get informative status about the internal child_process
    */
-  getStatus(): {
-    recentLogs: string[];
-    recentCrashes: CrashStatus[];
-    status: ChildProcessStatus;
-    pid: number | null;
-  } {
+  getStatus(): ChildProcessStatus {
     return {
       recentLogs: this.recentLogs,
       recentCrashes: this.recentCrashes,
       status: this.status,
-      pid: this.child ? this.child.pid : null
+      pid: this.child ? this.child.pid : null,
+      runningSince: this.runningSince
     };
   }
 

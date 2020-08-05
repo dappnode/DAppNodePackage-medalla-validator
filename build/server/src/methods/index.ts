@@ -1,3 +1,4 @@
+export * from "./getBinaryStatus";
 export * from "./getSettings";
 export * from "./getValidators";
 export * from "./importValidators";

@@ -158,3 +158,21 @@ export type DnpInstalledStatus =
   | (DnpInstalledPackage & { status: "installed" })
   | { name: string; status: "not-installed" }
   | { name: string; status: "fetch-error"; error: string };
+
+/**
+ * Informative status about the internal child_process (validator client)
+ */
+export interface ChildProcessStatus {
+  recentLogs: string[];
+  recentCrashes: ChildProcessCrashData[];
+  status: "killing" | "starting" | null;
+  pid: number | null;
+  runningSince: number | null;
+}
+
+export interface ChildProcessCrashData {
+  code: number | null;
+  command: string;
+  args: string[];
+  timestamp: number;
+}

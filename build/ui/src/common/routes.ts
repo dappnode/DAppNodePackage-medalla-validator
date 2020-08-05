@@ -5,9 +5,14 @@ import {
   ValidatorClientName,
   AppSettings,
   BeaconProviderName,
+  ChildProcessStatus,
 } from "./types";
 
 export interface Routes {
+  /**
+   * Informative status about the internal child_process (validator client)
+   */
+  getBinaryStatus: () => Promise<ChildProcessStatus | null>;
   /**
    * List current validator files in disk, plus their stats
    */
@@ -35,6 +40,7 @@ export interface Routes {
 }
 
 export const routesData: { [P in keyof Routes]: {} } = {
+  getBinaryStatus: {},
   getValidators: {},
   nodeStats: {},
   importValidators: {},

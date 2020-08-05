@@ -5,7 +5,8 @@ import {
   ValidatorFiles,
   AppSettings,
   ValidatorClientName,
-  BeaconProviderName
+  BeaconProviderName,
+  ChildProcessStatus
 } from "../../common";
 import {
   LIGHTHOUSE_DNPNAME,
@@ -125,6 +126,33 @@ export async function setBeaconProvider(
 ): Promise<void> {
   await waitMs(10000);
   settings.beaconProvider = beaconProvider;
+}
+
+export async function getBinaryStatus(): Promise<ChildProcessStatus | null> {
+  if (!settings.validatorClient) return null;
+  else
+    return {
+      recentLogs: [
+        "slot: 7091, epoch: 221, validators: 10, service: notifier",
+        "Aug 05 12:38:38.005 INFO Awaiting activation                     slot: 7092, epoch: 221, validators: 10, service: notifier",
+        "Aug 05 12:38:50.003 INFO Awaiting activation                     slot: 7093,",
+        "epoch: 221, validators: 10, service: notifier",
+        "Aug 05 12:39:02.003 INFO Awaiting activation                     slot: 7094, epoch: 221, validators: 10, service: notifier",
+        "Aug 05 12:39:14.002 INFO Awaiting activation                     slot: 7095, epoch: 221, validators: 10, service: notifier",
+        "Aug 05 12:39:26.002 INFO Awaiting activation                     slot: 7096, epoch: 221, validators: 10, service: notifier"
+      ],
+      recentCrashes: [
+        {
+          code: 1,
+          command: "ligthhouse",
+          args: ["--testnet medalla"],
+          timestamp: Date.now() - 30 * 1000
+        }
+      ],
+      status: null,
+      pid: 153,
+      runningSince: Date.now() - 5 * 60 * 1000
+    };
 }
 
 // Helpers
