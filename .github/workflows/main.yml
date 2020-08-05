@@ -24,7 +24,6 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [unit-test, integration-test]
     if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2
