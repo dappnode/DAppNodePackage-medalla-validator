@@ -32,8 +32,8 @@ export async function initializeValidatorDirectories() {
  */
 export function thereAreValidatorFiles(): boolean {
   const client = db.server.validatorClient.get();
-  const validatorFileManager = getValidatorFileManager(client);
-  return validatorFileManager.hasKeys();
+  if (!client) return false;
+  return getValidatorFileManager(client).hasKeys();
 }
 
 /**

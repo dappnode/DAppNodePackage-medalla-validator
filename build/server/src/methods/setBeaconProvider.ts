@@ -14,6 +14,8 @@ export async function setBeaconProvider(
   db.server.beaconProvider.set(beaconProvider);
 
   const client = db.server.validatorClient.get();
-  const binary = getValidatorBinary(client);
-  await binary.restart();
+  if (client) {
+    const binary = getValidatorBinary(client);
+    await binary.restart();
+  }
 }

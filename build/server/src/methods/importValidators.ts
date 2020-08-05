@@ -10,10 +10,13 @@ import * as db from "../db";
 export async function importValidators(
   validatorsFiles: ValidatorFiles[]
 ): Promise<void> {
-  const fileManager = getValidatorFileManager(db.server.validatorClient.get());
+  const client = db.server.validatorClient.get();
+  if (!client) throw Error("No validator client selected yet");
+
+  const fileManager = getValidatorFileManager(client);
   await fileManager.write(validatorsFiles);
 
   // Re-fetch current validatorClient in case it has changed
-  const binary = getValidatorBinary(db.server.validatorClient.get());
+  const binary = getValidatorBinary(client);
   await binary.restart();
 }

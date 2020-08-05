@@ -26,8 +26,8 @@ try {
 
 export const server = createDb(createLowDb(serverDbPath), {
   sessionsSecret: regular<string>(),
-  validatorClient: regular<ValidatorClientName>("lighthouse"),
-  beaconProvider: regular<BeaconProviderName>("lighthouse")
+  validatorClient: regular<ValidatorClientName>(),
+  beaconProvider: regular<BeaconProviderName>()
 });
 
 export const accounts = createDb(createLowDb(accountsDbPath), {

@@ -14,6 +14,11 @@ export async function switchValidatorClient(
   const prevClient = db.server.validatorClient.get();
   if (prevClient === nextClient) return;
 
+  if (!prevClient) {
+    db.server.validatorClient.set(nextClient);
+    return await getValidatorBinary(nextClient).start();
+  }
+
   const prevClientBinary = getValidatorBinary(prevClient);
   const nextClientBinary = getValidatorBinary(nextClient);
   const prevClientFileManager = getValidatorFileManager(prevClient);

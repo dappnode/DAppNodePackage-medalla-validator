@@ -6,8 +6,7 @@ import {
   LIGHTHOUSE_EXTRA_OPTS
 } from "../../params";
 import { getLogger } from "../../logs";
-import * as db from "../../db";
-import { getBeaconProviderUrl } from "../../utils/beaconProvider";
+import { getBeaconProviderUrl } from "./utils";
 
 export const lighthouseBinary = new Supervisor(
   {
@@ -19,12 +18,12 @@ export const lighthouseBinary = new Supervisor(
       "debug-level": LIGHTHOUSE_VERBOSITY,
       datadir: LIGHTHOUSE_DATA_DIR,
       "secrets-dir": LIGHTHOUSE_SECRETS_DIR,
-      server: getBeaconProviderUrl(db.server.beaconProvider.get()),
+      server: getBeaconProviderUrl(),
       // dargs extra options
       _: [LIGHTHOUSE_EXTRA_OPTS]
     },
     dynamicOptions: () => ({
-      server: getBeaconProviderUrl(db.server.beaconProvider.get())
+      server: getBeaconProviderUrl()
     })
   },
   {

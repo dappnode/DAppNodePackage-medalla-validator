@@ -23,5 +23,13 @@ const getNodeStatsMem = memoizee(getNodeStats, {
 
 export async function nodeStats(): Promise<NodeStats> {
   const beaconNode = db.server.beaconProvider.get();
+  if (!beaconNode)
+    return {
+      chainhead: null,
+      syncing: null,
+      peers: null,
+      eth2NetworkName
+    };
+
   return await getNodeStatsMem(beaconNode);
 }

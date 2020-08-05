@@ -31,17 +31,19 @@ export async function getValidators(): Promise<ValidatorStats[]> {
   const beaconNode = db.server.beaconProvider.get();
   const validatorClient = db.server.validatorClient.get();
 
-  const validatorFileManager = getValidatorFileManager(validatorClient);
-  const pubkeys = validatorFileManager.readPubkeys();
   // Keep fetching logs in the background only when UI is connected
   requestPastDepositEvents().catch(e => {
     logs.error(`Error requesting past deposit events`, e);
   });
 
-  const statusByPubkey = await getValidatorStatusMem(
-    beaconNode,
-    pubkeys
-  ).catch(e => logs.error(`Error fetching validators balances`, e));
+  const pubkeys = validatorClient
+    ? getValidatorFileManager(validatorClient).readPubkeys()
+    : [];
+  const statusByPubkey = beaconNode
+    ? await getValidatorStatusMem(beaconNode, pubkeys).catch(e =>
+        logs.error(`Error fetching validators balances`, e)
+      )
+    : {};
 
   return pubkeys
     .map(

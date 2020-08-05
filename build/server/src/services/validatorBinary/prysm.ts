@@ -8,16 +8,7 @@ import {
   PRYSM_WALLET_DIR
 } from "../../params";
 import { getLogger } from "../../logs";
-import * as db from "../../db";
-import { getBeaconProviderUrl } from "../../utils/beaconProvider";
-
-/**
- * Prysm does not want the protocol in the beacon URL
- */
-function getBeaconProviderUrlPrysm() {
-  const url = getBeaconProviderUrl(db.server.beaconProvider.get());
-  return url.replace(/^https?:\/\//, "");
-}
+import { getBeaconProviderUrlPrysm } from "./utils";
 
 export const prysmBinary = new Supervisor(
   {
