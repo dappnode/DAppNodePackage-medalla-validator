@@ -12,7 +12,7 @@ export async function switchValidatorClient(
   const prevClient = db.server.validatorClient.get();
   if (prevClient === nextClient) return;
 
-  if (prevClient) await getClient(prevClient).stopAndDeleteKeystores();
-  await getClient(nextClient).getKeystoresAndStart();
+  if (prevClient) await getClient(prevClient).stop();
+  await getClient(nextClient).restart();
   db.server.validatorClient.set(nextClient);
 }

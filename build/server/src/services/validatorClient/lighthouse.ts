@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import rimraf from "rimraf";
 import { promisify } from "util";
-import { keystoreManager } from "../keystoreManager";
+import { keystoreManager, ValidatorPaths } from "../keystoreManager";
 import { ClientKeystoreManager } from "./generic";
 import { Supervisor, getBeaconProviderUrl, ensureDir } from "../../utils";
 import {
@@ -65,13 +65,12 @@ export const lighthouseBinary = new Supervisor(
  * ```
  */
 export const lighthouseKeystoreManager: ClientKeystoreManager = {
-  hasKeystores(): boolean {
+  async hasKeystores(): Promise<boolean> {
     return fs.readdirSync(LIGHTHOUSE_KEYSTORES_DIR).length > 0;
   },
 
-  async importKeystores() {
+  async importKeystores(validatorsPaths: ValidatorPaths[]) {
     ensureDir(LIGHTHOUSE_SECRETS_DIR);
-    const validatorsPaths = keystoreManager.getValidatorsPaths();
     for (const validatorPaths of validatorsPaths) {
       let pubkey = validatorPaths.pubkey;
       if (!pubkey.startsWith("0x")) pubkey = `0x${pubkey}`;

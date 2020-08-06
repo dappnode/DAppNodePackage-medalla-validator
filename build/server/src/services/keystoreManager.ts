@@ -4,7 +4,7 @@ import { ValidatorFiles } from "../../common";
 import { VALIDATOR_KEYSTORES_DIR, VALIDATOR_SECRETS_DIR } from "../params";
 import { ensureDir, ensureDirFromFilePath } from "../utils";
 
-interface ValidatorPaths {
+export interface ValidatorPaths {
   dirPath: string;
   keystorePath: string;
   secretPath: string;

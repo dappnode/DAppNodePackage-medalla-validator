@@ -58,7 +58,7 @@ export const prysmBinary = new Supervisor(
  * deleted by just removing the wallet directory
  */
 export const prysmKeystoreManager: ClientKeystoreManager = {
-  hasKeystores(): boolean {
+  async hasKeystores(): Promise<boolean> {
     return keystoreManager.getValidatorsPaths().length > 0;
 
     // TODO: Use Prysm itself to check if it has keystores

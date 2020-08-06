@@ -4,7 +4,6 @@ import * as db from "./db";
 import { listenToDepositEvents } from "./services/eth1";
 import { printGitData } from "./services/printGitData";
 import { getClient } from "./services/validatorClient";
-import { NoKeystoresError } from "./services/validatorClient/generic";
 
 // Connect to a Eth1.x node
 listenToDepositEvents();
@@ -15,13 +14,10 @@ printGitData();
 const currentClient = db.server.validatorClient.get();
 if (currentClient) {
   getClient(currentClient)
-    .startIfHasKeystores()
+    .restart()
     .then(
       () => logs.info(`Started validator client ${currentClient}`),
-      e => {
-        if (e instanceof NoKeystoresError) logs.info("No keystores yet");
-        else logs.error(`Error starting validator client`, e);
-      }
+      e => logs.error(`Error starting validator client`, e)
     );
 } else {
   logs.info(`No validator client selected yet`);

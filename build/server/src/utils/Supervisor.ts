@@ -213,10 +213,6 @@ export class Supervisor<T extends GenericOptions = {}> {
     };
   }
 
-  getTargetStatus() {
-    return this.targetStatus;
-  }
-
   /**
    * Waits for the current child's exit event once
    * Must supply a timeout to prevent infinite waits

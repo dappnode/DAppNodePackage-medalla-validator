@@ -1,13 +1,12 @@
 import { Supervisor } from "../../utils";
 import { ChildProcessStatus } from "../../../common";
+import { keystoreManager, ValidatorPaths } from "../keystoreManager";
 
 export interface ClientKeystoreManager {
-  importKeystores(): Promise<void>;
+  importKeystores(validatorsPaths: ValidatorPaths[]): Promise<void>;
   deleteKeystores(): Promise<void>;
-  hasKeystores(): boolean;
+  hasKeystores(): Promise<boolean>;
 }
-
-export class NoKeystoresError extends Error {}
 
 export class ValidatorClient {
   private binary: Supervisor;
@@ -19,43 +18,30 @@ export class ValidatorClient {
   }
 
   /**
-   * Restart only if previously running + if it has keys
-   */
-  async restart(): Promise<void> {
-    if (
-      this.binary.getTargetStatus() === "running" &&
-      this.keystoreManager.hasKeystores()
-    ) {
-      await this.binary.restart();
-    }
-  }
-
-  /**
-   * Start binary if it has keystores. Run on main process start
-   */
-  async startIfHasKeystores(): Promise<void> {
-    if (this.keystoreManager.hasKeystores()) {
-      await this.binary.restart();
-    }
-  }
-
-  /**
    * Grab validator keys and start process
    */
-  async getKeystoresAndStart(): Promise<void> {
-    if (this.keystoreManager.hasKeystores()) {
-      await this.binary.kill();
-      await this.keystoreManager.importKeystores();
+  async restart(options?: { reImportKeystores?: boolean }): Promise<void> {
+    const validatorsPaths = keystoreManager.getValidatorsPaths();
+    const clientHasKeystores = await this.keystoreManager.hasKeystores();
+
+    if (validatorsPaths.length > 0) {
+      if (options?.reImportKeystores) {
+        await this.keystoreManager.deleteKeystores();
+      }
+
+      if (!clientHasKeystores) {
+        await this.binary.kill();
+        await this.keystoreManager.importKeystores(validatorsPaths);
+      }
+
       await this.binary.restart();
-    } else {
-      throw new NoKeystoresError("No keystores available");
     }
   }
 
   /**
    * Kill process and remove validator keys
    */
-  async stopAndDeleteKeystores(): Promise<void> {
+  async stop(): Promise<void> {
     await this.binary.kill();
     await this.keystoreManager.deleteKeystores();
   }

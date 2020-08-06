@@ -15,7 +15,7 @@ export async function importValidators(
   const clientName = db.server.validatorClient.get();
   if (clientName) {
     const client = getClient(clientName);
-    await client.stopAndDeleteKeystores();
-    await client.getKeystoresAndStart();
+    await client.stop();
+    await client.restart({ reImportKeystores: true });
   }
 }
