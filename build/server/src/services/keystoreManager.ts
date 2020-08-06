@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { ValidatorFiles } from "../../common";
 import { VALIDATOR_KEYSTORES_DIR, VALIDATOR_SECRETS_DIR } from "../params";
+import { ensureDir, ensureDirFromFilePath } from "../utils";
 
 interface ValidatorPaths {
   dirPath: string;
@@ -20,10 +21,10 @@ interface GeneralKeystoreManager {
 
 export const keystoreManager: GeneralKeystoreManager = {
   async importKeystores(validatorsFiles: ValidatorFiles[]): Promise<void> {
-    await fs.promises.mkdir(VALIDATOR_SECRETS_DIR, { recursive: true });
+    ensureDir(VALIDATOR_SECRETS_DIR);
     for (const { pubkey, keystore, passphrase } of validatorsFiles) {
       const paths = getPaths({ pubkey });
-      await fs.promises.mkdir(paths.dirPath, { recursive: true });
+      ensureDirFromFilePath(paths.keystorePath);
       await fs.promises.writeFile(paths.keystorePath, JSON.stringify(keystore));
       await fs.promises.writeFile(paths.secretPath, passphrase);
     }

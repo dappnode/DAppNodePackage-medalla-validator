@@ -15,6 +15,7 @@ import {
 } from "../../params";
 import { getLogger } from "../../logs";
 import { getBeaconProviderUrl } from "../../utils/beaconProviderUrl";
+import { ensureDir } from "../../utils";
 
 export const lighthouseBinary = new Supervisor(
   {
@@ -71,7 +72,7 @@ export const lighthouseKeystoreManager: ClientKeystoreManager = {
   },
 
   async importKeystores() {
-    await fs.promises.mkdir(LIGHTHOUSE_SECRETS_DIR, { recursive: true });
+    ensureDir(LIGHTHOUSE_SECRETS_DIR);
     const validatorsPaths = keystoreManager.getValidatorsPaths();
     for (const validatorPaths of validatorsPaths) {
       let pubkey = validatorPaths.pubkey;
@@ -79,7 +80,7 @@ export const lighthouseKeystoreManager: ClientKeystoreManager = {
       const dirPath = path.join(LIGHTHOUSE_KEYSTORES_DIR, pubkey);
       const keystorePath = path.join(dirPath, "voting-keystore.json");
       const secretPath = path.join(LIGHTHOUSE_SECRETS_DIR, pubkey);
-      await fs.promises.mkdir(dirPath, { recursive: true });
+      ensureDir(dirPath);
       await fs.promises.copyFile(validatorPaths.keystorePath, keystorePath);
       await fs.promises.copyFile(validatorPaths.secretPath, secretPath);
     }

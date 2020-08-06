@@ -1,4 +1,5 @@
 import fs from "fs";
+import path from "path";
 import { exec } from "child_process";
 import { promisify } from "util";
 import rimraf from "rimraf";
@@ -20,6 +21,7 @@ import {
   GRAFFITI
 } from "../../params";
 import { getRandomToken } from "../../utils/token";
+import { ensureDirFromFilePath } from "../../utils";
 
 /**
  * Prysm does not want the protocol in the beacon URL
@@ -78,6 +80,7 @@ export const prysmKeystoreManager: ClientKeystoreManager = {
 
   async importKeystores() {
     if (!fs.existsSync(PRYSM_WALLET_PASSWORD_PATH)) {
+      ensureDirFromFilePath(PRYSM_WALLET_PASSWORD_PATH);
       fs.writeFileSync(PRYSM_WALLET_PASSWORD_PATH, getRandomToken(32));
     }
 
