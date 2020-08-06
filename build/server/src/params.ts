@@ -40,7 +40,6 @@ export const PRYSM_BINARY = "validator";
 export const PRYSM_DATA_DIR = "/prysm";
 export const PRYSM_WALLET_DIR = "/prysm/.eth2validators/primary";
 export const PRYSM_WALLET_PASSWORD_PATH = "/prysm/.eth2validators/primary.pass";
-export const PRYSM_SECRETS_DIR = "/prysm/.eth2validators/secrets";
 export const PRYSM_LOG_FILE = "/var/log/validator.log";
 export const PRYSM_DNPNAME = "prysm-medalla-beacon-chain.dnp.dappnode.eth";
 export const PRYSM_REST_APIURL =

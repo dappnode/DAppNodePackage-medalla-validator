@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import rimraf from "rimraf";
 import { promisify } from "util";
-import { keystoreManager, ValidatorPaths } from "../keystoreManager";
+import { ValidatorPaths } from "../keystoreManager";
 import { ClientKeystoreManager } from "./generic";
 import { Supervisor, getBeaconProviderUrl, ensureDir } from "../../utils";
 import {
@@ -14,6 +14,9 @@ import {
   LIGHTHOUSE_EXTRA_OPTS
 } from "../../params";
 import { getLogger } from "../../logs";
+
+const binaryLogger = getLogger({ location: "lighthouse" });
+const keyMgrLogger = getLogger({ location: "lighthouse keystore manager" });
 
 export const lighthouseBinary = new Supervisor(
   {
@@ -37,7 +40,7 @@ export const lighthouseBinary = new Supervisor(
     timeoutKill: 10 * 1000,
     restartWait: 1000,
     resolveStartOnData: true,
-    logger: getLogger({ location: "lighthouse" })
+    logger: binaryLogger
   }
 );
 
@@ -81,10 +84,14 @@ export const lighthouseKeystoreManager: ClientKeystoreManager = {
       await fs.promises.copyFile(validatorPaths.keystorePath, keystorePath);
       await fs.promises.copyFile(validatorPaths.secretPath, secretPath);
     }
+    keyMgrLogger.info(
+      `Imported ${validatorsPaths.length} keystores to ${LIGHTHOUSE_KEYSTORES_DIR}`
+    );
   },
 
   async deleteKeystores() {
     await promisify(rimraf)(LIGHTHOUSE_KEYSTORES_DIR);
     await promisify(rimraf)(LIGHTHOUSE_SECRETS_DIR);
+    keyMgrLogger.info(`Deleted all files in ${LIGHTHOUSE_KEYSTORES_DIR}`);
   }
 };

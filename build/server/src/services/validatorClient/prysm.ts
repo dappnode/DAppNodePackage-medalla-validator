@@ -4,7 +4,7 @@ import { promisify } from "util";
 import rimraf from "rimraf";
 import dargs from "dargs";
 import { getLogger } from "../../logs";
-import { keystoreManager } from "../keystoreManager";
+import { ValidatorPaths } from "../keystoreManager";
 import { ClientKeystoreManager } from "./generic";
 import {
   Supervisor,
@@ -20,9 +20,11 @@ import {
   PRYSM_DATA_DIR,
   PRYSM_WALLET_DIR,
   PRYSM_WALLET_PASSWORD_PATH,
-  PRYSM_SECRETS_DIR,
   GRAFFITI
 } from "../../params";
+
+const binaryLogger = getLogger({ location: "prysm" });
+const keyMgrLogger = getLogger({ location: "prysm keystore manager" });
 
 export const prysmBinary = new Supervisor(
   {
@@ -32,7 +34,7 @@ export const prysmBinary = new Supervisor(
       "beacon-rpc-provider": getBeaconProviderUrlPrysm(),
       datadir: PRYSM_DATA_DIR,
       "wallet-dir": PRYSM_WALLET_DIR,
-      "passwords-dir": PRYSM_SECRETS_DIR,
+      "wallet-password-file": PRYSM_WALLET_PASSWORD_PATH,
       // "disable-accounts-v2": true,
       verbosity: PRYSM_VERBOSITY,
       "log-file": PRYSM_LOG_FILE,
@@ -48,7 +50,7 @@ export const prysmBinary = new Supervisor(
     timeoutKill: 10 * 1000,
     restartWait: 1000,
     resolveStartOnData: true,
-    logger: getLogger({ location: "prysm" })
+    logger: binaryLogger
   }
 );
 
@@ -59,28 +61,43 @@ export const prysmBinary = new Supervisor(
  */
 export const prysmKeystoreManager: ClientKeystoreManager = {
   async hasKeystores(): Promise<boolean> {
-    return keystoreManager.getValidatorsPaths().length > 0;
+    return fs.existsSync(PRYSM_WALLET_DIR);
 
-    // TODO: Use Prysm itself to check if it has keystores
-    // await shell(
-    //   "validator accounts-v2 list",
-    //   dargs({
-    //     "wallet-dir": PRYSM_WALLET_DIR,
-    //     "wallet-password-file": PRYSM_WALLET_PASSWORD_PATH
-    //   })
+    // TODO: Use a better way
+    // Note: `accounts-v2 list` outputs a too verbose output, can't use
+    // [2020-08-06 21:57:14]  INFO accounts-v2: (wallet directory) /prysm/.eth2validators/primary
+    // (keymanager kind) non-HD wallet
+
+    // Showing 1 validator account
+    // View the eth1 deposit transaction data for your accounts by running `validator accounts-v2 list --show-deposit-data
+
+    // Account 0 | shortly-vast-gibbon
+    // [validating public key] 0xb709108cf222c87d64526c393d872961f647f438b483365c14e5c0a26d08862cf06d10e630a71816c1920cb8ac699260
+
+    // const { stdout, stderr } = await promisify(exec)(
+    //   [
+    //     PRYSM_BINARY,
+    //     "accounts-v2",
+    //     "list",
+    //     ...dargs({
+    //       "wallet-dir": PRYSM_WALLET_DIR,
+    //       "wallet-password-file": PRYSM_WALLET_PASSWORD_PATH
+    //     })
+    //   ].join(" ")
     // );
   },
 
-  async importKeystores() {
+  async importKeystores(validatorsPaths: ValidatorPaths[]) {
     if (!fs.existsSync(PRYSM_WALLET_PASSWORD_PATH)) {
       ensureDirFromFilePath(PRYSM_WALLET_PASSWORD_PATH);
       fs.writeFileSync(PRYSM_WALLET_PASSWORD_PATH, getPrysmPassword());
+      keyMgrLogger.info(`Wrote wallet password: ${PRYSM_WALLET_PASSWORD_PATH}`);
     }
 
     // Necessary to create a wallet?
 
-    for (const validatorPaths of keystoreManager.getValidatorsPaths()) {
-      await promisify(exec)(
+    for (const validatorPaths of validatorsPaths) {
+      const { stdout, stderr } = await promisify(exec)(
         [
           PRYSM_BINARY,
           "accounts-v2",
@@ -94,11 +111,16 @@ export const prysmKeystoreManager: ClientKeystoreManager = {
           })
         ].join(" ")
       );
+      keyMgrLogger.info(
+        `Imported ${validatorsPaths.length} keystores to wallet ${PRYSM_WALLET_DIR}`,
+        { stdout, stderr }
+      );
     }
   },
 
   async deleteKeystores() {
     await promisify(rimraf)(PRYSM_WALLET_DIR);
+    keyMgrLogger.info(`Deleted all files in ${PRYSM_WALLET_DIR}`);
   }
 };
 
