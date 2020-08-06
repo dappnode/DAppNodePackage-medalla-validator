@@ -5,8 +5,7 @@ import {
 } from "../../../common";
 import fetch from "node-fetch";
 import querystring from "querystring";
-import { urlJoin } from "../../utils/url";
-import { parseFetchJson } from "../../utils/fetch";
+import { urlJoin, parseFetchJson } from "../../utils";
 import { BeaconNodeClient } from "./interface";
 
 export class PrysmBeaconNodeClient implements BeaconNodeClient {

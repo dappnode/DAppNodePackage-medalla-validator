@@ -3,8 +3,7 @@ import bodyParser from "body-parser";
 import logger from "morgan";
 import cors from "cors";
 import * as methods from "./methods";
-import { getRpcHandler } from "../src/utils/rpc";
-import { wrapRoute } from "../src/utils/express";
+import { getRpcHandler, wrapRoute } from "../src/utils";
 import { serverPort } from "../src/params";
 // Display stack traces with source-maps
 import "source-map-support/register";

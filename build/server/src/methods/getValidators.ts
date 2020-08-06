@@ -2,7 +2,7 @@ import memoizee from "memoizee";
 import { ethers } from "ethers";
 import * as db from "../db";
 import { ValidatorStats, DepositEvent, BeaconProviderName } from "../../common";
-import { computeExpectedBalance } from "../utils/depositEvent";
+import { computeExpectedBalance } from "../utils";
 import { requestPastDepositEvents } from "../services/eth1";
 import { getBeaconNodeClient } from "../services/beaconNode";
 import { logs } from "../logs";

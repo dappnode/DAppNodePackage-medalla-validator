@@ -4,7 +4,7 @@ import rimraf from "rimraf";
 import { promisify } from "util";
 import { keystoreManager } from "../keystoreManager";
 import { ClientKeystoreManager } from "./generic";
-import { Supervisor } from "../../utils/Supervisor";
+import { Supervisor, getBeaconProviderUrl, ensureDir } from "../../utils";
 import {
   LIGHTHOUSE_BINARY,
   LIGHTHOUSE_DATA_DIR,
@@ -14,8 +14,6 @@ import {
   LIGHTHOUSE_EXTRA_OPTS
 } from "../../params";
 import { getLogger } from "../../logs";
-import { getBeaconProviderUrl } from "../../utils/beaconProviderUrl";
-import { ensureDir } from "../../utils";
 
 export const lighthouseBinary = new Supervisor(
   {

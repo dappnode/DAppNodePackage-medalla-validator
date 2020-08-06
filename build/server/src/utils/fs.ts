@@ -13,6 +13,6 @@ export function ensureDir(dirPath: string): void {
  * Make sure the directory containing this file path exists
  * @param filePath "/path/to/dir/file.ext"
  */
-export function ensureFileDir(filePath: string): void {
+export function ensureDirFromFilePath(filePath: string): void {
   ensureDir(path.parse(filePath).dir);
 }

@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { parseFetchJson } from "../utils/fetch";
+import { parseFetchJson } from "../utils";
 import { DnpInstalledPackage } from "../../common";
 import { PUBLIC_PACKAGES_APIURL } from "../params";
 

@@ -1,14 +1,17 @@
 import fs from "fs";
-import path from "path";
 import { exec } from "child_process";
 import { promisify } from "util";
 import rimraf from "rimraf";
 import dargs from "dargs";
-import { getBeaconProviderUrl } from "../../utils/beaconProviderUrl";
-import { Supervisor } from "../../utils/Supervisor";
 import { getLogger } from "../../logs";
 import { keystoreManager } from "../keystoreManager";
 import { ClientKeystoreManager } from "./generic";
+import {
+  Supervisor,
+  getBeaconProviderUrl,
+  getRandomToken,
+  ensureDirFromFilePath
+} from "../../utils";
 import {
   PRYSM_BINARY,
   PRYSM_VERBOSITY,
@@ -20,8 +23,6 @@ import {
   PRYSM_SECRETS_DIR,
   GRAFFITI
 } from "../../params";
-import { getRandomToken } from "../../utils/token";
-import { ensureDirFromFilePath } from "../../utils";
 
 /**
  * Prysm does not want the protocol in the beacon URL

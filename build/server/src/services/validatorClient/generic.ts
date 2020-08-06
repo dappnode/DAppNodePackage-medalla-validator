@@ -1,4 +1,4 @@
-import { Supervisor } from "../../utils/Supervisor";
+import { Supervisor } from "../../utils";
 import { ChildProcessStatus } from "../../../common";
 
 export interface ClientKeystoreManager {
