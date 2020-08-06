@@ -24,14 +24,6 @@ import {
   GRAFFITI
 } from "../../params";
 
-/**
- * Prysm does not want the protocol in the beacon URL
- */
-function getBeaconProviderUrlPrysm() {
-  const url = getBeaconProviderUrl();
-  return url.replace(/^https?:\/\//, "");
-}
-
 export const prysmBinary = new Supervisor(
   {
     command: PRYSM_BINARY,
@@ -82,7 +74,7 @@ export const prysmKeystoreManager: ClientKeystoreManager = {
   async importKeystores() {
     if (!fs.existsSync(PRYSM_WALLET_PASSWORD_PATH)) {
       ensureDirFromFilePath(PRYSM_WALLET_PASSWORD_PATH);
-      fs.writeFileSync(PRYSM_WALLET_PASSWORD_PATH, getRandomToken(32));
+      fs.writeFileSync(PRYSM_WALLET_PASSWORD_PATH, getPrysmPassword());
     }
 
     // Necessary to create a wallet?
@@ -109,3 +101,21 @@ export const prysmKeystoreManager: ClientKeystoreManager = {
     await promisify(rimraf)(PRYSM_WALLET_DIR);
   }
 };
+
+/**
+ * Prysm does not want the protocol in the beacon URL
+ */
+function getBeaconProviderUrlPrysm() {
+  const url = getBeaconProviderUrl();
+  return url.replace(/^https?:\/\//, "");
+}
+
+/**
+ * Return a password compatible with Prysm requirements
+ * - more than 8 characters
+ * - must contain 1 number
+ * - must contain 1 special character
+ */
+function getPrysmPassword(): string {
+  return getRandomToken(32) + ".";
+}
