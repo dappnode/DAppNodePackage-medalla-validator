@@ -4,7 +4,7 @@ import { ChildProcessStatus } from "../../../common";
 export interface ClientKeystoreManager {
   importKeystores(): Promise<void>;
   deleteKeystores(): Promise<void>;
-  hasKeystores(): Promise<boolean>;
+  hasKeystores(): boolean;
 }
 
 export class NoKeystoresError extends Error {}
