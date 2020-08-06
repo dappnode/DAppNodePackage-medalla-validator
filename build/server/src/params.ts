@@ -12,8 +12,15 @@ export const DEPOSIT_CONTRACT_ADDRESS =
 export const DEPOSIT_CONTRACT_BLOCK = 3085928;
 
 /**
+ * Common keystores stores on disk
+ */
+export const VALIDATOR_KEYSTORES_DIR = "/validators/keystores";
+export const VALIDATOR_SECRETS_DIR = "/validators/secrets";
+
+/**
  * Lighthouse config and paths
  */
+export const LIGHTHOUSE_BINARY = "lighthouse";
 export const LIGHTHOUSE_DATA_DIR = "/lighthouse";
 export const LIGHTHOUSE_KEYSTORES_DIR = "/lighthouse/keystores";
 export const LIGHTHOUSE_SECRETS_DIR = "/lighthouse/secrets";
@@ -29,8 +36,10 @@ export const LIGHTHOUSE_VERBOSITY = process.env.LIGHTHOUSE_VERBOSITY || "info";
 /**
  * Prysm config and paths
  */
+export const PRYSM_BINARY = "validator";
 export const PRYSM_DATA_DIR = "/prysm";
 export const PRYSM_WALLET_DIR = "/prysm/.eth2validators/primary";
+export const PRYSM_WALLET_PASSWORD_PATH = "/prysm/.eth2validators/primary.pass";
 export const PRYSM_SECRETS_DIR = "/prysm/.eth2validators/secrets";
 export const PRYSM_LOG_FILE = "/var/log/validator.log";
 export const PRYSM_DNPNAME = "prysm-medalla-beacon-chain.dnp.dappnode.eth";

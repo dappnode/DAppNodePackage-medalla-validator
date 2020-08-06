@@ -77,11 +77,13 @@ export class Supervisor<T extends GenericOptions = {}> {
 
     // Pass kill signals through to child
     const onParentKill = (signal: NodeJS.Signals): void => {
-      if (!this.child) return;
-      this.logger.info(`Received ${signal}, killing child process...`);
-      this.child.removeAllListeners();
-      this.child.kill(signal);
-      process.exit(); // MUST exit otherwise the stop sequence is aborted
+      if (this.child) {
+        this.logger.info(`Received ${signal}, killing child process...`);
+        this.child.removeAllListeners();
+        this.child.kill(signal);
+      }
+      // MUST exit otherwise the stop sequence is aborted
+      process.exit();
     };
     for (const signal of signalsToPass)
       process.on(signal, onParentKill.bind(this, signal));
@@ -209,6 +211,10 @@ export class Supervisor<T extends GenericOptions = {}> {
       pid: this.child ? this.child.pid : null,
       runningSince: this.runningSince
     };
+  }
+
+  getTargetStatus() {
+    return this.targetStatus;
   }
 
   /**

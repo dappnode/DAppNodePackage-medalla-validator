@@ -1,7 +1,7 @@
 import { ValidatorFiles } from "../../common";
-import { getValidatorFileManager } from "../services/validatorFiles";
-import { getValidatorBinary } from "../services/validatorBinary";
+import { keystoreManager } from "../services/keystoreManager";
 import * as db from "../db";
+import { getClient } from "../services/validatorClient";
 
 /**
  * Import validator keystores and passphrases, store them locally
@@ -10,13 +10,12 @@ import * as db from "../db";
 export async function importValidators(
   validatorsFiles: ValidatorFiles[]
 ): Promise<void> {
-  const client = db.server.validatorClient.get();
-  if (!client) throw Error("No validator client selected yet");
+  await keystoreManager.importKeystores(validatorsFiles);
 
-  const fileManager = getValidatorFileManager(client);
-  await fileManager.write(validatorsFiles);
-
-  // Re-fetch current validatorClient in case it has changed
-  const binary = getValidatorBinary(client);
-  await binary.restart();
+  const clientName = db.server.validatorClient.get();
+  if (clientName) {
+    const client = getClient(clientName);
+    await client.stopAndDeleteKeystores();
+    await client.getKeystoresAndStart();
+  }
 }

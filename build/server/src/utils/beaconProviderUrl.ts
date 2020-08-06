@@ -1,16 +1,5 @@
-import * as db from "../../db";
-import {
-  LIGHTHOUSE_VALIDATOR_APIURL,
-  PRYSM_VALIDATOR_APIRUL
-} from "../../params";
-
-/**
- * Prysm does not want the protocol in the beacon URL
- */
-export function getBeaconProviderUrlPrysm() {
-  const url = getBeaconProviderUrl();
-  return url.replace(/^https?:\/\//, "");
-}
+import * as db from "../db";
+import { LIGHTHOUSE_VALIDATOR_APIURL, PRYSM_VALIDATOR_APIRUL } from "../params";
 
 export function getBeaconProviderUrl() {
   const beaconProvider =

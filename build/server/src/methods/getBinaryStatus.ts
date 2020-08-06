@@ -1,9 +1,9 @@
 import { ChildProcessStatus } from "../../common";
 import * as db from "../db";
-import { getValidatorBinary } from "../services/validatorBinary";
+import { getClient } from "../services/validatorClient";
 
 export async function getBinaryStatus(): Promise<ChildProcessStatus | null> {
-  const validatorClient = db.server.validatorClient.get();
-  if (!validatorClient) return null;
-  else return getValidatorBinary(validatorClient).getStatus();
+  const client = db.server.validatorClient.get();
+  if (!client) return null;
+  else return getClient(client).getStatus();
 }
