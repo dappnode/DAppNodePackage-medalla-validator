@@ -69,7 +69,12 @@ export const lighthouseBinary = new Supervisor(
  */
 export const lighthouseKeystoreManager: ClientKeystoreManager = {
   async hasKeystores(): Promise<boolean> {
-    return fs.readdirSync(LIGHTHOUSE_KEYSTORES_DIR).length > 0;
+    try {
+      return fs.readdirSync(LIGHTHOUSE_KEYSTORES_DIR).length > 0;
+    } catch (e) {
+      if (e.code === "ENOENT") return false;
+      else throw e;
+    }
   },
 
   async importKeystores(validatorsPaths: ValidatorPaths[]) {
