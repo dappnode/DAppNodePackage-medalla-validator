@@ -35,9 +35,9 @@ export interface ValidatorFiles {
 export interface Eth2Keystore {
   crypto: object; // { ... }
   pubkey: string; // "b709108cf222c87d64526c393d872961f647f438b483365c14e5c0a26d08862cf06d10e630a71816c1920cb8ac699260",
-  path: string; // "m/12381/3600/0/0/0"
-  uuid: string; // "deba008c-3b56-4f49-981b-0e62fd6c0171"
-  version: number; // 4
+  path?: string; // "m/12381/3600/0/0/0"
+  uuid?: string; // "deba008c-3b56-4f49-981b-0e62fd6c0171"
+  version?: number; // 4
 }
 
 /**
