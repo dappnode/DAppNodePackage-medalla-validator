@@ -106,6 +106,8 @@ export const prysmKeystoreManager: ClientKeystoreManager = {
       const tmpKeystorePath = path.join(tmpKeystoreDir, eth2CliName);
       fs.copyFileSync(keystorePath, tmpKeystorePath);
 
+      // This command will only import 1 account MAX, so it's okay to use exec
+      // The output will never be too long and it will last for < 20 sec
       const { stdout, stderr } = await promisify(exec)(
         [
           PRYSM_BINARY,
