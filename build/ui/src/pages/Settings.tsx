@@ -28,6 +28,7 @@ export function Settings() {
       {appSettings.data ? (
         <>
           {appSettings.data.beaconProvider &&
+            appSettings.data.validatorClient &&
             appSettings.data.validatorClient !==
               appSettings.data.beaconProvider && (
               <Alert severity="warning">
