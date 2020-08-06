@@ -1,4 +1,5 @@
 import fs from "fs";
+import path from "path";
 import { exec } from "child_process";
 import { promisify } from "util";
 import rimraf from "rimraf";
@@ -96,7 +97,15 @@ export const prysmKeystoreManager: ClientKeystoreManager = {
 
     // Necessary to create a wallet?
 
-    for (const validatorPaths of validatorsPaths) {
+    for (const { pubkey, keystorePath, secretPath } of validatorsPaths) {
+      // Prysm expects keystores to have the eth2-cli name format
+      // keystore-m_12381_3600_0_0_0-1595959302
+      const tmpKeystoreDir = fs.mkdtempSync(`prysm-import-${pubkey}`);
+      const unixSec = Math.floor(Date.now() / 1000);
+      const eth2CliName = `keystore-m_12381_3600_0_0_0-${unixSec}.json`;
+      const tmpKeystorePath = path.join(tmpKeystoreDir, eth2CliName);
+      fs.copyFileSync(keystorePath, tmpKeystorePath);
+
       const { stdout, stderr } = await promisify(exec)(
         [
           PRYSM_BINARY,
@@ -106,13 +115,21 @@ export const prysmKeystoreManager: ClientKeystoreManager = {
             "wallet-dir": PRYSM_WALLET_DIR,
             "wallet-password-file": PRYSM_WALLET_PASSWORD_PATH,
             // Directory containing multiple keystores WITH THE SAME PASSWORD
-            "keys-dir": validatorPaths.dirPath,
-            "account-password-file": validatorPaths.secretPath
+            "keys-dir": tmpKeystoreDir,
+            "account-password-file": secretPath
           })
         ].join(" ")
       );
+
+      if (stdout.includes("imported 0 accounts"))
+        throw Error(
+          `cmd 'prysm accounts-v2 import' failed to import keystore from ${tmpKeystoreDir}: ${stdout}`
+        );
+
+      await promisify(rimraf)(tmpKeystoreDir);
+
       keyMgrLogger.info(
-        `Imported ${validatorsPaths.length} keystores to wallet ${PRYSM_WALLET_DIR}`,
+        `Imported ${pubkey} keystore to wallet ${PRYSM_WALLET_DIR}`,
         { stdout, stderr }
       );
     }
