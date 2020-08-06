@@ -41,9 +41,14 @@ export const keystoreManager: GeneralKeystoreManager = {
   },
 
   getValidatorsPaths(): ValidatorPaths[] {
-    return fs.readdirSync(VALIDATOR_KEYSTORES_DIR).map(pubkey => {
-      return getPaths({ pubkey });
-    });
+    try {
+      return fs
+        .readdirSync(VALIDATOR_KEYSTORES_DIR)
+        .map(pubkey => getPaths({ pubkey }));
+    } catch (e) {
+      if (e.code === "ENOENT") return [];
+      else throw e;
+    }
   }
 };
 
