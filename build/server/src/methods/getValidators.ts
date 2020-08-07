@@ -4,14 +4,17 @@ import * as db from "../db";
 import { ValidatorStats, DepositEvent, BeaconProviderName } from "../../common";
 import { computeExpectedBalance } from "../utils";
 import { requestPastDepositEvents } from "../services/eth1";
-import { getBeaconNodeClient } from "../services/beaconNode";
+import {
+  getBeaconNodeClient,
+  ValidatorStatusByPubkey
+} from "../services/beaconNode";
 import { logs } from "../logs";
 import { keystoreManager } from "../services/keystoreManager";
 
 async function getValidatorStatus(
   beaconNode: BeaconProviderName,
   pubkeys: string[]
-) {
+): Promise<ValidatorStatusByPubkey> {
   const beaconNodeClient = getBeaconNodeClient(beaconNode);
   if (await beaconNodeClient.syncing()) {
     return {};

@@ -32,6 +32,8 @@ export const lighthouseBinary = new Supervisor(
       // dargs extra options
       _: [LIGHTHOUSE_EXTRA_OPTS]
     },
+    // No typing necessary, Supervisor instance makes sure it's correct
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     dynamicOptions: () => ({
       server: getBeaconProviderUrl()
     })
@@ -77,7 +79,7 @@ export const lighthouseKeystoreManager: ClientKeystoreManager = {
     }
   },
 
-  async importKeystores(validatorsPaths: ValidatorPaths[]) {
+  async importKeystores(validatorsPaths: ValidatorPaths[]): Promise<void> {
     ensureDir(LIGHTHOUSE_SECRETS_DIR);
     for (const validatorPaths of validatorsPaths) {
       let pubkey = validatorPaths.pubkey;
@@ -94,7 +96,7 @@ export const lighthouseKeystoreManager: ClientKeystoreManager = {
     );
   },
 
-  async deleteKeystores() {
+  async deleteKeystores(): Promise<void> {
     await promisify(rimraf)(LIGHTHOUSE_KEYSTORES_DIR);
     await promisify(rimraf)(LIGHTHOUSE_SECRETS_DIR);
     keyMgrLogger.info(`Deleted all files in ${LIGHTHOUSE_KEYSTORES_DIR}`);

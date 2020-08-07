@@ -43,6 +43,8 @@ export const prysmBinary = new Supervisor(
       // dargs extra options
       _: [PRYSM_EXTRA_OPTS]
     },
+    // No typing necessary, Supervisor instance makes sure it's correct
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     dynamicOptions: () => ({
       "beacon-rpc-provider": getBeaconProviderUrlPrysm()
     })
@@ -88,7 +90,7 @@ export const prysmKeystoreManager: ClientKeystoreManager = {
     // );
   },
 
-  async importKeystores(validatorsPaths: ValidatorPaths[]) {
+  async importKeystores(validatorsPaths: ValidatorPaths[]): Promise<void> {
     if (!fs.existsSync(PRYSM_WALLET_PASSWORD_PATH)) {
       ensureDirFromFilePath(PRYSM_WALLET_PASSWORD_PATH);
       fs.writeFileSync(PRYSM_WALLET_PASSWORD_PATH, getPrysmPassword());
@@ -137,7 +139,7 @@ export const prysmKeystoreManager: ClientKeystoreManager = {
     }
   },
 
-  async deleteKeystores() {
+  async deleteKeystores(): Promise<void> {
     await promisify(rimraf)(PRYSM_WALLET_DIR);
     keyMgrLogger.info(`Deleted all files in ${PRYSM_WALLET_DIR}`);
   }
@@ -146,7 +148,7 @@ export const prysmKeystoreManager: ClientKeystoreManager = {
 /**
  * Prysm does not want the protocol in the beacon URL
  */
-function getBeaconProviderUrlPrysm() {
+function getBeaconProviderUrlPrysm(): string {
   const url = getBeaconProviderUrl();
   return url.replace(/^https?:\/\//, "");
 }

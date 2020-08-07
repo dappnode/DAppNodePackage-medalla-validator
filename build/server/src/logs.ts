@@ -22,6 +22,7 @@ const tags = {
   error: "ERROR"
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type LoggerArg = string | Error | { [key: string]: any };
 type LoggerFn = (...items: LoggerArg[]) => void;
 export interface Logger {
@@ -76,6 +77,7 @@ export function getLogger(options: { location?: string } = {}): Logger {
      * logs.debug("some process", ["arg", "arg"], id);
      * ```
      */
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     debug: formatLogger(tags.debug, logDebug ? console.debug : (): void => {}),
     /**
      * Allows to log any type of data. Strings will be shown first.
