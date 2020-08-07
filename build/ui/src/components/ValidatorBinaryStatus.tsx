@@ -43,6 +43,9 @@ const useStyles = makeStyles((theme) => ({
   noValidators: {
     fontSize: "0.85rem",
   },
+  errorLog: {
+    color: theme.palette.error.main,
+  },
   terminal: {
     whiteSpace: "pre",
     fontFamily: `"Inconsolata", monospace`,
@@ -58,22 +61,27 @@ export function ValidatorBinaryStatus() {
   const classes = useStyles();
 
   if (binaryStatus.data) {
-    const { runningSince, recentCrashes, recentLogs } = binaryStatus.data;
+    const { runningSince, recentCrashes } = binaryStatus.data;
     const crashesInLastHour = recentCrashes.filter(
       (c) => Date.now() - c.timestamp < 60 * 60 * 1000
     );
+    const isCrashingTooMuch = crashesInLastHour.length >= 5;
+    const lastCrash = recentCrashes[0];
+    const lastCrashLogs = lastCrash?.logs || [];
     return (
       <>
         <Typography>
           Runing for:{" "}
-          {runningSince ? parseDateDiff(Date.now() - runningSince) : "???"} (
-          {crashesInLastHour.length} recent crashes){" "}
-          {crashesInLastHour.length > 0 && (
-            <Link onClick={() => setShowCrashData((x) => !x)}>
-              Show crash data
-            </Link>
-          )}
+          {runningSince ? parseDateDiff(Date.now() - runningSince) : "???"}{" "}
         </Typography>
+
+        {isCrashingTooMuch && showCrashData && (
+          <Typography>
+            <Link onClick={() => setShowCrashData((x) => !x)}>
+              Hide crash data
+            </Link>
+          </Typography>
+        )}
 
         {showCrashData ? (
           <>
@@ -82,7 +90,16 @@ export function ValidatorBinaryStatus() {
             <Typography variant="subtitle2" color="primary">
               Client logs
             </Typography>
-            <code className={classes.terminal}>{recentLogs.join("\n")}</code>
+            <code className={classes.terminal}>
+              {lastCrashLogs.map((row, i) => (
+                <div
+                  key={i}
+                  className={isErrorlog(row) ? classes.errorLog : ""}
+                >
+                  {row}
+                </div>
+              ))}
+            </code>
 
             <Divider className={classes.divider} />
 
@@ -95,7 +112,7 @@ export function ValidatorBinaryStatus() {
               </div>
             ))}
           </>
-        ) : crashesInLastHour.length > 5 ? (
+        ) : isCrashingTooMuch ? (
           <Alert
             severity="error"
             action={
@@ -116,4 +133,8 @@ export function ValidatorBinaryStatus() {
   } else {
     return null;
   }
+}
+
+function isErrorlog(logRow: string): boolean {
+  return logRow.includes("error") || logRow.includes("fatal");
 }

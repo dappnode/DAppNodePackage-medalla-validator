@@ -54,7 +54,8 @@ export class Supervisor<T extends GenericOptions = {}> {
   private targetStatus: "running" | "killed" = "killed";
 
   // Informative ephemeral state
-  private maxLogs = 20;
+  private maxLogs = 10;
+  private maxCrashes = 5;
   private recentLogs: string[] = [];
   private recentCrashes: ChildProcessCrashData[] = [];
   private runningSince: number | null = null;
@@ -164,9 +165,10 @@ export class Supervisor<T extends GenericOptions = {}> {
       // TODO: Find a better way to call the class from an unbinded instance
       const onExit = async (code: number | null): Promise<void> => {
         this.logger.error(`child process exited with code ${code} ${cmdStr}`);
+        const logs = [...this.recentLogs]; // Shallow copy of logs array
         this.recentCrashes = [
-          ...this.recentCrashes.slice(0, this.maxLogs - 1),
-          { code, command, args, timestamp: Date.now() }
+          ...this.recentCrashes.slice(0, this.maxCrashes - 1),
+          { code, command, args, timestamp: Date.now(), logs }
         ];
         await pause(this.restartWait);
         // Only restart the process if it should still be running
@@ -207,7 +209,6 @@ export class Supervisor<T extends GenericOptions = {}> {
    */
   getStatus(): ChildProcessStatus {
     return {
-      recentLogs: this.recentLogs,
       recentCrashes: this.recentCrashes,
       pid: this.child ? this.child.pid : null,
       runningSince: this.runningSince

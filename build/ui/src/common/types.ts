@@ -159,7 +159,6 @@ export type DnpInstalledStatus =
  * Informative status about the internal child_process (validator client)
  */
 export interface ChildProcessStatus {
-  recentLogs: string[];
   recentCrashes: ChildProcessCrashData[];
   pid: number | null;
   runningSince: number | null;
@@ -170,4 +169,5 @@ export interface ChildProcessCrashData {
   command: string;
   args: string[];
   timestamp: number;
+  logs: string[];
 }
