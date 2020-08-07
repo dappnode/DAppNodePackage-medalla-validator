@@ -49,7 +49,7 @@ export class PrysmBeaconNodeClient implements BeaconNodeClient {
     const syncing = await this.fetch<{ syncing: boolean }>(
       "/eth/v1alpha1/node/syncing"
     );
-    return syncing
+    return syncing.syncing
       ? {
           startingSlot: 0,
           currentSlot: 0,
