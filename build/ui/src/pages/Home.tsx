@@ -39,7 +39,10 @@ export function Home() {
       </LayoutItem>
       {nodeStats.data && (
         <LayoutItem sm={6}>
-          <NodeStatsView nodeStats={nodeStats.data} />
+          <NodeStatsView
+            nodeStats={nodeStats.data}
+            appSettings={appSettings.data}
+          />
         </LayoutItem>
       )}
 

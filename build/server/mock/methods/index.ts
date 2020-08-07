@@ -96,8 +96,7 @@ export async function nodeStats(): Promise<NodeStats> {
       headBlockRoot: "y1GDABJ0iPgZhdcWBXTon4r2TgEnpS3XFISckLyqa+U=",
       finalizedSlot: 177600,
       slotsPerEpoch: 32
-    },
-    eth2NetworkName: "Medalla testnet"
+    }
   };
 }
 
