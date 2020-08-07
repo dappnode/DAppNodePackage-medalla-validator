@@ -13,7 +13,11 @@ async function getValidatorStatus(
   pubkeys: string[]
 ) {
   const beaconNodeClient = getBeaconNodeClient(beaconNode);
-  return await beaconNodeClient.validators(pubkeys);
+  if (await beaconNodeClient.syncing()) {
+    return {};
+  } else {
+    return await beaconNodeClient.validators(pubkeys);
+  }
 }
 
 const getValidatorStatusMem = memoizee(getValidatorStatus, {
