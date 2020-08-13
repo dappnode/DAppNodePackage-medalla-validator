@@ -3,6 +3,7 @@ import { BeaconNodeClient } from "./interface";
 import { LighthouseNodeClient } from "./lighthouse";
 import { PrysmBeaconNodeClient } from "./prysm";
 import { LIGHTHOUSE_REST_APIURL, PRYSM_REST_APIURL } from "../../params";
+export * from "./interface";
 
 const lighthouseNodeClient = new LighthouseNodeClient(LIGHTHOUSE_REST_APIURL);
 const prysmBeaconNodeClient = new PrysmBeaconNodeClient(PRYSM_REST_APIURL);

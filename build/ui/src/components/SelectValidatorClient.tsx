@@ -12,6 +12,7 @@ import { RequestStatus } from "types";
 import { ValidatorClientName, AppSettings } from "common";
 import { LoadingView } from "./LoadingView";
 import { ErrorView } from "./ErrorView";
+import { Alert } from "@material-ui/lab";
 
 const validatorClientOptions: {
   value: ValidatorClientName;
@@ -75,6 +76,15 @@ export function SelectValidatorClient({
           ))}
         </Select>
       </FormControl>
+
+      {reqStatus.loading &&
+        appSettings.validatorClient &&
+        appSettings.validatorClient !== "prysm" &&
+        validatorClient === "prysm" && (
+          <Alert severity="warning">
+            Importing validators may take a while (5-20 sec / validator).
+          </Alert>
+        )}
 
       {reqStatus.error && <ErrorView error={reqStatus.error} />}
       {reqStatus.loading && (

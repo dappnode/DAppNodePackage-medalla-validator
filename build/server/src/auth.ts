@@ -1,5 +1,5 @@
 import express from "express";
-import { HttpError } from "./utils/express";
+import { HttpError } from "./utils";
 import { logs } from "./logs";
 import { adminPassword, disablePassword } from "./params";
 

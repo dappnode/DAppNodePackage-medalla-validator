@@ -11,7 +11,7 @@ import {
   TableContainer,
   makeStyles,
 } from "@material-ui/core";
-import { api } from "api/rpc";
+import { api, useApi } from "api/rpc";
 import mapValues from "lodash/mapValues";
 import { ValidatorFiles, Eth2Keystore } from "common";
 import { RequestStatus } from "types";
@@ -21,11 +21,12 @@ import BackupIcon from "@material-ui/icons/Backup";
 import CloseIcon from "@material-ui/icons/Close";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import { useDropzone } from "react-dropzone";
-import { processEth2File } from "../utils/eth2FileParser";
 import { PublicKeyView } from "components/PublicKeyView";
 import { ValidatorPasswordInput } from "components/ValidatorPasswordInput";
 import { Title } from "components/Title";
 import { LoadingView } from "components/LoadingView";
+import { parseDateDiff } from "../utils/dates";
+import { processEth2File } from "../utils/eth2FileParser";
 
 type ValidatorFilesPartial = Partial<ValidatorFiles> &
   Pick<ValidatorFiles, "pubkey">;
@@ -75,6 +76,7 @@ export function ValidatorsImportFiles() {
   >({});
   const [loadingFiles, setLoadingFiles] = useState<string>();
   const [importStatus, setImportStatus] = useState<RequestStatus<string>>({});
+  const appSettings = useApi.getSettings();
 
   const addKeystore = useCallback(
     (pubkey: string, keystore: Eth2Keystore) => {
@@ -264,14 +266,21 @@ export function ValidatorsImportFiles() {
         </TableContainer>
       )}
 
+      {importStatus.loading &&
+        appSettings.data?.validatorClient === "prysm" && (
+          <Alert severity="warning">
+            Importing validators may take a while (5-20 sec / validator).
+            Estimated{" "}
+            {parseDateDiff(Object.values(validators).length * 10 * 1000)}
+          </Alert>
+        )}
+
       {importStatus.result && (
         <Alert severity="success">Successfully imported validators</Alert>
       )}
       {importStatus.error && <ErrorView error={importStatus.error} />}
       {importStatus.loading && (
-        <LoadingView
-          steps={["Importing validator files", "Restarting validator client"]}
-        />
+        <LoadingView steps={["Importing validator files"]} />
       )}
 
       <div className={classes.bottomButtons}>
