@@ -2,18 +2,25 @@ import memoizee from "memoizee";
 import { ethers } from "ethers";
 import * as db from "../db";
 import { ValidatorStats, DepositEvent, BeaconProviderName } from "../../common";
-import { computeExpectedBalance } from "../utils/depositEvent";
+import { computeExpectedBalance } from "../utils";
 import { requestPastDepositEvents } from "../services/eth1";
-import { getValidatorFileManager } from "../services/validatorFiles";
-import { getBeaconNodeClient } from "../services/beaconNode";
+import {
+  getBeaconNodeClient,
+  ValidatorStatusByPubkey
+} from "../services/beaconNode";
 import { logs } from "../logs";
+import { keystoreManager } from "../services/keystoreManager";
 
 async function getValidatorStatus(
   beaconNode: BeaconProviderName,
   pubkeys: string[]
-) {
+): Promise<ValidatorStatusByPubkey> {
   const beaconNodeClient = getBeaconNodeClient(beaconNode);
-  return await beaconNodeClient.validators(pubkeys);
+  if (await beaconNodeClient.syncing()) {
+    return {};
+  } else {
+    return await beaconNodeClient.validators(pubkeys);
+  }
 }
 
 const getValidatorStatusMem = memoizee(getValidatorStatus, {
@@ -29,16 +36,14 @@ const getValidatorStatusMem = memoizee(getValidatorStatus, {
  */
 export async function getValidators(): Promise<ValidatorStats[]> {
   const beaconNode = db.server.beaconProvider.get();
-  const validatorClient = db.server.validatorClient.get();
 
   // Keep fetching logs in the background only when UI is connected
   requestPastDepositEvents().catch(e => {
     logs.error(`Error requesting past deposit events`, e);
   });
 
-  const pubkeys = validatorClient
-    ? getValidatorFileManager(validatorClient).readPubkeys()
-    : [];
+  const validators = await keystoreManager.readKeystores();
+  const pubkeys = validators.map(v => v.pubkey);
   const statusByPubkey = beaconNode
     ? await getValidatorStatusMem(beaconNode, pubkeys).catch(e =>
         logs.error(`Error fetching validators balances`, e)

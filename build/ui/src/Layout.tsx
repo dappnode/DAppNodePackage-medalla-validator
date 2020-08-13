@@ -235,7 +235,7 @@ export const Layout: React.FC<{
           <Link to={paths.home} className={classes.mainLogo}>
             <img src={dappnodeLogo} className={classes.topBarLogo} alt="logo" />
             <Typography component="h1" variant="h6" color="inherit" noWrap>
-              Validator dashboard
+              Medalla validator dashboard
             </Typography>
           </Link>
 

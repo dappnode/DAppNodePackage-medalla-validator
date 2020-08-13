@@ -54,7 +54,8 @@ export class Supervisor<T extends GenericOptions = {}> {
   private targetStatus: "running" | "killed" = "killed";
 
   // Informative ephemeral state
-  private maxLogs: number = 20;
+  private maxLogs = 10;
+  private maxCrashes = 5;
   private recentLogs: string[] = [];
   private recentCrashes: ChildProcessCrashData[] = [];
   private runningSince: number | null = null;
@@ -77,11 +78,13 @@ export class Supervisor<T extends GenericOptions = {}> {
 
     // Pass kill signals through to child
     const onParentKill = (signal: NodeJS.Signals): void => {
-      if (!this.child) return;
-      this.logger.info(`Received ${signal}, killing child process...`);
-      this.child.removeAllListeners();
-      this.child.kill(signal);
-      process.exit(); // MUST exit otherwise the stop sequence is aborted
+      if (this.child) {
+        this.logger.info(`Received ${signal}, killing child process...`);
+        this.child.removeAllListeners();
+        this.child.kill(signal);
+      }
+      // MUST exit otherwise the stop sequence is aborted
+      process.exit();
     };
     for (const signal of signalsToPass)
       process.on(signal, onParentKill.bind(this, signal));
@@ -135,7 +138,7 @@ export class Supervisor<T extends GenericOptions = {}> {
    * If resolveStartOnData = true, will wait for first 'data' event
    * Can only be called once at a time, otherwise will error
    */
-  async start(): Promise<void> {
+  private async start(): Promise<void> {
     this.targetStatus = "running";
 
     try {
@@ -159,20 +162,22 @@ export class Supervisor<T extends GenericOptions = {}> {
       if (child.stdout) child.stdout.on("data", onData.bind(this));
       if (child.stderr) child.stderr.on("data", onData.bind(this));
 
-      const that = this;
-      child.addListener("exit", async code => {
-        that.logger.error(`child process exited with code ${code} ${cmdStr}`);
-        that.recentCrashes = [
-          ...that.recentCrashes.slice(0, this.maxLogs - 1),
-          { code, command, args, timestamp: Date.now() }
+      // TODO: Find a better way to call the class from an unbinded instance
+      const onExit = async (code: number | null): Promise<void> => {
+        this.logger.error(`child process exited with code ${code} ${cmdStr}`);
+        const logs = [...this.recentLogs]; // Shallow copy of logs array
+        this.recentCrashes = [
+          ...this.recentCrashes.slice(0, this.maxCrashes - 1),
+          { code, command, args, timestamp: Date.now(), logs }
         ];
-        await pause(that.restartWait);
+        await pause(this.restartWait);
         // Only restart the process if it should still be running
-        if (that.targetStatus === "running")
-          that.start().catch(e => {
-            that.logger.error(`child process restart error: ${e.message}`);
+        if (this.targetStatus === "running")
+          this.start().catch(e => {
+            this.logger.error(`child process restart error: ${e.message}`);
           });
-      });
+      };
+      child.once("exit", onExit.bind(this));
 
       if (this.resolveStartOnData && child.stdout)
         await new Promise((resolve, reject) => {
@@ -204,7 +209,6 @@ export class Supervisor<T extends GenericOptions = {}> {
    */
   getStatus(): ChildProcessStatus {
     return {
-      recentLogs: this.recentLogs,
       recentCrashes: this.recentCrashes,
       pid: this.child ? this.child.pid : null,
       runningSince: this.runningSince

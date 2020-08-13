@@ -5,8 +5,7 @@ import {
 } from "../../../common";
 import fetch from "node-fetch";
 import querystring from "querystring";
-import { urlJoin } from "../../utils/url";
-import { parseFetchJson } from "../../utils/fetch";
+import { urlJoin, parseFetchJson } from "../../utils";
 import { BeaconNodeClient } from "./interface";
 
 export class PrysmBeaconNodeClient implements BeaconNodeClient {
@@ -50,7 +49,7 @@ export class PrysmBeaconNodeClient implements BeaconNodeClient {
     const syncing = await this.fetch<{ syncing: boolean }>(
       "/eth/v1alpha1/node/syncing"
     );
-    return syncing
+    return syncing.syncing
       ? {
           startingSlot: 0,
           currentSlot: 0,

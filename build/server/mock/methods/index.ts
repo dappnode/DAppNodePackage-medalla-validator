@@ -96,8 +96,7 @@ export async function nodeStats(): Promise<NodeStats> {
       headBlockRoot: "y1GDABJ0iPgZhdcWBXTon4r2TgEnpS3XFISckLyqa+U=",
       finalizedSlot: 177600,
       slotsPerEpoch: 32
-    },
-    eth2NetworkName: "Medalla testnet"
+    }
   };
 }
 
@@ -132,20 +131,21 @@ export async function getBinaryStatus(): Promise<ChildProcessStatus | null> {
   if (!settings.validatorClient) return null;
   else
     return {
-      recentLogs: [
-        "slot: 7091, epoch: 221, validators: 10, service: notifier",
-        "Aug 05 12:38:38.005 INFO Awaiting activation                     slot: 7092, epoch: 221, validators: 10, service: notifier",
-        "Aug 05 12:38:50.003 INFO Awaiting activation                     slot: 7093,",
-        "epoch: 221, validators: 10, service: notifier",
-        "Aug 05 12:39:02.003 INFO Awaiting activation                     slot: 7094, epoch: 221, validators: 10, service: notifier",
-        "Aug 05 12:39:14.002 INFO Awaiting activation                     slot: 7095, epoch: 221, validators: 10, service: notifier",
-        "Aug 05 12:39:26.002 INFO Awaiting activation                     slot: 7096, epoch: 221, validators: 10, service: notifier"
-      ],
       recentCrashes: Array(8).fill({
         code: 1,
         command: "ligthhouse",
         args: ["--testnet medalla"],
-        timestamp: Date.now() - 30 * 1000
+        timestamp: Date.now() - 30 * 1000,
+        logs: [
+          "slot: 7091, epoch: 221, validators: 10, service: notifier",
+          "Aug 05 12:38:38.005 INFO Awaiting activation                     slot: 7092, epoch: 221, validators: 10, service: notifier",
+          "Aug 05 12:38:50.003 INFO Awaiting activation                     slot: 7093,",
+          "epoch: 221, validators: 10, service: notifier",
+          "Aug 05 12:39:02.003 INFO Awaiting activation                     slot: 7094, epoch: 221, validators: 10, service: notifier",
+          "Aug 05 12:39:14.002 INFO Awaiting activation                     slot: 7095, epoch: 221, validators: 10, service: notifier",
+          "Aug 05 12:39:26.002 INFO Awaiting activation                     slot: 7096, epoch: 221, validators: 10, service: notifier",
+          `level=fatal msg="Could not determine if beacon chain started: could not receive ChainStart from stream: rpc error: code = Unimplemented desc = Not Found: HTTP status code 404; transport: received the unexpected content-type "text/plain; charset=utf-8"" prefix=validator`
+        ]
       }),
       pid: 153,
       runningSince: Date.now() - 5 * 60 * 1000

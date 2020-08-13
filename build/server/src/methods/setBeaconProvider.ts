@@ -1,6 +1,6 @@
 import { BeaconProviderName } from "../../common";
-import { getValidatorBinary } from "../services/validatorBinary";
 import * as db from "../db";
+import { getClient } from "../services/validatorClient";
 
 /**
  * Set beacon provider URL or name to which validator clients connect to
@@ -14,8 +14,5 @@ export async function setBeaconProvider(
   db.server.beaconProvider.set(beaconProvider);
 
   const client = db.server.validatorClient.get();
-  if (client) {
-    const binary = getValidatorBinary(client);
-    await binary.restart();
-  }
+  if (client) await getClient(client).restart();
 }

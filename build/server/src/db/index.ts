@@ -7,7 +7,7 @@ import {
   ValidatorClientName,
   BeaconProviderName
 } from "../../common";
-import { getRandomToken } from "../utils/token";
+import { getRandomToken } from "../utils";
 import { dbDir, dataPath } from "../params";
 import { logs } from "../logs";
 

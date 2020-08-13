@@ -4,8 +4,7 @@ import {
   SyncStatus
 } from "../../../common";
 import fetch from "node-fetch";
-import { urlJoin } from "../../utils/url";
-import { parseFetchJson } from "../../utils/fetch";
+import { urlJoin, parseFetchJson } from "../../utils";
 import { BeaconNodeClient } from "./interface";
 
 interface LighthouseValidatorStatus {
@@ -118,8 +117,11 @@ export class LighthouseNodeClient implements BeaconNodeClient {
     const url = urlJoin(this.grpcGatewayUrl, apiPath);
     const res = await fetch(url, {
       method: "POST",
+      // fetch is not well type for some reason
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
       body: JSON.stringify(body),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
       headers: { "Content-Type": "application/json" }
     });

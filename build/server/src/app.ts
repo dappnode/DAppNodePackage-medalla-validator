@@ -5,12 +5,11 @@ import compression from "compression";
 import path from "path";
 import logger from "morgan";
 import cors from "cors";
-import { getRpcHandler } from "./utils/rpc";
 import * as methods from "./methods";
 import * as db from "./db";
 import * as auth from "./auth";
 import { uiFilesPath, serverPort, logDebug } from "./params";
-import { wrapRoute, wrapMiddleware } from "./utils/express";
+import { getRpcHandler, wrapRoute, wrapMiddleware } from "./utils";
 // Display stack traces with source-maps
 import "source-map-support/register";
 const FileStore = require("session-file-store")(session);
