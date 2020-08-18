@@ -58,8 +58,8 @@ FROM debian:buster-slim as lighthouse-binary
 
 ARG UPSTREAM_VERSION_LIGHTHOUSE
 ENV DOWNLOAD_URL https://github.com/sigp/lighthouse/releases/download
-ENV BINARY lighthouse-${UPSTREAM_VERSION}-x86_64-unknown-linux-gnu-portable.tar.gz
-ENV BINARY_URL $DOWNLOAD_URL/$UPSTREAM_VERSION/$BINARY
+ENV BINARY lighthouse-${UPSTREAM_VERSION_LIGHTHOUSE}-x86_64-unknown-linux-gnu-portable.tar.gz
+ENV BINARY_URL $DOWNLOAD_URL/$UPSTREAM_VERSION_LIGHTHOUSE/$BINARY
 
 RUN DEBIAN_FRONTEND=noninteractive \
   apt update && apt install --assume-yes --no-install-recommends wget ca-certificates && \
