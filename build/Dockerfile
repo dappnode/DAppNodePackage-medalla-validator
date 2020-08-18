@@ -37,17 +37,6 @@ RUN node getGitData /app/.git-data.json
 # Results in /app/.git-data.json
 
 ################
-# ethdo binary
-################
-FROM golang:buster as ethdo-binary
-
-RUN DEBIAN_FRONTEND=noninteractive \
-  apt update && apt install --assume-yes --no-install-recommends \
-  build-essential \
-  && rm -rf /var/lib/apt/lists/*
-RUN GO111MODULE=on go get github.com/wealdtech/ethdo
-
-################
 # Prysm binary
 ################
 FROM debian:buster-slim as validator-binary
@@ -61,6 +50,26 @@ RUN DEBIAN_FRONTEND=noninteractive \
   wget $BINARY_URL -O /usr/local/bin/validator && \
   chmod +x  /usr/local/bin/validator && \
   rm -rf /var/lib/apt/lists/*
+
+################
+# Lighthouse binary
+################
+FROM debian:buster-slim as lighthouse-binary
+
+ARG UPSTREAM_VERSION_LIGHTHOUSE
+ENV DOWNLOAD_URL https://github.com/sigp/lighthouse/releases/download
+ENV BINARY lighthouse-${UPSTREAM_VERSION_LIGHTHOUSE}-x86_64-unknown-linux-gnu-portable.tar.gz
+ENV BINARY_URL $DOWNLOAD_URL/$UPSTREAM_VERSION_LIGHTHOUSE/$BINARY
+
+RUN DEBIAN_FRONTEND=noninteractive \
+  apt update && apt install --assume-yes --no-install-recommends wget ca-certificates && \
+  wget $BINARY_URL && \
+  tar -xzvf $BINARY && \
+  rm -rf $BINARY && \
+  cp lighthouse /usr/local/bin/lighthouse && \
+  chmod +x /usr/local/bin/lighthouse && \
+  rm -rf /var/lib/apt/lists/*
+
 
 ################
 # Final layer
@@ -90,7 +99,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ADD build/ssl /app/ssl
 COPY --from=node:10.20.1-buster-slim /usr/local/bin/node /usr/local/bin
 # Get Lighthouse binary
-COPY --from=sigp/lighthouse:latest /usr/local/bin/lighthouse /usr/local/bin/
+COPY --from=lighthouse-binary /usr/local/bin/lighthouse /usr/local/bin/
 # Get Prysm binary
 COPY --from=validator-binary /usr/local/bin/validator /usr/local/bin/
 # Copy app files
