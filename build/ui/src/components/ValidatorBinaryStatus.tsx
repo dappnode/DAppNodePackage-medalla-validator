@@ -71,7 +71,7 @@ export function ValidatorBinaryStatus() {
     return (
       <>
         <Typography>
-          Runing for:{" "}
+          Running for:{" "}
           {runningSince ? parseDateDiff(Date.now() - runningSince) : "???"}{" "}
         </Typography>
 
