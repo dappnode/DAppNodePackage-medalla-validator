@@ -1,7 +1,7 @@
 ################
 # UI build
 ################
-FROM node:buster-slim as build-ui
+FROM --platform=${BUILDPLATFORM:-amd64} node:buster-slim as build-ui
 WORKDIR /app
 # Copy and install deps first to cache
 COPY build/ui/package.json build/ui/yarn.lock ./
@@ -14,7 +14,7 @@ RUN yarn build
 ################
 # Server build
 ################
-FROM node:buster-slim as build-server
+FROM --platform=${BUILDPLATFORM:-amd64} node:buster-slim as build-server
 WORKDIR /app
 COPY build/server/package.json build/server/yarn.lock ./
 RUN yarn
@@ -27,7 +27,7 @@ RUN yarn build
 ################
 # Git data
 ################
-FROM node:buster-slim as git-data
+FROM --platform=${BUILDPLATFORM:-amd64} node:buster-slim as git-data
 WORKDIR /app
 RUN apt update && apt install --assume-yes git
 COPY .git .git
