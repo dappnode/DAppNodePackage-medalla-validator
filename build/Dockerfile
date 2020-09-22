@@ -41,13 +41,14 @@ RUN node getGitData /app/.git-data.json
 ################
 FROM debian:buster-slim as validator-binary
 
+ARG TARGETARCH
 ARG UPSTREAM_VERSION
 ENV DOWNLOAD_URL https://github.com/prysmaticlabs/prysm/releases/download
-ENV BINARY_URL $DOWNLOAD_URL/$UPSTREAM_VERSION/validator-$UPSTREAM_VERSION-linux-amd64
+ENV BINARY_URL $DOWNLOAD_URL/$UPSTREAM_VERSION/validator-$UPSTREAM_VERSION-linux-$TARGETARCH
 
 RUN DEBIAN_FRONTEND=noninteractive \
   apt update && apt install --assume-yes --no-install-recommends wget ca-certificates && \
-  wget $BINARY_URL -O /usr/local/bin/validator && \
+  wget -q $BINARY_URL -O /usr/local/bin/validator && \
   chmod +x  /usr/local/bin/validator && \
   rm -rf /var/lib/apt/lists/*
 
@@ -107,5 +108,9 @@ COPY --from=validator-binary /usr/local/bin/validator /usr/local/bin/
 COPY --from=build-ui /app/build ${CLIENT_FILES_PATH}
 COPY --from=build-server /app/build server
 COPY --from=git-data /app/.git-data.json $GIT_DATA_PATH
+
+# Verify binaries are in correct arch
+RUN lighthouse --version
+RUN validator --version
 
 CMD ["node", "server"]
