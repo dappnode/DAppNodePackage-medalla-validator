@@ -58,12 +58,13 @@ FROM debian:buster-slim as lighthouse-binary
 
 ARG UPSTREAM_VERSION_LIGHTHOUSE
 ENV DOWNLOAD_URL https://github.com/sigp/lighthouse/releases/download
-ENV BINARY lighthouse-${UPSTREAM_VERSION_LIGHTHOUSE}-x86_64-unknown-linux-gnu-portable.tar.gz
-ENV BINARY_URL $DOWNLOAD_URL/$UPSTREAM_VERSION_LIGHTHOUSE/$BINARY
 
-RUN DEBIAN_FRONTEND=noninteractive \
+RUN export ARCH=$(uname -m) && \
+  export BINARY=lighthouse-${UPSTREAM_VERSION_LIGHTHOUSE}-${ARCH}-unknown-linux-gnu-portable.tar.gz && \
+  export BINARY_URL=${DOWNLOAD_URL}/${UPSTREAM_VERSION_LIGHTHOUSE}/${BINARY} && \
+  DEBIAN_FRONTEND=noninteractive \
   apt update && apt install --assume-yes --no-install-recommends wget ca-certificates && \
-  wget $BINARY_URL && \
+  wget -q $BINARY_URL && \
   tar -xzvf $BINARY && \
   rm -rf $BINARY && \
   cp lighthouse /usr/local/bin/lighthouse && \
