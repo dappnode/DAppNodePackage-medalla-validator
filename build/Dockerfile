@@ -47,7 +47,7 @@ ENV DOWNLOAD_URL https://github.com/prysmaticlabs/prysm/releases/download
 
 RUN DEBIAN_FRONTEND=noninteractive \
   apt update && apt install --assume-yes --no-install-recommends wget ca-certificates && \
-  wget -q $DOWNLOAD_URL/$UPSTREAM_VERSION/beacon-chain-$UPSTREAM_VERSION-linux-${TARGETARCH:-amd64} -O /usr/local/bin/beacon-chain && \
+  wget -q $DOWNLOAD_URL/$UPSTREAM_VERSION/validator-$UPSTREAM_VERSION-linux-${TARGETARCH:-amd64} -O /usr/local/bin/validator && \
   chmod +x  /usr/local/bin/validator && \
   rm -rf /var/lib/apt/lists/*
 
