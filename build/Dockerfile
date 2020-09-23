@@ -44,11 +44,10 @@ FROM debian:buster-slim as validator-binary
 ARG TARGETARCH
 ARG UPSTREAM_VERSION
 ENV DOWNLOAD_URL https://github.com/prysmaticlabs/prysm/releases/download
-ENV BINARY_URL $DOWNLOAD_URL/$UPSTREAM_VERSION/validator-$UPSTREAM_VERSION-linux-$TARGETARCH
 
 RUN DEBIAN_FRONTEND=noninteractive \
   apt update && apt install --assume-yes --no-install-recommends wget ca-certificates && \
-  wget -q $BINARY_URL -O /usr/local/bin/validator && \
+  wget -q $DOWNLOAD_URL/$UPSTREAM_VERSION/beacon-chain-$UPSTREAM_VERSION-linux-${TARGETARCH:-amd64} -O /usr/local/bin/beacon-chain && \
   chmod +x  /usr/local/bin/validator && \
   rm -rf /var/lib/apt/lists/*
 
