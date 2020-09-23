@@ -86,7 +86,7 @@ ENV GIT_DATA_PATH /app/.git-data.json
 ENV WORKDIR /app
 
 # ETH2 Config
-ENV ETH2_NETWORK_NAME Altona Testnet
+ENV ETH2_NETWORK_NAME Medalla Testnet
 
 WORKDIR ${WORKDIR}
 
