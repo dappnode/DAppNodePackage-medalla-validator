@@ -1,7 +1,7 @@
 ################
 # UI build
 ################
-FROM node:buster-slim as build-ui
+FROM --platform=${BUILDPLATFORM:-amd64} node:buster-slim as build-ui
 WORKDIR /app
 # Copy and install deps first to cache
 COPY build/ui/package.json build/ui/yarn.lock ./
@@ -14,7 +14,7 @@ RUN yarn build
 ################
 # Server build
 ################
-FROM node:buster-slim as build-server
+FROM --platform=${BUILDPLATFORM:-amd64} node:buster-slim as build-server
 WORKDIR /app
 COPY build/server/package.json build/server/yarn.lock ./
 RUN yarn
@@ -27,7 +27,7 @@ RUN yarn build
 ################
 # Git data
 ################
-FROM node:buster-slim as git-data
+FROM --platform=${BUILDPLATFORM:-amd64} node:buster-slim as git-data
 WORKDIR /app
 RUN apt update && apt install --assume-yes git
 COPY .git .git
@@ -41,13 +41,13 @@ RUN node getGitData /app/.git-data.json
 ################
 FROM debian:buster-slim as validator-binary
 
+ARG TARGETARCH
 ARG UPSTREAM_VERSION
 ENV DOWNLOAD_URL https://github.com/prysmaticlabs/prysm/releases/download
-ENV BINARY_URL $DOWNLOAD_URL/$UPSTREAM_VERSION/validator-$UPSTREAM_VERSION-linux-amd64
 
 RUN DEBIAN_FRONTEND=noninteractive \
   apt update && apt install --assume-yes --no-install-recommends wget ca-certificates && \
-  wget $BINARY_URL -O /usr/local/bin/validator && \
+  wget -q $DOWNLOAD_URL/$UPSTREAM_VERSION/validator-$UPSTREAM_VERSION-linux-${TARGETARCH:-amd64} -O /usr/local/bin/validator && \
   chmod +x  /usr/local/bin/validator && \
   rm -rf /var/lib/apt/lists/*
 
@@ -58,12 +58,13 @@ FROM debian:buster-slim as lighthouse-binary
 
 ARG UPSTREAM_VERSION_LIGHTHOUSE
 ENV DOWNLOAD_URL https://github.com/sigp/lighthouse/releases/download
-ENV BINARY lighthouse-${UPSTREAM_VERSION_LIGHTHOUSE}-x86_64-unknown-linux-gnu-portable.tar.gz
-ENV BINARY_URL $DOWNLOAD_URL/$UPSTREAM_VERSION_LIGHTHOUSE/$BINARY
 
-RUN DEBIAN_FRONTEND=noninteractive \
+RUN export ARCH=$(uname -m) && \
+  export BINARY=lighthouse-${UPSTREAM_VERSION_LIGHTHOUSE}-${ARCH}-unknown-linux-gnu-portable.tar.gz && \
+  export BINARY_URL=${DOWNLOAD_URL}/${UPSTREAM_VERSION_LIGHTHOUSE}/${BINARY} && \
+  DEBIAN_FRONTEND=noninteractive \
   apt update && apt install --assume-yes --no-install-recommends wget ca-certificates && \
-  wget $BINARY_URL && \
+  wget -q $BINARY_URL && \
   tar -xzvf $BINARY && \
   rm -rf $BINARY && \
   cp lighthouse /usr/local/bin/lighthouse && \
@@ -106,5 +107,9 @@ COPY --from=validator-binary /usr/local/bin/validator /usr/local/bin/
 COPY --from=build-ui /app/build ${CLIENT_FILES_PATH}
 COPY --from=build-server /app/build server
 COPY --from=git-data /app/.git-data.json $GIT_DATA_PATH
+
+# Verify binaries are in correct arch
+RUN lighthouse --version
+RUN validator --version
 
 CMD ["node", "server"]
