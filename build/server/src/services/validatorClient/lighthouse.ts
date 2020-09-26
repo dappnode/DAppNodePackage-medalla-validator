@@ -11,7 +11,8 @@ import {
   LIGHTHOUSE_KEYSTORES_DIR,
   LIGHTHOUSE_SECRETS_DIR,
   LIGHTHOUSE_VERBOSITY,
-  LIGHTHOUSE_EXTRA_OPTS
+  LIGHTHOUSE_EXTRA_OPTS,
+  GRAFFITI
 } from "../../params";
 import { getLogger } from "../../logs";
 
@@ -29,6 +30,7 @@ export const lighthouseBinary = new Supervisor(
       datadir: LIGHTHOUSE_DATA_DIR,
       "secrets-dir": LIGHTHOUSE_SECRETS_DIR,
       server: getBeaconProviderUrl(),
+      ...(GRAFFITI ? { graffiti: GRAFFITI } : {}), // Ignore if empty
       // dargs extra options
       _: [LIGHTHOUSE_EXTRA_OPTS]
     },
