@@ -1,11 +1,14 @@
 {
   "name": "medalla-validator.dnp.dappnode.eth",
-  "version": "1.0.10",
+  "version": "1.0.12",
   "upstreamVersion": "v1.0.0-alpha.13",
   "shortDescription": "Eth2.0 Medalla testnet validator",
   "description": "A validator client which manages a staking user's private/public keys, connects to a beacon node, and acts as a validator in Ethereum 2.0 by staking 32 ETH and participating in proof of stake consensus by proposing and voting on blocks.",
   "type": "service",
-  "architectures": ["linux/amd64", "linux/arm64"],
+  "architectures": [
+    "linux/amd64",
+    "linux/arm64"
+  ],
   "author": "DAppNode Association <admin@dappnode.io> (https://github.com/dappnode)",
   "contributors": [
     "Eduardo Antuña <eduadiez@gmail.com> (https://github.com/eduadiez)"
