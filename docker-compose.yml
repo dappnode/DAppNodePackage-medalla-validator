@@ -7,7 +7,7 @@ services:
       dockerfile: build/Dockerfile
       args:
         UPSTREAM_VERSION: v1.0.0-alpha.26
-        UPSTREAM_VERSION_LIGHTHOUSE: v0.2.12
+        UPSTREAM_VERSION_LIGHTHOUSE: v0.2.11
     volumes:
       - 'keystores:/validators'
       - 'lighthouse:/lighthouse'
