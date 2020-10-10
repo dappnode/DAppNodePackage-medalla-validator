@@ -57,7 +57,7 @@ export const PRYSM_VALIDATOR_APIRUL =
   "http://prysm-zinken-beacon-chain.dappnode:4000";
 export const PRYSM_EXTRA_OPTS = process.env.PRYSM_EXTRA_OPTS || "";
 export const PRYSM_VERBOSITY = process.env.PRYSM_VERBOSITY || "info";
-export const PRYSM_DNPNAME = "prysm-spadina-beacon-chain.dnp.dappnode.eth";
+export const PRYSM_DNPNAME = "prysm-zinken-beacon-chain.dnp.dappnode.eth";
 export const PRYSM_INSTALL_URL = getInstallUrlIpfs(
   "/ipfs/QmeV1prc6aenz2kjPgWz7YQrx5caZnKQvYQ4qwbkbMJMGG"
 );
