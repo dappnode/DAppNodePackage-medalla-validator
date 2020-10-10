@@ -39,7 +39,9 @@ export const LIGHTHOUSE_EXTRA_OPTS = process.env.LIGHTHOUSE_EXTRA_OPTS || "";
 export const LIGHTHOUSE_VERBOSITY = process.env.LIGHTHOUSE_VERBOSITY || "info";
 export const LIGHTHOUSE_DNPNAME =
   "lighthouse-zinken-beacon-chain.dnp.dappnode.eth";
-export const LIGHTHOUSE_INSTALL_URL = INSTALL_DNP_URL + LIGHTHOUSE_DNPNAME;
+export const LIGHTHOUSE_INSTALL_URL = getInstallUrlIpfs(
+  "/ipfs/QmSPqB5DPcag8RMwvZXGKFK3SvL4iky4vuM2X7pAjhdVxN"
+);
 
 /**
  * Prysm config and paths
@@ -56,7 +58,9 @@ export const PRYSM_VALIDATOR_APIRUL =
 export const PRYSM_EXTRA_OPTS = process.env.PRYSM_EXTRA_OPTS || "";
 export const PRYSM_VERBOSITY = process.env.PRYSM_VERBOSITY || "info";
 export const PRYSM_DNPNAME = "prysm-spadina-beacon-chain.dnp.dappnode.eth";
-export const PRYSM_INSTALL_URL = INSTALL_DNP_URL + PRYSM_DNPNAME;
+export const PRYSM_INSTALL_URL = getInstallUrlIpfs(
+  "/ipfs/QmeV1prc6aenz2kjPgWz7YQrx5caZnKQvYQ4qwbkbMJMGG"
+);
 
 /**
  * DAppNode / DAPPMANAGER params
