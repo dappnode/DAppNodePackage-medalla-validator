@@ -40,7 +40,7 @@ export const LIGHTHOUSE_VERBOSITY = process.env.LIGHTHOUSE_VERBOSITY || "info";
 export const LIGHTHOUSE_DNPNAME =
   "lighthouse-zinken-beacon-chain.dnp.dappnode.eth";
 export const LIGHTHOUSE_INSTALL_URL = getInstallUrlIpfs(
-  "/ipfs/QmSPqB5DPcag8RMwvZXGKFK3SvL4iky4vuM2X7pAjhdVxN"
+  "/ipfs/QmT83JtiDvRyyqFwYA1pfuDP4BGDfTBTP9tugzqUmuUfJq"
 );
 
 /**
