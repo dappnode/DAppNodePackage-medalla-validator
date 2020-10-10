@@ -11,7 +11,9 @@ import {
 import {
   LIGHTHOUSE_DNPNAME,
   PRYSM_DNPNAME,
-  DMS_DNPNAME
+  PRYSM_INSTALL_URL,
+  DMS_DNPNAME,
+  DMS_INSTALL_LINK
 } from "../../src/params";
 
 // New state
@@ -29,11 +31,13 @@ const settings: AppSettings = {
     },
     prysm: {
       name: PRYSM_DNPNAME,
+      installUrl: PRYSM_INSTALL_URL,
       status: "not-installed"
     }
   },
   dmsDnp: {
     name: DMS_DNPNAME,
+    installUrl: DMS_INSTALL_LINK,
     status: "not-installed"
   }
 };

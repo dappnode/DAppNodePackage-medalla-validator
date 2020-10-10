@@ -152,7 +152,7 @@ export interface DnpInstalledPackage {
 
 export type DnpInstalledStatus =
   | (DnpInstalledPackage & { status: "installed" })
-  | { name: string; status: "not-installed" }
+  | { name: string; installUrl: string; status: "not-installed" }
   | { name: string; status: "fetch-error"; error: string };
 
 /**

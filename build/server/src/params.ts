@@ -17,20 +17,29 @@ export const VALIDATOR_KEYSTORES_DIR = "/validators/keystores";
 export const VALIDATOR_SECRETS_DIR = "/validators/secrets";
 
 /**
+ * DAppNode URLs
+ */
+const INSTALL_DNP_URL = "http://my.dappnode/#/installer/";
+const PACKAGE_DNP_URL = "http://my.dappnode/#/packages/";
+const getInstallUrlIpfs = (hash: string): string =>
+  INSTALL_DNP_URL + encodeURIComponent(hash);
+
+/**
  * Lighthouse config and paths
  */
 export const LIGHTHOUSE_BINARY = "lighthouse";
 export const LIGHTHOUSE_DATA_DIR = "/lighthouse";
 export const LIGHTHOUSE_KEYSTORES_DIR = "/lighthouse/keystores";
 export const LIGHTHOUSE_SECRETS_DIR = "/lighthouse/secrets";
-export const LIGHTHOUSE_DNPNAME =
-  "lighthouse-medalla-beacon-chain.dnp.dappnode.eth";
 export const LIGHTHOUSE_REST_APIURL =
   "http://lighthouse-medalla-beacon-chain.dappnode:5052";
 export const LIGHTHOUSE_VALIDATOR_APIURL =
   "http://lighthouse-medalla-beacon-chain.dappnode:5052";
 export const LIGHTHOUSE_EXTRA_OPTS = process.env.LIGHTHOUSE_EXTRA_OPTS || "";
 export const LIGHTHOUSE_VERBOSITY = process.env.LIGHTHOUSE_VERBOSITY || "info";
+export const LIGHTHOUSE_DNPNAME =
+  "lighthouse-medalla-beacon-chain.dnp.dappnode.eth";
+export const LIGHTHOUSE_INSTALL_URL = INSTALL_DNP_URL + LIGHTHOUSE_DNPNAME;
 
 /**
  * Prysm config and paths
@@ -40,19 +49,21 @@ export const PRYSM_DATA_DIR = "/prysm";
 export const PRYSM_WALLET_DIR = "/prysm/.eth2validators/primary";
 export const PRYSM_WALLET_PASSWORD_PATH = "/prysm/.eth2validators/primary.pass";
 export const PRYSM_LOG_FILE = "/var/log/validator.log";
-export const PRYSM_DNPNAME = "prysm-medalla-beacon-chain.dnp.dappnode.eth";
 export const PRYSM_REST_APIURL =
   "http://prysm-medalla-beacon-chain.dappnode:3500";
 export const PRYSM_VALIDATOR_APIRUL =
   "http://prysm-medalla-beacon-chain.dappnode:4000";
 export const PRYSM_EXTRA_OPTS = process.env.PRYSM_EXTRA_OPTS || "";
 export const PRYSM_VERBOSITY = process.env.PRYSM_VERBOSITY || "info";
+export const PRYSM_DNPNAME = "prysm-spadina-beacon-chain.dnp.dappnode.eth";
+export const PRYSM_INSTALL_URL = INSTALL_DNP_URL + PRYSM_DNPNAME;
 
 /**
  * DAppNode / DAPPMANAGER params
  */
 export const PUBLIC_PACKAGES_APIURL = "http://my.dappnode/public-packages";
 export const DMS_DNPNAME = "dms.dnp.dappnode.eth";
+export const DMS_INSTALL_LINK = INSTALL_DNP_URL + DMS_DNPNAME;
 
 // Login password
 export const adminPassword = process.env.PASSWORD;

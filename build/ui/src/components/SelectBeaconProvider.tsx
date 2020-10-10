@@ -14,7 +14,7 @@ import { LoadingView } from "./LoadingView";
 import { newTabProps, urlJoin, noAStyle } from "utils";
 import { shortNameCapitalized } from "utils/format";
 import { DnpInstalledStatus, BeaconProviderName, AppSettings } from "common";
-import { INSTALL_DNP_URL, PACKAGE_DNP_URL } from "params";
+import { PACKAGE_DNP_URL } from "params";
 import { Alert } from "@material-ui/lab";
 
 const runningState = "running";
@@ -179,11 +179,7 @@ function BeaconNodeDnpStatus({
         <Alert
           severity="warning"
           action={
-            <a
-              href={urlJoin(INSTALL_DNP_URL, dnpName)}
-              {...newTabProps}
-              style={noAStyle}
-            >
+            <a href={currentDnp.installUrl} {...newTabProps} style={noAStyle}>
               <Button color="inherit">INSTALL</Button>
             </a>
           }
