@@ -31,6 +31,7 @@ export const prysmBinary = new Supervisor(
   {
     command: PRYSM_BINARY,
     options: {
+      zinken: true,
       "monitoring-host": "0.0.0.0",
       "beacon-rpc-provider": getBeaconProviderUrlPrysm(),
       datadir: PRYSM_DATA_DIR,
