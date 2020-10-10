@@ -80,9 +80,9 @@ export function OnboardingDialog({
         return (
           <>
             <Typography>
-              Welcome to the Medalla validator onboarding! First, select a
-              Beacon node provider that all validators connect to, to fetch
-              duties and publish attestations and blocks
+              Welcome to the Zinken validator onboarding! First, select a Beacon
+              node provider that all validators connect to, to fetch duties and
+              publish attestations and blocks
             </Typography>
             <SelectBeaconProvider
               appSettings={appSettings}
@@ -154,7 +154,7 @@ export function OnboardingDialog({
       aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title">
-        Medalla validator onboarding
+        Zinken validator onboarding
       </DialogTitle>
 
       <Stepper activeStep={activeStep} alternativeLabel>

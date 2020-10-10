@@ -24,6 +24,7 @@ export const lighthouseBinary = new Supervisor(
     command: LIGHTHOUSE_BINARY,
     args: ["validator_client"],
     options: {
+      testnet: "zinken",
       "auto-register": true,
       // "strict-lockfiles": true,
       "debug-level": LIGHTHOUSE_VERBOSITY,

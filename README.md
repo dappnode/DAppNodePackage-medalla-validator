@@ -1,6 +1,6 @@
-# Medalla validator Ethereum2.0 DAppNode Package
+# Zinken validator Ethereum2.0 DAppNode Package
 
-[![DAppNode Available](https://img.shields.io/badge/DAppNode-Available-brightgreen.svg)](http://my.dappnode/#/installer/medalla-validator.dnp.dappnode.eth)
+[![DAppNode Available](https://img.shields.io/badge/DAppNode-Available-brightgreen.svg)](http://my.dappnode/#/installer/zinken-validator.dnp.dappnode.eth)
 [![Prysm github](https://img.shields.io/badge/Prysm-Github-blue.svg)](https://prylabs.net/)
 
 Integrated multi client validator. Includes the validator binaries:
@@ -10,13 +10,13 @@ Integrated multi client validator. Includes the validator binaries:
 
 ---
 
-![avatar](avatar-medalla-validator.png)
+![avatar](avatar-zinken-validator.png)
 
 # Installation Notes
 
 1. Install the DAppNodePackage:
 
-   [![DAppNode Install](https://img.shields.io/badge/DAppNode-Install-blue.svg)](http://my.admin.dnp.dappnode.eth/#/installer/medalla-validator.dnp.dappnode.eth)
+   [![DAppNode Install](https://img.shields.io/badge/DAppNode-Install-blue.svg)](http://my.admin.dnp.dappnode.eth/#/installer/zinken-validator.dnp.dappnode.eth)
 
    **NOTE:** You can choose a password for your account or the package will auto generate a random one automatically at the first start
 
