@@ -65,20 +65,20 @@ function getSideNameSecondaryItems({
     {
       name: "Metrics",
       Icon: BarChartIcon,
-      href: "http://dms.dappnode/d/DNPE2PAD/dappnode-eth-2-0-medalla-dashboard",
+      href: "http://dms.dappnode/d/DNPE2PAD/dappnode-eth-2-0-zinken-dashboard",
       show: isDmsInstalled === true,
     },
     {
       name: "Nodes",
       Icon: LayersIcon,
-      href: "https://eth2stats.io/medalla-testnet",
+      href: "https://eth2stats.io/zinken-testnet",
       show: true,
     },
     {
       name: "Logs",
       Icon: AssignmentIcon,
       href:
-        "http://my.dappnode/#/packages/medalla-validator.dnp.dappnode.eth/logs",
+        "http://my.dappnode/#/packages/zinken-validator.dnp.dappnode.eth/logs",
       show: true,
     },
     {
@@ -235,7 +235,7 @@ export const Layout: React.FC<{
           <Link to={paths.home} className={classes.mainLogo}>
             <img src={dappnodeLogo} className={classes.topBarLogo} alt="logo" />
             <Typography component="h1" variant="h6" color="inherit" noWrap>
-              Medalla validator dashboard
+              Zinken validator dashboard
             </Typography>
           </Link>
 

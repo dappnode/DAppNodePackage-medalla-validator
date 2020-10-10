@@ -10,7 +10,7 @@ jobs:
     name: Trigger the DAppNode Package update
     runs-on: ubuntu-latest
     env: 
-      DISPATCH_REPO: dappnode/DAppNodePackage-medalla-validator
+      DISPATCH_REPO: dappnode/DAppNodePackage-zinken-validator
       UPSTREAM_REPO_PRYSM: prysmaticlabs/prysm
       UPSTREAM_REPO_LIGHTHOUSE: sigp/lighthouse
     steps:

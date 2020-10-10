@@ -138,7 +138,7 @@ export async function getBinaryStatus(): Promise<ChildProcessStatus | null> {
       recentCrashes: Array(8).fill({
         code: 1,
         command: "ligthhouse",
-        args: ["--testnet medalla"],
+        args: ["--testnet zinken"],
         timestamp: Date.now() - 30 * 1000,
         logs: [
           "slot: 7091, epoch: 221, validators: 10, service: notifier",
