@@ -78,7 +78,7 @@ function computeBalance(
     balance,
     status
   }: {
-    balance?: number | null;
+    balance?: string | null;
     status?: string;
   },
   depositEvents: DepositEvent[]
@@ -98,7 +98,7 @@ function computeBalance(
 
   return {
     eth:
-      typeof balance === "number"
+      (typeof balance === "number" || typeof balance === "string")
         ? // API returns the balance in 9 decimals
           parseFloat(ethers.utils.formatUnits(balance, 9)) || null
         : null,

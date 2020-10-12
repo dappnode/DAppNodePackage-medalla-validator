@@ -94,13 +94,7 @@ export async function nodeStats(): Promise<NodeStats> {
     peers: [
       "/ip4/104.36.201.234/tcp/13210/p2p/16Uiu2HAm5RX4gAQtwqArBmuuGugUXAViKaKBx6ugDJb1L1RFcpfK"
     ],
-    syncing: { startingSlot: 0, currentSlot: 100, highestSlot: 200 },
-    chainhead: {
-      headSlot: 177684,
-      headBlockRoot: "y1GDABJ0iPgZhdcWBXTon4r2TgEnpS3XFISckLyqa+U=",
-      finalizedSlot: 177600,
-      slotsPerEpoch: 32
-    }
+    syncing: { head_slot: "1234", sync_distance: "12" }
   };
 }
 
