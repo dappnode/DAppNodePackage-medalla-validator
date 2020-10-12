@@ -50,12 +50,8 @@ export class PrysmBeaconNodeClient implements BeaconNodeClient {
       "/eth/v1alpha1/node/syncing"
     );
     return syncing.syncing
-      ? {
-          startingSlot: 0,
-          currentSlot: 0,
-          highestSlot: 0
-        }
-      : null;
+      ? { head_slot: "0", sync_distance: "1" }
+      : { head_slot: "0", sync_distance: "0" };
   }
 
   async validators(
@@ -81,8 +77,8 @@ export class PrysmBeaconNodeClient implements BeaconNodeClient {
       );
       dataByPubkey[pubkey] = {
         ...status,
-        index: balance ? parseInt(balance.index) : null,
-        balance: balance ? parseInt(balance.balance) : null
+        index: balance ? balance.index : null,
+        balance: balance ? balance.balance : null
       };
     });
 
