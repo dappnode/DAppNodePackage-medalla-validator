@@ -66,7 +66,6 @@ export async function getValidators(): Promise<ValidatorStats[]> {
         };
       }
     )
-    .filter(({ depositEvents, status }) => depositEvents.length > 0 || status);
 }
 
 function computeBalance(
