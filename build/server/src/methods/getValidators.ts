@@ -2,6 +2,7 @@ import memoizee from "memoizee";
 import { ethers } from "ethers";
 import * as db from "../db";
 import { ValidatorStats, DepositEvent, BeaconProviderName } from "../../common";
+import { SHOW_ALL_VALIDATORS } from "../params";
 import { computeExpectedBalance } from "../utils";
 import { requestPastDepositEvents } from "../services/eth1";
 import {
@@ -66,6 +67,10 @@ export async function getValidators(): Promise<ValidatorStats[]> {
         };
       }
     )
+    .filter(
+      ({ depositEvents, status }) =>
+        SHOW_ALL_VALIDATORS || depositEvents.length > 0 || status
+    );
 }
 
 function computeBalance(
