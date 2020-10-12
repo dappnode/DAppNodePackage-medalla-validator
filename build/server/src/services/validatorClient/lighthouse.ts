@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
+import { exec } from "child_process";
 import rimraf from "rimraf";
+import dargs from "dargs";
 import { promisify } from "util";
 import { ValidatorPaths } from "../keystoreManager";
 import { ClientKeystoreManager } from "./generic";
@@ -81,7 +83,50 @@ export const lighthouseKeystoreManager: ClientKeystoreManager = {
     }
   },
 
+  /**
+   * lighthouse account_manager validator import
+   *   --reuse-password
+   *   --stdin-inputs
+   *   --directory /validators/keystores/0x8a34daad3e91bd5d34573fbad003753e94db563229791e563e2893f3719251251136bb61431916312e2cc0d68c8f8756
+   *   < /validators/secrets/0x8a34daad3e91bd5d34573fbad003753e94db563229791e563e2893f3719251251136bb61431916312e2cc0d68c8f8756
+   *
+   * [Lighthouse v0.3.0-b185d7b]
+   */
   async importKeystores(validatorsPaths: ValidatorPaths[]): Promise<void> {
+    for (const { pubkey, keystorePath, secretPath } of validatorsPaths) {
+      // This command will only import 1 account MAX, so it's okay to use exec
+      // The output will never be too long and it will last for < 20 sec
+      const { stdout, stderr } = await promisify(exec)(
+        [
+          LIGHTHOUSE_BINARY,
+          "account_manager",
+          "validator",
+          "import",
+          ...dargs({
+            "reuse-password": true,
+            "stdin-inputs": true,
+            directory: path.dirname(keystorePath)
+          }),
+          // Provide the password to stdin
+          `< ${secretPath}`
+        ].join(" ")
+      );
+
+      if (stdout.includes("imported 0 validator"))
+        throw Error(
+          `cmd 'lighthouse account_manager validator import' failed to import keystore from ${keystorePath}: ${stdout}`
+        );
+
+      keyMgrLogger.info(`Imported ${pubkey} keystore to lighthouse`, {
+        stdout,
+        stderr
+      });
+    }
+
+    //
+    // OLD
+    //
+
     ensureDir(LIGHTHOUSE_SECRETS_DIR);
     for (const validatorPaths of validatorsPaths) {
       let pubkey = validatorPaths.pubkey;
