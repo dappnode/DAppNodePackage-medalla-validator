@@ -29,7 +29,7 @@ export const lighthouseBinary = new Supervisor(
       // "strict-lockfiles": true,
       "debug-level": LIGHTHOUSE_VERBOSITY,
       datadir: LIGHTHOUSE_DATA_DIR,
-      server: getBeaconProviderUrl(),
+      "beacon-node": getBeaconProviderUrl(),
       ...(GRAFFITI ? { graffiti: GRAFFITI } : {}), // Ignore if empty
       // dargs extra options
       _: [LIGHTHOUSE_EXTRA_OPTS]
@@ -37,7 +37,7 @@ export const lighthouseBinary = new Supervisor(
     // No typing necessary, Supervisor instance makes sure it's correct
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     dynamicOptions: () => ({
-      server: getBeaconProviderUrl()
+      "beacon-node": getBeaconProviderUrl()
     })
   },
   {
