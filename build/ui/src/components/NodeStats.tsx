@@ -14,11 +14,9 @@ export function NodeStatsView({
     <>
       <Title>Node stats</Title>
       <Typography>
-        Current epoch:{" "}
+        Current slot:{" "}
         <strong>
-          {nodeStats.chainhead
-            ? nodeStats.chainhead.headSlot % nodeStats.chainhead.slotsPerEpoch
-            : "?"}
+          {nodeStats.syncing ? nodeStats.syncing.head_slot : "?"}
         </strong>{" "}
         {nodeStats.syncing ? "(syncing)" : "(synced)"}
       </Typography>
