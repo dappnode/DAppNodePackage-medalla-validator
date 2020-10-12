@@ -3,6 +3,9 @@ export const eth1Web3Url =
   process.env.WEB3PROVIDER || "https://goerli.dappnode.net";
 export const GRAFFITI = process.env.GRAFFITI || "";
 
+// Config
+export const SHOW_ALL_VALIDATORS = true;
+
 /**
  * Zinken settings
  */
@@ -29,8 +32,7 @@ const getInstallUrlIpfs = (hash: string): string =>
  */
 export const LIGHTHOUSE_BINARY = "lighthouse";
 export const LIGHTHOUSE_DATA_DIR = "/lighthouse";
-export const LIGHTHOUSE_KEYSTORES_DIR = "/lighthouse/keystores";
-export const LIGHTHOUSE_SECRETS_DIR = "/lighthouse/secrets";
+export const LIGHTHOUSE_KEYSTORES_DIR = "/lighthouse/validators";
 export const LIGHTHOUSE_REST_APIURL =
   "http://lighthouse-zinken-beacon-chain.dappnode:5052";
 export const LIGHTHOUSE_VALIDATOR_APIURL =

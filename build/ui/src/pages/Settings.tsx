@@ -1,6 +1,6 @@
 import React from "react";
 import { useApi } from "api/rpc";
-import { Typography, makeStyles } from "@material-ui/core";
+import { Typography, makeStyles, Box } from "@material-ui/core";
 import { LayoutItem } from "components/LayoutItem";
 import { Title, TitlePage } from "components/Title";
 import { SelectBeaconProvider } from "components/SelectBeaconProvider";
@@ -16,6 +16,9 @@ const useStyles = makeStyles((theme) => ({
   selectFormControl: {
     marginTop: theme.spacing(3),
   },
+  maxWidth: {
+    width: "100%"
+  }
 }));
 
 export function Settings() {
@@ -61,9 +64,13 @@ export function Settings() {
           </LayoutItem>
         </>
       ) : appSettings.error ? (
-        <ErrorView error={appSettings.error} />
+        <Box className={classes.maxWidth}>
+          <ErrorView error={appSettings.error} />
+        </Box>
       ) : appSettings.isValidating ? (
-        <LoadingView steps={["Loading settings..."]} />
+        <Box className={classes.maxWidth}>
+          <LoadingView steps={["Loading settings..."]} />
+        </Box>
       ) : null}
     </>
   );
