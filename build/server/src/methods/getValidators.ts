@@ -17,7 +17,9 @@ async function getValidatorStatus(
   pubkeys: string[]
 ): Promise<ValidatorStatusByPubkey> {
   const beaconNodeClient = getBeaconNodeClient(beaconNode);
-  if (await beaconNodeClient.syncing()) {
+  const syncingStatus = await beaconNodeClient.syncing();
+  const isSyncing = syncingStatus.sync_distance > "0";
+  if (isSyncing) {
     return {};
   } else {
     return await beaconNodeClient.validators(pubkeys);
@@ -98,7 +100,7 @@ function computeBalance(
 
   return {
     eth:
-      (typeof balance === "number" || typeof balance === "string")
+      typeof balance === "number" || typeof balance === "string"
         ? // API returns the balance in 9 decimals
           parseFloat(ethers.utils.formatUnits(balance, 9)) || null
         : null,
