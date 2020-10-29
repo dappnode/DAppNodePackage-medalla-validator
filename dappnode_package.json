@@ -1,7 +1,7 @@
 {
   "name": "medalla-validator.dnp.dappnode.eth",
   "version": "1.0.10",
-  "upstreamVersion": "v1.0.0-alpha.13",
+  "upstreamVersion": "prysmaticlabs/prysm@v1.0.0-beta.0, sigp/lighthouse@v0.3.2",
   "upstreamRepo": "prysmaticlabs/prysm,sigp/lighthouse",
   "upstreamArg": "UPSTREAM_VERSION_PRYSM,UPSTREAM_VERSION_LIGHTHOUSE",
   "shortDescription": "Eth2.0 Medalla testnet validator",
@@ -23,10 +23,7 @@
   "requirements": {
     "minimumDappnodeVersion": "0.2.37"
   },
-  "categories": [
-    "Blockchain",
-    "ETH2.0"
-  ],
+  "categories": ["Blockchain", "ETH2.0"],
   "links": {
     "homepage": "https://github.com/dappnode/DAppNodePackage-medalla-validator",
     "ui": "http://medalla-validator.dappnode/"
