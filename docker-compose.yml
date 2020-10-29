@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: build/Dockerfile
       args:
-        UPSTREAM_REPO_PRYSM: v1.0.0-beta.0-rc
+        UPSTREAM_VERSION_PRYSM: v1.0.0-beta.0-rc
         UPSTREAM_VERSION_LIGHTHOUSE: v0.3.0
     volumes:
       - 'keystores:/validators'
