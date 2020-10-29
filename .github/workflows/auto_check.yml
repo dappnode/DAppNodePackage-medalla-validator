@@ -1,9 +1,11 @@
 name: Bump upstream version
 
 on:
-  push:
   schedule:
     - cron: "00 */4 * * *"
+  push:
+    branches:
+      - "master"
 jobs:
   bump-upstream:
     runs-on: ubuntu-latest

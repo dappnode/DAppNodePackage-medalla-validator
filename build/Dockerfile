@@ -42,12 +42,12 @@ RUN node getGitData /app/.git-data.json
 FROM debian:buster-slim as validator-binary
 
 ARG TARGETARCH
-ARG UPSTREAM_VERSION
+ARG UPSTREAM_VERSION_PRYSM
 ENV DOWNLOAD_URL https://github.com/prysmaticlabs/prysm/releases/download
 
 RUN DEBIAN_FRONTEND=noninteractive \
   apt update && apt install --assume-yes --no-install-recommends wget ca-certificates
-RUN wget -q $DOWNLOAD_URL/$UPSTREAM_VERSION/validator-$UPSTREAM_VERSION-linux-${TARGETARCH:-amd64} -O /usr/local/bin/validator && \
+RUN wget -q $DOWNLOAD_URL/$UPSTREAM_VERSION_PRYSM/validator-$UPSTREAM_VERSION_PRYSM-linux-${TARGETARCH:-amd64} -O /usr/local/bin/validator && \
   chmod +x  /usr/local/bin/validator && \
   rm -rf /var/lib/apt/lists/*
 
