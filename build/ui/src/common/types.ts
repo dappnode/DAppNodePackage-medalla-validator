@@ -70,7 +70,6 @@ export interface DepositEvent extends DepositEventArgs {
 export interface NodeStats {
   peers: string[] | null;
   syncing: SyncStatus | null;
-  chainhead: BeaconNodeChainhead | null;
 }
 
 // Prysm deposit contract
@@ -112,8 +111,8 @@ export interface ValidatorStatus {
    * UNKNOWN_STATUS - validator does not have a known status in the network.
    */
   status: string;
-  index: number | null;
-  balance: number | null;
+  index: string | null;
+  balance: string | null;
 }
 
 export interface ValidatorData {
@@ -134,10 +133,15 @@ export interface BeaconNodeChainhead {
 }
 
 export type SyncStatus = {
-  startingSlot: number; // 0;
-  currentSlot: number; // 100;
-  highestSlot: number; // 200;
-} | null;
+  /**
+   * Head slot node is trying to reach
+   */
+  head_slot: string;
+  /**
+   * How many slots node needs to process to reach head. 0 if synced.
+   */
+  sync_distance: string;
+};
 
 /**
  * DAPPMANAGER Type, from the public API

@@ -1,5 +1,5 @@
 {
-  "name": "dappnode-medalla-validator-api-server",
+  "name": "dappnode-zinken-validator-api-server",
   "version": "1.0.0",
   "description": "Validator dashboard API server",
   "main": "index.js",
@@ -13,13 +13,14 @@
     "test:file": "mocha -r dotenv/config -r ts-node/register --exit ",
     "test:int": "npm run test:int:file \"./{,!(node_modules)/**}/*.test.int.ts\" ",
     "test:int:file": "mocha -r dotenv/config -r ts-node/register --exit",
-    "lint": "./node_modules/.bin/eslint . --ext .ts --fix",
     "pre-commit": "npm run lint && npm run test",
     "analyze": "webpack --profile --json > build/stats.json && npx webpack-bundle-analyzer build/stats.json",
     "common-build": "node common/validation/generateSchemas",
     "common-copy": "rm -rf ../ui/src/common/ && cp -r common/ ../ui/src/common/",
     "common-watch": "node scripts/sync-common",
-    "prepare": "patch-package"
+    "prepare": "patch-package",
+    "lint": "eslint . --ext .ts --fix",
+    "prettier": "prettier --write 'src/**/*.*' 'test/**/*.*'"
   },
   "repository": {
     "type": "git",

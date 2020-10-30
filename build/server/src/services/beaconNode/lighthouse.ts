@@ -1,3 +1,4 @@
+import querystring from "querystring";
 import {
   ValidatorStatus,
   BeaconNodeChainhead,
@@ -18,13 +19,44 @@ interface LighthouseValidatorStatus {
   withdrawable_epoch: number; // 18446744073709551615
 }
 
+interface EthV1ApiNodeSyncingNodePeer {
+  peer_id: string; // "QmYyQSo1c1Ym7orWxLYvCrM2EmxFTANf8wXmmE7DWjhx5N"
+}
+
+interface EthV1ApiNodeSyncing {
+  /**
+   * Head slot node is trying to reach
+   */
+  head_slot: string;
+  /**
+   * How many slots node needs to process to reach head. 0 if synced.
+   */
+  sync_distance: string;
+}
+
+interface EthV1ApiNodeSyncingValidatorStatus {
+  index: string; // "1",
+  balance: string; // "1",
+  status: string; // "active_ongoing",
+  validator: {
+    pubkey: string; // "0x93247f2209abcacf57b75a51dafae777f9dd38bc7053d1af526f220a7489a6d3a2753e5f3e8b1cfe39b56f43611df74a",
+    withdrawal_credentials: string; // "0xcf8e0d4e9587369b2301d0790347320302cc0943d5a1884560367e8208d920f2",
+    effective_balance: string; // "1",
+    slashed: boolean; // false,
+    activation_eligibility_epoch: string; // "1",
+    activation_epoch: string; // "1",
+    exit_epoch: string; // "1",
+    withdrawable_epoch: string; // "1"
+  };
+}
+
 export class LighthouseNodeClient implements BeaconNodeClient {
   grpcGatewayUrl: string;
   // TODO: Fetch from config
   slotsPerEpoch = 32;
 
   /**
-   * @param grpcGatewayUrl "http://lighthouse-medalla-beacon-chain.dappnode:5052"
+   * @param grpcGatewayUrl "http://lighthouse-zinken-beacon-chain.dappnode:5052"
    */
   constructor(grpcGatewayUrl: string) {
     this.grpcGatewayUrl = grpcGatewayUrl;
@@ -33,73 +65,30 @@ export class LighthouseNodeClient implements BeaconNodeClient {
   // Metrics fetch in intervals the data and store it in the db
   // Then the UI fetches the db state
 
-  async chainhead(): Promise<BeaconNodeChainhead> {
-    const head = await this.fetch<{
-      slot: number; // 37923,
-      block_root: string; // "0xe865d4805395a0776b8abe46d714a9e64914ab8dc5ff66624e5a1776bcc1684b",
-      state_root: string; // "0xe500e3567ab273c9a6f8a057440deff476ab236f0983da27f201ee9494a879f0",
-      finalized_slot: number; // 37856,
-      finalized_block_root: string; // "0xbdae152b62acef1e5c332697567d2b89e358628790b8273729096da670b23e86",
-      justified_slot: number; // 37888,
-      justified_block_root: string; // "0x01c2f516a407d8fdda23cad4ed4381e4ab8913d638f935a2fe9bd00d6ced5ec4",
-      previous_justified_slot: number; // 37856,
-      previous_justified_block_root: string; // "0xbdae152b62acef1e5c332697567d2b89e358628790b8273729096da670b23e86"
-    }>("/beacon/head");
-    return {
-      headSlot: head.slot,
-      headBlockRoot: head.block_root,
-      finalizedSlot: head.finalized_slot,
-      slotsPerEpoch: this.slotsPerEpoch
-    };
-  }
-
   async peers(): Promise<string[]> {
-    // peers = ["QmaPGeXcfKFMU13d8VgbnnpeTxcvoFoD9bUpnRGMUJ1L9w"]
-    return await this.fetch<string[]>("/network/peers");
+    const peers = await this.fetch<EthV1ApiNodeSyncingNodePeer[]>(
+      "/eth/v1/node/peers"
+    );
+    return peers.map(peer => peer.peer_id);
   }
 
   async syncing(): Promise<SyncStatus> {
-    const data = await this.fetch<{
-      is_syncing: boolean; // true;
-      sync_status: {
-        starting_slot: number; // 0;
-        current_slot: number; // 100;
-        highest_slot: number; // 200;
-      };
-    }>("/node/syncing");
-    if (data.is_syncing)
-      return {
-        startingSlot: data.sync_status.starting_slot,
-        currentSlot: data.sync_status.current_slot,
-        highestSlot: data.sync_status.highest_slot
-      };
-    else return null;
+    return await this.fetch<EthV1ApiNodeSyncing>("/eth/v1/node/syncing");
   }
 
   async validators(
     pubkeys: string[]
   ): Promise<{ [pubKey: string]: ValidatorStatus }> {
-    const validators = await this.fetchPost<
-      {
-        pubkey: string; // "0x98f87bc7c8fa10408425bbeeeb3dc387e3e0b4bd92f57775b60b39156a16f9ec80b273a64269332d97bdb7d93ae05a16",
-        validator_index: number | null; // 14935,
-        balance: number | null; // 3228885987,
-        validator: LighthouseValidatorStatus | null;
-      }[],
-      {
-        state_root?: string;
-        pubkeys: string[];
-      }
-    >("/beacon/validators", { pubkeys });
-
-    const chainhead = await this.chainhead();
-    const currentEpoch = chainhead.headSlot % this.slotsPerEpoch;
+    const validators = await this.fetch<EthV1ApiNodeSyncingValidatorStatus[]>(
+      "/eth/v1/beacon/states/head/validators",
+      { id: pubkeys }
+    );
 
     const dataByPubkey: { [pubKey: string]: ValidatorStatus } = {};
     for (const validator of validators) {
-      dataByPubkey[validator.pubkey] = {
-        status: computeValidatorStatus(validator.validator, currentEpoch),
-        index: validator.validator_index,
+      dataByPubkey[validator.validator.pubkey] = {
+        status: validator.status,
+        index: validator.index,
         balance: validator.balance
       };
     }
@@ -107,44 +96,13 @@ export class LighthouseNodeClient implements BeaconNodeClient {
     return dataByPubkey;
   }
 
-  private async fetch<R>(apiPath: string): Promise<R> {
-    const url = urlJoin(this.grpcGatewayUrl, apiPath);
+  private async fetch<R>(
+    apiPath: string,
+    query?: { [key: string]: any }
+  ): Promise<R> {
+    let url = urlJoin(this.grpcGatewayUrl, apiPath);
+    if (query) url += "?" + querystring.stringify(query);
     const res = await fetch(url);
     return parseFetchJson(res);
   }
-
-  private async fetchPost<R, T>(apiPath: string, body: T): Promise<R> {
-    const url = urlJoin(this.grpcGatewayUrl, apiPath);
-    const res = await fetch(url, {
-      method: "POST",
-      // fetch is not well type for some reason
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
-      body: JSON.stringify(body),
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
-      headers: { "Content-Type": "application/json" }
-    });
-    return parseFetchJson(res);
-  }
-}
-
-/**
- * Compute a validator status from its state
- * @param validator
- * @param currentEpoch
- */
-function computeValidatorStatus(
-  validator: LighthouseValidatorStatus | null,
-  currentEpoch: number
-): ValidatorStatus["status"] {
-  const farFutureEpoch = Number.MAX_SAFE_INTEGER;
-  if (!validator) return "UNKNOWN_STATUS";
-  if (currentEpoch < validator.activation_eligibility_epoch) return "DEPOSITED";
-  if (currentEpoch < validator.activation_epoch) return "PENDING";
-  if (validator.exit_epoch >= farFutureEpoch) return "ACTIVE";
-  if (currentEpoch < validator.exit_epoch)
-    if (validator.slashed) return "SLASHING";
-    else return "EXITING";
-  return "EXITED";
 }

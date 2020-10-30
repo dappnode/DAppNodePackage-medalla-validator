@@ -31,6 +31,7 @@ export const prysmBinary = new Supervisor(
   {
     command: PRYSM_BINARY,
     options: {
+      zinken: true,
       "monitoring-host": "0.0.0.0",
       "beacon-rpc-provider": getBeaconProviderUrlPrysm(),
       datadir: PRYSM_DATA_DIR,
@@ -90,6 +91,16 @@ export const prysmKeystoreManager: ClientKeystoreManager = {
     // );
   },
 
+  /**
+   * ```
+   * ./prysm.sh validator accounts-v2 import
+   *   --wallet-dir ~/.eth2validators/prysm-wallet-v2
+   *   --keys-dir ~/Downloads/eth2deposit-cli-3f4a79a-linux-amd64/validator_keys
+   *   --wallet-password-file ./wallet.pass
+   *   --account-password-file ./account.pass
+   * ```
+   * [validator-v1.0.0-alpha.29-linux-amd64]
+   */
   async importKeystores(validatorsPaths: ValidatorPaths[]): Promise<void> {
     if (!fs.existsSync(PRYSM_WALLET_PASSWORD_PATH)) {
       ensureDirFromFilePath(PRYSM_WALLET_PASSWORD_PATH);

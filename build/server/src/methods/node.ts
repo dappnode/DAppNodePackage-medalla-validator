@@ -8,7 +8,6 @@ async function getNodeStats(
 ): Promise<NodeStats> {
   const beaconNodeClient = getBeaconNodeClient(beaconNode);
   return {
-    chainhead: await beaconNodeClient.chainhead(),
     syncing: await beaconNodeClient.syncing(),
     peers: await beaconNodeClient.peers()
   };
@@ -23,7 +22,6 @@ export async function nodeStats(): Promise<NodeStats> {
   const beaconNode = db.server.beaconProvider.get();
   if (!beaconNode)
     return {
-      chainhead: null,
       syncing: null,
       peers: null
     };

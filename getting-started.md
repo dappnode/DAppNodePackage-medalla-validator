@@ -1,6 +1,6 @@
 Go to the accounts manager dashboard to get started
 
-[medalla-validator.dappnode](http://medalla-validator.dappnode/)
+[zinken-validator.dappnode](http://zinken-validator.dappnode/)
 
 ---
 
