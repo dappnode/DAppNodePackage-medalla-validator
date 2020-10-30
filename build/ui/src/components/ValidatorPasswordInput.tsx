@@ -72,6 +72,7 @@ export function ValidatorPasswordInput({
                 password={passwordConfirm}
                 setPassword={setPasswordConfirm}
                 error={hasErrors}
+                id="password-confirm-toogle-show"
               />
 
               {errors.map((error, i) => (
