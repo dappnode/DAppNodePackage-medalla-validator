@@ -3,6 +3,9 @@ export const eth1Web3Url =
   process.env.WEB3PROVIDER || "https://goerli.dappnode.net";
 export const GRAFFITI = process.env.GRAFFITI || "";
 
+// Config
+export const SHOW_ALL_VALIDATORS = true;
+
 /**
  * Medalla settings
  */
@@ -29,8 +32,7 @@ const getInstallUrlIpfs = (hash: string): string =>
  */
 export const LIGHTHOUSE_BINARY = "lighthouse";
 export const LIGHTHOUSE_DATA_DIR = "/lighthouse";
-export const LIGHTHOUSE_KEYSTORES_DIR = "/lighthouse/keystores";
-export const LIGHTHOUSE_SECRETS_DIR = "/lighthouse/secrets";
+export const LIGHTHOUSE_KEYSTORES_DIR = "/lighthouse/validators";
 export const LIGHTHOUSE_REST_APIURL =
   "http://lighthouse-medalla-beacon-chain.dappnode:5052";
 export const LIGHTHOUSE_VALIDATOR_APIURL =
@@ -55,8 +57,10 @@ export const PRYSM_VALIDATOR_APIRUL =
   "http://prysm-medalla-beacon-chain.dappnode:4000";
 export const PRYSM_EXTRA_OPTS = process.env.PRYSM_EXTRA_OPTS || "";
 export const PRYSM_VERBOSITY = process.env.PRYSM_VERBOSITY || "info";
-export const PRYSM_DNPNAME = "prysm-spadina-beacon-chain.dnp.dappnode.eth";
-export const PRYSM_INSTALL_URL = INSTALL_DNP_URL + PRYSM_DNPNAME;
+export const PRYSM_DNPNAME = "prysm-medalla-beacon-chain.dnp.dappnode.eth";
+export const PRYSM_INSTALL_URL = getInstallUrlIpfs(
+  "/ipfs/QmeV1prc6aenz2kjPgWz7YQrx5caZnKQvYQ4qwbkbMJMGG"
+);
 
 /**
  * DAppNode / DAPPMANAGER params

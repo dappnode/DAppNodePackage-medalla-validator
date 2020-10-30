@@ -18,7 +18,6 @@ const validatorClientOptions: {
   value: ValidatorClientName;
   label: string;
 }[] = [
-  { value: "lighthouse", label: "Lighthouse" },
   { value: "prysm", label: "Prysm" },
 ];
 

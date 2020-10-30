@@ -2,6 +2,7 @@ import memoizee from "memoizee";
 import { ethers } from "ethers";
 import * as db from "../db";
 import { ValidatorStats, DepositEvent, BeaconProviderName } from "../../common";
+import { SHOW_ALL_VALIDATORS } from "../params";
 import { computeExpectedBalance } from "../utils";
 import { requestPastDepositEvents } from "../services/eth1";
 import {
@@ -16,7 +17,9 @@ async function getValidatorStatus(
   pubkeys: string[]
 ): Promise<ValidatorStatusByPubkey> {
   const beaconNodeClient = getBeaconNodeClient(beaconNode);
-  if (await beaconNodeClient.syncing()) {
+  const syncingStatus = await beaconNodeClient.syncing();
+  const isSyncing = syncingStatus.sync_distance > "0";
+  if (isSyncing) {
     return {};
   } else {
     return await beaconNodeClient.validators(pubkeys);
@@ -66,7 +69,10 @@ export async function getValidators(): Promise<ValidatorStats[]> {
         };
       }
     )
-    .filter(({ depositEvents, status }) => depositEvents.length > 0 || status);
+    .filter(
+      ({ depositEvents, status }) =>
+        SHOW_ALL_VALIDATORS || depositEvents.length > 0 || status
+    );
 }
 
 function computeBalance(
@@ -74,7 +80,7 @@ function computeBalance(
     balance,
     status
   }: {
-    balance?: number | null;
+    balance?: string | null;
     status?: string;
   },
   depositEvents: DepositEvent[]
@@ -94,7 +100,7 @@ function computeBalance(
 
   return {
     eth:
-      typeof balance === "number"
+      typeof balance === "number" || typeof balance === "string"
         ? // API returns the balance in 9 decimals
           parseFloat(ethers.utils.formatUnits(balance, 9)) || null
         : null,

@@ -23,7 +23,10 @@
   "requirements": {
     "minimumDappnodeVersion": "0.2.37"
   },
-  "categories": ["Blockchain", "ETH2.0"],
+  "categories": [
+    "Blockchain",
+    "ETH2.0"
+  ],
   "links": {
     "homepage": "https://github.com/dappnode/DAppNodePackage-medalla-validator",
     "ui": "http://medalla-validator.dappnode/"
