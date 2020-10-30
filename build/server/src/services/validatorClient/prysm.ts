@@ -40,6 +40,7 @@ export const prysmBinary = new Supervisor(
       // "disable-accounts-v2": true,
       verbosity: PRYSM_VERBOSITY,
       "log-file": PRYSM_LOG_FILE,
+      "accept-terms-of-use": true,
       ...(GRAFFITI ? { graffiti: GRAFFITI } : {}), // Ignore if empty
       // dargs extra options
       _: [PRYSM_EXTRA_OPTS]
