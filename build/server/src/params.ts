@@ -7,7 +7,7 @@ export const GRAFFITI = process.env.GRAFFITI || "";
 export const SHOW_ALL_VALIDATORS = true;
 
 /**
- * Zinken settings
+ * Medalla settings
  */
 export const DEPOSIT_CONTRACT_ADDRESS =
   "0x07b39F4fDE4A38bACe212b546dAc87C58DfE3fDC";
@@ -34,16 +34,14 @@ export const LIGHTHOUSE_BINARY = "lighthouse";
 export const LIGHTHOUSE_DATA_DIR = "/lighthouse";
 export const LIGHTHOUSE_KEYSTORES_DIR = "/lighthouse/validators";
 export const LIGHTHOUSE_REST_APIURL =
-  "http://lighthouse-zinken-beacon-chain.dappnode:5052";
+  "http://lighthouse-medalla-beacon-chain.dappnode:5052";
 export const LIGHTHOUSE_VALIDATOR_APIURL =
-  "http://lighthouse-zinken-beacon-chain.dappnode:5052";
+  "http://lighthouse-medalla-beacon-chain.dappnode:5052";
 export const LIGHTHOUSE_EXTRA_OPTS = process.env.LIGHTHOUSE_EXTRA_OPTS || "";
 export const LIGHTHOUSE_VERBOSITY = process.env.LIGHTHOUSE_VERBOSITY || "info";
 export const LIGHTHOUSE_DNPNAME =
-  "lighthouse-zinken-beacon-chain.dnp.dappnode.eth";
-export const LIGHTHOUSE_INSTALL_URL = getInstallUrlIpfs(
-  "/ipfs/QmTPHXe3a4mZsv7phKNfptdANLcRoMwEzbSaJwTyAWstcc"
-);
+  "lighthouse-medalla-beacon-chain.dnp.dappnode.eth";
+export const LIGHTHOUSE_INSTALL_URL = INSTALL_DNP_URL + LIGHTHOUSE_DNPNAME;
 
 /**
  * Prysm config and paths
@@ -54,12 +52,12 @@ export const PRYSM_WALLET_DIR = "/prysm/.eth2validators/primary";
 export const PRYSM_WALLET_PASSWORD_PATH = "/prysm/.eth2validators/primary.pass";
 export const PRYSM_LOG_FILE = "/var/log/validator.log";
 export const PRYSM_REST_APIURL =
-  "http://prysm-zinken-beacon-chain.dappnode:3500";
+  "http://prysm-medalla-beacon-chain.dappnode:3500";
 export const PRYSM_VALIDATOR_APIRUL =
-  "http://prysm-zinken-beacon-chain.dappnode:4000";
+  "http://prysm-medalla-beacon-chain.dappnode:4000";
 export const PRYSM_EXTRA_OPTS = process.env.PRYSM_EXTRA_OPTS || "";
 export const PRYSM_VERBOSITY = process.env.PRYSM_VERBOSITY || "info";
-export const PRYSM_DNPNAME = "prysm-zinken-beacon-chain.dnp.dappnode.eth";
+export const PRYSM_DNPNAME = "prysm-medalla-beacon-chain.dnp.dappnode.eth";
 export const PRYSM_INSTALL_URL = getInstallUrlIpfs(
   "/ipfs/QmeV1prc6aenz2kjPgWz7YQrx5caZnKQvYQ4qwbkbMJMGG"
 );

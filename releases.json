@@ -1,0 +1,23 @@
+{
+  "1.0.4": {
+    "hash": "/ipfs/QmUzBwFj3chR4tL3THabngm4VcvWkfw7vzp91KYWWSCdYs",
+    "uploadedTo": {
+      "remote": "Mon, 17 Aug 2020 08:40:39 GMT"
+    },
+    "link": "https://dappnode.github.io/sdk-publish/?r=medalla-validator.dnp.dappnode.eth&v=1.0.4&h=%2Fipfs%2FQmUzBwFj3chR4tL3THabngm4VcvWkfw7vzp91KYWWSCdYs"
+  },
+  "1.0.6": {
+    "hash": "/ipfs/QmcsHgbUTxjHwpeCi8pS8eKWmeL7GaoLcJXyij8q7dVqbB",
+    "uploadedTo": {
+      "remote": "Wed, 19 Aug 2020 16:52:51 GMT"
+    },
+    "link": "https://dappnode.github.io/sdk-publish/?r=medalla-validator.dnp.dappnode.eth&v=1.0.6&h=%2Fipfs%2FQmcsHgbUTxjHwpeCi8pS8eKWmeL7GaoLcJXyij8q7dVqbB"
+  },
+  "1.0.7": {
+    "hash": "/ipfs/QmXYxy4mbMGF3ZCw5EkXAYMSnh6yJBKfYi6aeqsvcATCcq",
+    "uploadedTo": {
+      "remote": "Sat, 29 Aug 2020 08:36:15 GMT"
+    },
+    "link": "https://dappnode.github.io/sdk-publish/?r=medalla-validator.dnp.dappnode.eth&v=1.0.7&h=%2Fipfs%2FQmXYxy4mbMGF3ZCw5EkXAYMSnh6yJBKfYi6aeqsvcATCcq"
+  }
+}

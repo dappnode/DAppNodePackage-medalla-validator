@@ -25,7 +25,7 @@ export const lighthouseBinary = new Supervisor(
     command: LIGHTHOUSE_BINARY,
     args: ["validator_client"],
     options: {
-      testnet: "zinken",
+      testnet: "medalla",
       // "strict-lockfiles": true,
       "debug-level": LIGHTHOUSE_VERBOSITY,
       datadir: LIGHTHOUSE_DATA_DIR,
@@ -91,7 +91,7 @@ export const lighthouseKeystoreManager: ClientKeystoreManager = {
   /**
    * lighthouse account_manager validator import
    *   --datadir $LIGHTHOUSE_DATA_DIR
-   *   --testnet zinken
+   *   --testnet medalla
    *   --reuse-password
    *   --stdin-inputs
    *   --directory /validators/keystores/0x8a34daad3e91bd5d34573fbad003753e94db563229791e563e2893f3719251251136bb61431916312e2cc0d68c8f8756
@@ -111,7 +111,7 @@ export const lighthouseKeystoreManager: ClientKeystoreManager = {
           "import",
           ...dargs({
             datadir: LIGHTHOUSE_DATA_DIR,
-            testnet: "zinken",
+            testnet: "medalla",
             "reuse-password": true,
             "stdin-inputs": true,
             directory: path.dirname(keystorePath)

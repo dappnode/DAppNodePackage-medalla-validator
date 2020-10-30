@@ -1,5 +1,5 @@
 {
-  "name": "dappnode-zinken-validator-api-server",
+  "name": "dappnode-medalla-validator-api-server",
   "version": "1.0.0",
   "description": "Validator dashboard API server",
   "main": "index.js",

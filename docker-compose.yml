@@ -1,7 +1,7 @@
-version: "3.4"
+version: '3.4'
 services:
   medalla-validator.dnp.dappnode.eth:
-    image: "medalla-validator.dnp.dappnode.eth:1.0.10"
+    image: 'medalla-validator.dnp.dappnode.eth:1.0.10'
     build:
       context: .
       dockerfile: build/Dockerfile
@@ -9,17 +9,17 @@ services:
         UPSTREAM_VERSION_PRYSM: v1.0.0-beta.0
         UPSTREAM_VERSION_LIGHTHOUSE: v0.3.2
     volumes:
-      - "keystores:/validators"
-      - "lighthouse:/lighthouse"
-      - "prysm:/prysm"
-      - "logs:/var/log"
-      - "db-api:/app/db-api"
+      - 'keystores:/validators'
+      - 'lighthouse:/lighthouse'
+      - 'prysm:/prysm'
+      - 'logs:/var/log'
+      - 'db-api:/app/db-api'
     restart: always
     environment:
       - PASSWORD=
       - LOG_LEVEL=
       - GRAFFITI=validating_from_DAppNode
-      - "WEB3PROVIDER=https://goerli.dappnode.net"
+      - 'WEB3PROVIDER=https://goerli.dappnode.net'
       - LIGHTHOUSE_EXTRA_OPTS=
       - LIGHTHOUSE_VERBOSITY=
       - PRYSM_EXTRA_OPTS=

@@ -14,7 +14,7 @@ export class PrysmBeaconNodeClient implements BeaconNodeClient {
   slotsPerEpoch = 32;
 
   /**
-   * @param grpcGatewayUrl "http://prysm-zinken-beacon-chain.dappnode:3500"
+   * @param grpcGatewayUrl "http://prysm-medalla-beacon-chain.dappnode:3500"
    */
   constructor(grpcGatewayUrl: string) {
     this.grpcGatewayUrl = grpcGatewayUrl;
