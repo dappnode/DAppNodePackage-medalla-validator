@@ -17,8 +17,8 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
   },
   maxWidth: {
-    width: "100%"
-  }
+    width: "100%",
+  },
 }));
 
 export function Settings() {

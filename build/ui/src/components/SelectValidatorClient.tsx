@@ -17,9 +17,7 @@ import { Alert } from "@material-ui/lab";
 const validatorClientOptions: {
   value: ValidatorClientName;
   label: string;
-}[] = [
-  { value: "prysm", label: "Prysm" },
-];
+}[] = [{ value: "prysm", label: "Prysm" }];
 
 const useStyles = makeStyles((theme) => ({
   selectDescription: {
