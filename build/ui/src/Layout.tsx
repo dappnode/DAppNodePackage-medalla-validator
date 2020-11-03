@@ -28,6 +28,7 @@ import Brightness7Icon from "@material-ui/icons/Brightness7";
 import Brightness4Icon from "@material-ui/icons/Brightness4";
 import HomeIcon from "@material-ui/icons/Home";
 import BackupIcon from "@material-ui/icons/Backup";
+import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
 import SettingsIcon from "@material-ui/icons/Settings";
 import PeopleIcon from "@material-ui/icons/People";
 import BarChartIcon from "@material-ui/icons/BarChart";
@@ -48,6 +49,11 @@ const sideNavMainItems = [
     name: "Import",
     Icon: BackupIcon,
     path: paths.validatorsImport,
+  },
+  {
+    name: "Export",
+    Icon: CloudDownloadIcon,
+    path: paths.validatorsExport
   },
   {
     name: "Settings",
