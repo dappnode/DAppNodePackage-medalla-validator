@@ -53,7 +53,7 @@ const sideNavMainItems = [
   {
     name: "Export",
     Icon: CloudDownloadIcon,
-    path: paths.validatorsExport
+    path: paths.validatorsExport,
   },
   {
     name: "Settings",

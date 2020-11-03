@@ -15,15 +15,12 @@ export function NodeStatsView({
       <Title>Node stats</Title>
       <Typography>
         Current slot:{" "}
-        <strong>
-          {nodeStats.syncing ? nodeStats.syncing.head_slot : "?"}
-        </strong>{" "}
+        <strong>{nodeStats.syncing ? nodeStats.syncing.head_slot : "?"}</strong>{" "}
         {nodeStats.syncing
           ? parseInt(nodeStats.syncing.sync_distance) > 0
             ? "(syncing)"
             : "(synced)"
-          : ""
-        }
+          : ""}
       </Typography>
       <Typography>
         Peers: <strong>{nodeStats.peers ? nodeStats.peers.length : "?"}</strong>

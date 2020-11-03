@@ -11,16 +11,12 @@ export function ValidatorsExport() {
       <LayoutItem>
         <Title>Export validators</Title>
         <Typography color="textSecondary">
-          Export all local validators keystores a single zip file. They are encrypted with their original import password.
+          Export all local validators keystores a single zip file. They are
+          encrypted with their original import password.
         </Typography>
 
-        
         <Box mt={3} mb={1}>
-          <Button
-            variant="contained"
-            color="primary"
-            href={apiPaths.backup}
-          >
+          <Button variant="contained" color="primary" href={apiPaths.backup}>
             Backup
           </Button>
         </Box>

@@ -7,9 +7,13 @@ import { logs } from "../logs";
 /**
  * Endpoint to download all local validator keystores
  */
-export const downloadKeystoresBackup: express.Handler = async (req, res, next) => {
+export const downloadKeystoresBackup: express.Handler = async (
+  req,
+  res,
+  next
+) => {
   try {
-    const keystoresBackup = prepareKeystoresBackup()
+    const keystoresBackup = prepareKeystoresBackup();
 
     const filename = `medalla-validators-backup.zip`;
     const mimetype = "application/zip";
@@ -26,11 +30,11 @@ function prepareKeystoresBackup(): Buffer {
   const zip = new AdmZip();
 
   const validatorPaths = keystoreManager.getValidatorsPaths();
-  validatorPaths.forEach(({keystorePath, secretPath}, i) => {
+  validatorPaths.forEach(({ keystorePath, secretPath }, i) => {
     zip.addFile(`keystore-${i}.json`, fs.readFileSync(keystorePath));
     zip.addFile(`password-${i}.json`, fs.readFileSync(secretPath));
-  })
-  
+  });
+
   // get everything as a buffer
   return zip.toBuffer();
 }
