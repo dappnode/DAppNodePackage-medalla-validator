@@ -24,8 +24,6 @@ export const VALIDATOR_SECRETS_DIR = "/validators/secrets";
  */
 const INSTALL_DNP_URL = "http://my.dappnode/#/installer/";
 const PACKAGE_DNP_URL = "http://my.dappnode/#/packages/";
-const getInstallUrlIpfs = (hash: string): string =>
-  INSTALL_DNP_URL + encodeURIComponent(hash);
 
 /**
  * Lighthouse config and paths
@@ -58,9 +56,7 @@ export const PRYSM_VALIDATOR_APIRUL =
 export const PRYSM_EXTRA_OPTS = process.env.PRYSM_EXTRA_OPTS || "";
 export const PRYSM_VERBOSITY = process.env.PRYSM_VERBOSITY || "info";
 export const PRYSM_DNPNAME = "prysm-medalla-beacon-chain.dnp.dappnode.eth";
-export const PRYSM_INSTALL_URL = getInstallUrlIpfs(
-  "/ipfs/QmeV1prc6aenz2kjPgWz7YQrx5caZnKQvYQ4qwbkbMJMGG"
-);
+export const PRYSM_INSTALL_URL = INSTALL_DNP_URL + PRYSM_DNPNAME;
 
 /**
  * DAppNode / DAPPMANAGER params
