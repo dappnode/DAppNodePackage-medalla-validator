@@ -37,7 +37,6 @@ export const prysmBinary = new Supervisor(
       datadir: PRYSM_DATA_DIR,
       "wallet-dir": PRYSM_WALLET_DIR,
       "wallet-password-file": PRYSM_WALLET_PASSWORD_PATH,
-      // "disable-accounts-v2": true,
       verbosity: PRYSM_VERBOSITY,
       "log-file": PRYSM_LOG_FILE,
       "accept-terms-of-use": true,
@@ -94,11 +93,12 @@ export const prysmKeystoreManager: ClientKeystoreManager = {
 
   /**
    * ```
-   * ./prysm.sh validator accounts-v2 import
-   *   --wallet-dir ~/.eth2validators/prysm-wallet-v2
-   *   --keys-dir ~/Downloads/eth2deposit-cli-3f4a79a-linux-amd64/validator_keys
-   *   --wallet-password-file ./wallet.pass
-   *   --account-password-file ./account.pass
+   * ./prysm.sh validator accounts import
+   *   --wallet-dir /prysm/.eth2validators/primary
+   *   --wallet-password-file /prysm/.eth2validators/primary.pass
+   *   --keys-dir prysm-import-0x94a1c0901b79b323ba4245bccf8ee50ac2ba0897558ac6811b917e0384a8a8159e1a1d6052534479dc5343af302c3863DIZ2b1
+   *   --account-password-file /validators/secrets/0x94a1c0901b79b323ba4245bccf8ee50ac2ba0897558ac6811b917e0384a8a8159e1a1d6052534479dc5343af302c3863
+   *   --accept-terms-of-use
    * ```
    * [validator-v1.0.0-alpha.29-linux-amd64]
    */
@@ -125,21 +125,22 @@ export const prysmKeystoreManager: ClientKeystoreManager = {
       const { stdout, stderr } = await promisify(exec)(
         [
           PRYSM_BINARY,
-          "accounts-v2",
+          "accounts",
           "import",
           ...dargs({
             "wallet-dir": PRYSM_WALLET_DIR,
             "wallet-password-file": PRYSM_WALLET_PASSWORD_PATH,
             // Directory containing multiple keystores WITH THE SAME PASSWORD
             "keys-dir": tmpKeystoreDir,
-            "account-password-file": secretPath
+            "account-password-file": secretPath,
+            "accept-terms-of-use": true,
           })
         ].join(" ")
       );
 
       if (stdout.includes("imported 0 accounts"))
         throw Error(
-          `cmd 'prysm accounts-v2 import' failed to import keystore from ${tmpKeystoreDir}: ${stdout}`
+          `cmd 'prysm accounts import' failed to import keystore from ${tmpKeystoreDir}: ${stdout}`
         );
 
       await promisify(rimraf)(tmpKeystoreDir);
