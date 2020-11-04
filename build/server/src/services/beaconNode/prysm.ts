@@ -55,7 +55,7 @@ export class PrysmBeaconNodeClient implements BeaconNodeClient {
       const chainhead = await this.fetch<BeaconNodeChainhead>(
         "/eth/v1alpha1/beacon/chainhead"
       );
-      return { head_slot: String(chainhead.headSlot), sync_distance: "1" };
+      return { head_slot: String(chainhead.headSlot), sync_distance: "0" };
     }
   }
 
