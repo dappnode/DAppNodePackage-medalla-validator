@@ -7,6 +7,7 @@ import { NodeStatsView } from "components/NodeStats";
 import { TotalBalance } from "components/TotalBalance";
 import { OnboardingDialog } from "components/OnboardingDialog";
 import { ValidatorClientView } from "components/ValidatorClientView";
+import { parseIsSyncing } from "utils/syncing";
 
 export function Home() {
   const [onboardingOpen, setOnboardingOpen] = useState(false);
@@ -25,7 +26,7 @@ export function Home() {
 
   return (
     <>
-      {nodeStats.data?.syncing && (
+      {parseIsSyncing(nodeStats.data?.syncing) && (
         <LayoutItem noPaper>
           <Alert severity="warning">
             Eth2 beacon node is still syncing. The validator can not perform its

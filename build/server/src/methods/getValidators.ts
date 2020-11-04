@@ -18,7 +18,8 @@ async function getValidatorStatus(
 ): Promise<ValidatorStatusByPubkey> {
   const beaconNodeClient = getBeaconNodeClient(beaconNode);
   const syncingStatus = await beaconNodeClient.syncing();
-  const isSyncing = syncingStatus.sync_distance > "0";
+  // > operator works with strings
+  const isSyncing = parseInt(syncingStatus.sync_distance) > 0;
   if (isSyncing) {
     return {};
   } else {
