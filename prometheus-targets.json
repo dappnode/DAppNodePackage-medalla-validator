@@ -1,0 +1,9 @@
+[
+  {
+    "labels": {
+      "job": "prysm-validator",
+      "group": "prysm"
+    },
+    "targets": ["medalla-validator.dnp.dappnode:8081"]
+  }
+]
