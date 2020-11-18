@@ -1,7 +1,7 @@
 {
   "name": "medalla-validator.dnp.dappnode.eth",
   "version": "1.0.15",
-  "upstreamVersion": "prysmaticlabs/prysm@v1.0.0-beta.2, sigp/lighthouse@v0.3.3",
+  "upstreamVersion": "prysmaticlabs/prysm@v1.0.0-beta.3, sigp/lighthouse@v0.3.5",
   "upstreamRepo": "prysmaticlabs/prysm,sigp/lighthouse",
   "upstreamArg": "UPSTREAM_VERSION_PRYSM,UPSTREAM_VERSION_LIGHTHOUSE",
   "shortDescription": "Eth2.0 Medalla testnet validator",
